@@ -6,9 +6,17 @@ import { createServiceClient } from "@/lib/supabase/admin";
 import { parsePriceTiersJson, unitPriceForQuantity } from "@/lib/price-tiers";
 
 const checkoutSchema = z.object({
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+  company: z.string().optional(),
   email: z.string().email(),
-  fullName: z.string().min(2),
   phone: z.string().optional(),
+  billingLine1: z.string().min(2),
+  billingCity: z.string().min(1),
+  billingState: z.string().min(1),
+  billingPostalCode: z.string().min(2),
+  billingCountry: z.string().min(2),
+  shipToDifferentAddress: z.boolean().optional(),
   line1: z.string().min(2),
   line2: z.string().optional(),
   city: z.string().min(1),
@@ -95,16 +103,25 @@ export async function submitOrder(
     postalCode: input.postalCode,
     country: input.country,
   };
+  const billing_address = {
+    line1: input.billingLine1,
+    city: input.billingCity,
+    state: input.billingState,
+    postalCode: input.billingPostalCode,
+    country: input.billingCountry,
+    company: input.company ?? "",
+  };
+  const fullName = `${input.firstName} ${input.lastName}`.trim();
 
   const { data: order, error: oErr } = await svc
     .from("orders")
     .insert({
       user_id: user.id,
       email: input.email,
-      full_name: input.fullName,
+      full_name: fullName,
       phone: input.phone ?? null,
       shipping_address,
-      billing_address: shipping_address,
+      billing_address: billing_address,
       payment_notes: input.paymentNotes ?? null,
       customer_notes: input.customerNotes ?? null,
       policy_acknowledged_at: new Date().toISOString(),
