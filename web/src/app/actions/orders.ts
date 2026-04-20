@@ -113,29 +113,55 @@ export async function submitOrder(
   };
   const fullName = `${input.firstName} ${input.lastName}`.trim();
 
-  const { data: order, error: oErr } = await svc
-    .from("orders")
-    .insert({
-      user_id: user.id,
-      email: input.email,
-      full_name: fullName,
-      phone: input.phone ?? null,
-      shipping_address,
-      billing_address: billing_address,
-      payment_notes: input.paymentNotes ?? null,
-      customer_notes: input.customerNotes ?? null,
-      policy_acknowledged_at: new Date().toISOString(),
-      policy_acknowledgement: {
-        source: "checkout",
-        terms_version: "2026-04",
-        shipping_cold_chain_version: "2026-04",
-        returns_cancellations_version: "2026-04",
-      },
-      status: "pending_csr",
-      subtotal,
-    })
-    .select("id")
-    .single();
+  const baseOrderInsert = {
+    user_id: user.id,
+    email: input.email,
+    full_name: fullName,
+    phone: input.phone ?? null,
+    shipping_address,
+    billing_address: billing_address,
+    payment_notes: input.paymentNotes ?? null,
+    customer_notes: input.customerNotes ?? null,
+    status: "pending_csr" as const,
+    subtotal,
+  };
+
+  const withPolicy = {
+    ...baseOrderInsert,
+    policy_acknowledged_at: new Date().toISOString(),
+    policy_acknowledgement: {
+      source: "checkout",
+      terms_version: "2026-04",
+      shipping_cold_chain_version: "2026-04",
+      returns_cancellations_version: "2026-04",
+    },
+  };
+
+  let order:
+    | {
+        id: string;
+      }
+    | null = null;
+  let oErr: { message?: string; code?: string } | null = null;
+
+  // Preferred insert with policy audit fields.
+  {
+    const res = await svc.from("orders").insert(withPolicy).select("id").single();
+    order = res.data;
+    oErr = res.error;
+  }
+
+  // Backward-compatible fallback for databases that have not applied the migration yet.
+  if (!order && oErr) {
+    const msg = String(oErr.message ?? "");
+    const missingPolicyColumns =
+      msg.includes("policy_acknowledged_at") || msg.includes("policy_acknowledgement");
+    if (missingPolicyColumns) {
+      const retry = await svc.from("orders").insert(baseOrderInsert).select("id").single();
+      order = retry.data;
+      oErr = retry.error;
+    }
+  }
 
   if (oErr || !order) {
     return { ok: false, message: oErr?.message ?? "Order failed." };
