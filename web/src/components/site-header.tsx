@@ -28,21 +28,8 @@ export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-emerald-900/10 bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
-        <Link
-          href="/"
-          className="relative flex h-11 w-[11.5rem] shrink-0 items-center sm:h-12 sm:w-[12.5rem]"
-          aria-label="MedicaPlanet home"
-        >
-          {/* Logo SVG had a huge empty canvas (612×408); file viewBox is cropped to the ink so object-contain fills this slot. */}
-          <img
-            src="/medicaplanet_logo.svg"
-            alt=""
-            width={512}
-            height={132}
-            decoding="async"
-            fetchPriority="high"
-            className="max-h-full w-full object-contain object-left"
-          />
+        <Link href="/" className="text-lg font-semibold tracking-tight text-emerald-900">
+          MedicaPlanet
         </Link>
         <nav className="flex flex-wrap items-center gap-4 text-sm font-medium text-zinc-700">
           {nav.map((n) => (
