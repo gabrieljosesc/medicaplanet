@@ -5,7 +5,7 @@ export default async function AdminOrdersPage() {
   const supabase = await createClient();
   const { data: orders } = await supabase
     .from("orders")
-    .select("id,email,full_name,status,subtotal,created_at")
+    .select("id,email,full_name,status,subtotal,created_at,policy_acknowledged_at")
     .order("created_at", { ascending: false })
     .limit(100);
 
@@ -18,6 +18,7 @@ export default async function AdminOrdersPage() {
             <th className="py-2 pr-2">When</th>
             <th className="py-2 pr-2">Customer</th>
             <th className="py-2 pr-2">Status</th>
+            <th className="py-2 pr-2">Policy ack</th>
             <th className="py-2 pr-2">Total</th>
           </tr>
         </thead>
@@ -34,6 +35,15 @@ export default async function AdminOrdersPage() {
                 <div className="text-xs text-zinc-500">{o.email}</div>
               </td>
               <td className="py-2 pr-2">{o.status}</td>
+              <td className="py-2 pr-2 text-xs">
+                {o.policy_acknowledged_at ? (
+                  <span className="text-emerald-700">
+                    Yes · {new Date(o.policy_acknowledged_at).toLocaleDateString()}
+                  </span>
+                ) : (
+                  <span className="text-amber-700">No</span>
+                )}
+              </td>
               <td className="py-2 pr-2">${Number(o.subtotal).toFixed(2)}</td>
             </tr>
           ))}
