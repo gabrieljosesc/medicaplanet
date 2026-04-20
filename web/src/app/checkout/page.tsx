@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cart-context";
@@ -51,8 +52,15 @@ export default function CheckoutPage() {
     <div className="mx-auto max-w-xl">
       <h1 className="text-2xl font-semibold text-zinc-900">Checkout</h1>
       <p className="mt-2 text-sm text-zinc-600">
-        No card is charged on this site. CSR will contact you to confirm payment and ship details.
+        No card is charged at checkout. CSR reviews each order for professional verification,
+        compliance, and shipping constraints, then confirms payment and dispatch with you.
       </p>
+      <p className="mt-2 text-xs text-zinc-600">
+        By submitting, you agree to our <Link href="/legal/terms" className="underline hover:no-underline">Terms of Supply</Link>,{" "}
+        <Link href="/legal/shipping-cold-chain" className="underline hover:no-underline">Shipping & Cold-Chain Policy</Link>, and{" "}
+        <Link href="/legal/returns-cancellations" className="underline hover:no-underline">Returns & Cancellations Policy</Link>.
+      </p>
+
       <form onSubmit={onSubmit} className="mt-6 space-y-4">
         <div>
           <label className="text-xs font-medium text-zinc-600">Email</label>
@@ -102,13 +110,20 @@ export default function CheckoutPage() {
           <label className="text-xs font-medium text-zinc-600">Payment / callback notes (optional)</label>
           <textarea name="paymentNotes" rows={2} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
         </div>
+        <label className="flex items-start gap-2 text-xs text-zinc-700">
+          <input type="checkbox" required className="mt-0.5 size-4 rounded border-zinc-400" />
+          <span>
+            I confirm this purchase is for authorized professional use and that product handling at
+            delivery will follow required storage and local regulatory standards.
+          </span>
+        </label>
         {error && <p className="text-sm text-red-700">{error}</p>}
         <button
           type="submit"
           disabled={pending}
           className="w-full rounded-full bg-emerald-800 py-3 text-sm font-semibold text-white hover:bg-emerald-900 disabled:opacity-60"
         >
-          {pending ? "Submitting…" : "Place order (CSR will follow up)"}
+          {pending ? "Submitting…" : "Place order (CSR verification & follow-up)"}
         </button>
       </form>
     </div>

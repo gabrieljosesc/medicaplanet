@@ -58,8 +58,23 @@ function RegisterFormInner({
     <div className="mx-auto max-w-2xl px-1">
       <h1 className="text-2xl font-semibold text-rose-950">Create account</h1>
       <p className="mt-1 text-sm text-rose-800/80">
-        Licensed professionals — all fields marked with <span className="text-rose-500">*</span> are
-        required.
+        Licensed professionals only. All fields marked with <span className="text-rose-500">*</span>{" "}
+        are required for compliance review before account approval and fulfillment access.
+      </p>
+      <p className="mt-2 text-xs text-rose-700/80">
+        By registering, you agree to our{" "}
+        <Link href="/legal/terms" className="underline hover:no-underline">
+          Terms of Supply
+        </Link>
+        ,{" "}
+        <Link href="/legal/privacy" className="underline hover:no-underline">
+          Privacy Notice
+        </Link>
+        , and{" "}
+        <Link href="/legal/verification" className="underline hover:no-underline">
+          Professional Verification Policy
+        </Link>
+        .
       </p>
 
       {globalError && (
@@ -318,12 +333,20 @@ function RegisterFormInner({
           </div>
         </div>
 
+        <label className="mt-6 flex items-start gap-2 text-xs text-rose-900/90">
+          <input type="checkbox" required className="mt-0.5 size-4 rounded border-rose-300" />
+          <span>
+            I confirm I am authorized to purchase regulated medical/aesthetic supplies and that my
+            license information is accurate and current.
+          </span>
+        </label>
+
         <button
           type="submit"
           disabled={pending}
           className="mt-8 w-full rounded-full bg-rose-500 px-6 py-3.5 text-base font-semibold text-white shadow-md transition hover:scale-[1.02] hover:bg-rose-600 hover:shadow-lg active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50"
         >
-          {pending ? "Creating account…" : "Register"}
+          {pending ? "Creating account..." : "Register"}
         </button>
       </form>
 
@@ -342,7 +365,7 @@ function RegisterFormInner({
 
 export default function RegisterPage() {
   return (
-    <Suspense fallback={<div className="mx-auto max-w-2xl py-12 text-center text-rose-900">Loading…</div>}>
+    <Suspense fallback={<div className="mx-auto max-w-2xl py-12 text-center text-rose-900">Loadingâ€¦</div>}>
       <RegisterFormWithQuery />
     </Suspense>
   );
