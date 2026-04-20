@@ -12,6 +12,7 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [shipDifferent, setShipDifferent] = useState(false);
+  const [shippingExpanded, setShippingExpanded] = useState(true);
   const subtotal = lines.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -81,11 +82,19 @@ export default function CheckoutPage() {
         <Link href="/legal/shipping-cold-chain" className="underline hover:no-underline">Shipping & Cold-Chain Policy</Link>, and{" "}
         <Link href="/legal/returns-cancellations" className="underline hover:no-underline">Returns & Cancellations Policy</Link>.
       </p>
+      <ol className="mt-4 flex flex-wrap items-center gap-2 text-xs font-medium">
+        <li className="rounded-full bg-emerald-100 px-3 py-1 text-emerald-900">1. Billing</li>
+        <li className="rounded-full bg-zinc-100 px-3 py-1 text-zinc-700">2. Shipping</li>
+        <li className="rounded-full bg-zinc-100 px-3 py-1 text-zinc-700">3. Review & submit</li>
+      </ol>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <form onSubmit={onSubmit} className="space-y-5">
           <section className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
             <h2 className="text-sm font-semibold text-zinc-900">Billing details</h2>
+            <p className="mt-1 text-xs text-zinc-500">
+              Required fields are used for invoice and verification records.
+            </p>
             <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
                 <label className="text-xs font-medium text-zinc-600">First name</label>
@@ -137,43 +146,64 @@ export default function CheckoutPage() {
                 name="shipToDifferentAddress"
                 value="1"
                 checked={shipDifferent}
-                onChange={(e) => setShipDifferent(e.target.checked)}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setShipDifferent(checked);
+                  if (checked) setShippingExpanded(true);
+                }}
                 className="mt-0.5 size-4 rounded border-zinc-400"
               />
               <span>Ship to a different address</span>
             </label>
             {shipDifferent ? (
-              <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <div className="sm:col-span-2">
-                  <label className="text-xs font-medium text-zinc-600">Shipping address line 1</label>
-                  <input name="line1" required={shipDifferent} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+              <>
+                <div className="mt-3 flex items-center justify-between rounded-md bg-zinc-50 px-3 py-2">
+                  <p className="text-xs text-zinc-600">Shipping fields are required when enabled.</p>
+                  <button
+                    type="button"
+                    onClick={() => setShippingExpanded((v) => !v)}
+                    className="text-xs font-medium text-emerald-800 hover:underline"
+                  >
+                    {shippingExpanded ? "Collapse" : "Expand"}
+                  </button>
                 </div>
-                <div className="sm:col-span-2">
-                  <label className="text-xs font-medium text-zinc-600">Shipping address line 2 (optional)</label>
-                  <input name="line2" className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-zinc-600">Shipping country</label>
-                  <input name="country" required={shipDifferent} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-zinc-600">Shipping city</label>
-                  <input name="city" required={shipDifferent} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-zinc-600">Shipping state / province</label>
-                  <input name="state" required={shipDifferent} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-zinc-600">Shipping ZIP code</label>
-                  <input name="postalCode" required={shipDifferent} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
-                </div>
-              </div>
+                {shippingExpanded ? (
+                  <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div className="sm:col-span-2">
+                      <label className="text-xs font-medium text-zinc-600">Shipping address line 1</label>
+                      <input name="line1" required={shipDifferent} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="text-xs font-medium text-zinc-600">Shipping address line 2 (optional)</label>
+                      <input name="line2" className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-zinc-600">Shipping country</label>
+                      <input name="country" required={shipDifferent} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-zinc-600">Shipping city</label>
+                      <input name="city" required={shipDifferent} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-zinc-600">Shipping state / province</label>
+                      <input name="state" required={shipDifferent} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-zinc-600">Shipping ZIP code</label>
+                      <input name="postalCode" required={shipDifferent} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+                    </div>
+                  </div>
+                ) : null}
+              </>
             ) : null}
           </section>
 
           <section className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
             <p className="text-sm font-semibold text-zinc-900">Payment & order notes</p>
+            <p className="mt-1 text-xs text-zinc-500">
+              Select preferred payment route; CSR confirms final payment instructions after review.
+            </p>
             <div className="mt-3 space-y-2 text-sm text-zinc-700">
               <label className="flex items-center gap-2">
                 <input type="radio" name="paymentMethod" value="credit_card" defaultChecked className="size-4" />
