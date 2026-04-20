@@ -15,6 +15,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
     .single();
   if (!order) notFound();
   const items = Array.isArray(order.order_items) ? order.order_items : [];
+  const policyAck = order.policy_acknowledgement as Record<string, unknown> | null;
 
   return (
     <div>
@@ -31,6 +32,22 @@ export default async function AdminOrderDetailPage({ params }: Props) {
         <p>Shipping: {JSON.stringify(order.shipping_address)}</p>
         {order.customer_notes && <p>Customer notes: {order.customer_notes}</p>}
         {order.payment_notes && <p>Payment notes: {order.payment_notes}</p>}
+        <div className="mt-2 rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-700">
+          <p className="font-medium text-zinc-900">Policy acknowledgement</p>
+          <p className="mt-1">
+            Accepted at:{" "}
+            {order.policy_acknowledged_at
+              ? new Date(order.policy_acknowledged_at).toLocaleString()
+              : "not recorded"}
+          </p>
+          {policyAck && Object.keys(policyAck).length > 0 ? (
+            <pre className="mt-1 overflow-x-auto rounded bg-white p-2 text-[11px] leading-5">
+              {JSON.stringify(policyAck, null, 2)}
+            </pre>
+          ) : (
+            <p className="mt-1 text-zinc-500">No policy metadata captured.</p>
+          )}
+        </div>
       </div>
       <ul className="mt-6 space-y-2">
         {items.map((it: { id: string; title: string; quantity: number; unit_price: number }) => (
