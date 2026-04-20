@@ -21,5 +21,11 @@ export function resolveProductMainImage(
 
 /** Next/Image: skip optimizer for hosts that break or SVG; allow Supabase + static files to optimize. */
 export function nextImageUnoptimized(src: string): boolean {
-  return src.includes("placehold.co") || /\.svg(\?|$)/i.test(src);
+  if (src.includes("placehold.co") || /\.svg(\?|$)/i.test(src)) return true;
+  // Filenames like `ZO-...-0.25%-01.jpg` contain a literal `%`. The optimizer
+  // runs decodeURIComponent on the `url` query param and throws URIError on
+  // invalid escape sequences, so serve these static files as plain <img>.
+  const isLocalPath = src.startsWith("/") && !/^https?:\/\//i.test(src);
+  if (isLocalPath && src.includes("%")) return true;
+  return false;
 }
