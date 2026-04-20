@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { CartBadge } from "@/components/cart-badge";
@@ -28,8 +29,21 @@ export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-emerald-900/10 bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
-        <Link href="/" className="text-lg font-semibold tracking-tight text-emerald-900">
-          MedicaPlanet
+        <Link
+          href="/"
+          className="relative flex shrink-0 items-center leading-none"
+          aria-label="MedicaPlanet home"
+        >
+          <Image
+            src="/medicaplanet_logo.svg"
+            alt=""
+            width={138}
+            height={92}
+            sizes="(max-width: 640px) 120px, 140px"
+            className="h-7 w-auto max-h-7 sm:h-8 sm:max-h-8"
+            priority
+            unoptimized
+          />
         </Link>
         <nav className="flex flex-wrap items-center gap-4 text-sm font-medium text-zinc-700">
           {nav.map((n) => (

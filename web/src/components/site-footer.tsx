@@ -1,9 +1,21 @@
+import Image from "next/image";
+import Link from "next/link";
+
 export function SiteFooter() {
   return (
     <footer className="mt-auto border-t border-emerald-900/10 bg-emerald-950 text-emerald-50">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-2">
         <div>
-          <p className="text-lg font-semibold">MedicaPlanet</p>
+          <Link href="/" className="inline-flex items-center leading-none" aria-label="MedicaPlanet home">
+            <Image
+              src="/medicaplanet_logo.svg"
+              alt=""
+              width={160}
+              height={107}
+              className="h-8 w-auto max-h-8 brightness-0 invert"
+              unoptimized
+            />
+          </Link>
           <p className="mt-2 text-sm text-emerald-200/90">
             Wholesale-style supply for licensed aesthetic and medical professionals. Cold-chain
             awareness where required; CSR verifies licenses before fulfillment.
