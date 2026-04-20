@@ -30,15 +30,15 @@ export async function SiteHeader() {
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
         <Link
           href="/"
-          className="relative flex h-10 w-[9.25rem] shrink-0 items-center sm:h-11 sm:w-[10rem]"
+          className="relative flex h-11 w-[11.5rem] shrink-0 items-center sm:h-12 sm:w-[12.5rem]"
           aria-label="MedicaPlanet home"
         >
-          {/* Native img: Next/Image + SVG often ignores Tailwind height; wide viewBox needs a fixed box + object-contain to match old wordmark width (~9–10rem). */}
+          {/* Logo SVG had a huge empty canvas (612×408); file viewBox is cropped to the ink so object-contain fills this slot. */}
           <img
             src="/medicaplanet_logo.svg"
             alt=""
-            width={612}
-            height={408}
+            width={512}
+            height={132}
             decoding="async"
             fetchPriority="high"
             className="max-h-full w-full object-contain object-left"
