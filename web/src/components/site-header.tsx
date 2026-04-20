@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { CartBadge } from "@/components/cart-badge";
@@ -31,17 +30,18 @@ export async function SiteHeader() {
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
         <Link
           href="/"
-          className="relative flex shrink-0 items-center text-lg font-semibold leading-tight tracking-tight text-emerald-900"
+          className="relative flex h-10 w-[9.25rem] shrink-0 items-center sm:h-11 sm:w-[10rem]"
           aria-label="MedicaPlanet home"
         >
-          <Image
+          {/* Native img: Next/Image + SVG often ignores Tailwind height; wide viewBox needs a fixed box + object-contain to match old wordmark width (~9–10rem). */}
+          <img
             src="/medicaplanet_logo.svg"
             alt=""
             width={612}
             height={408}
-            className="h-[2.35em] w-auto sm:h-[2.45em]"
-            priority
-            unoptimized
+            decoding="async"
+            fetchPriority="high"
+            className="max-h-full w-full object-contain object-left"
           />
         </Link>
         <nav className="flex flex-wrap items-center gap-4 text-sm font-medium text-zinc-700">
