@@ -31,16 +31,15 @@ export async function SiteHeader() {
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
         <Link
           href="/"
-          className="relative flex shrink-0 items-center leading-none"
+          className="relative flex shrink-0 items-center text-lg font-semibold leading-tight tracking-tight text-emerald-900"
           aria-label="MedicaPlanet home"
         >
           <Image
             src="/medicaplanet_logo.svg"
             alt=""
-            width={138}
-            height={92}
-            sizes="(max-width: 640px) 120px, 140px"
-            className="h-7 w-auto max-h-7 sm:h-8 sm:max-h-8"
+            width={612}
+            height={408}
+            className="h-[2.35em] w-auto sm:h-[2.45em]"
             priority
             unoptimized
           />
