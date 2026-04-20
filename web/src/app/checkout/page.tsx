@@ -29,6 +29,7 @@ export default function CheckoutPage() {
       country: String(fd.get("country")),
       customerNotes: String(fd.get("customerNotes") || ""),
       paymentNotes: String(fd.get("paymentNotes") || ""),
+      policyAccepted: Boolean(fd.get("policyAck")),
       items: lines.map((l) => ({ slug: l.slug, quantity: l.quantity })),
     });
     setPending(false);
@@ -111,7 +112,13 @@ export default function CheckoutPage() {
           <textarea name="paymentNotes" rows={2} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
         </div>
         <label className="flex items-start gap-2 text-xs text-zinc-700">
-          <input type="checkbox" required className="mt-0.5 size-4 rounded border-zinc-400" />
+          <input
+            type="checkbox"
+            name="policyAck"
+            value="1"
+            required
+            className="mt-0.5 size-4 rounded border-zinc-400"
+          />
           <span>
             I confirm this purchase is for authorized professional use and that product handling at
             delivery will follow required storage and local regulatory standards.

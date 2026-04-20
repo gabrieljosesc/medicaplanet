@@ -17,6 +17,9 @@ const checkoutSchema = z.object({
   country: z.string().min(2),
   customerNotes: z.string().optional(),
   paymentNotes: z.string().optional(),
+  policyAccepted: z.boolean().refine((v) => v === true, {
+    message: "Policy acknowledgement is required.",
+  }),
   items: z
     .array(
       z.object({
@@ -104,6 +107,13 @@ export async function submitOrder(
       billing_address: shipping_address,
       payment_notes: input.paymentNotes ?? null,
       customer_notes: input.customerNotes ?? null,
+      policy_acknowledged_at: new Date().toISOString(),
+      policy_acknowledgement: {
+        source: "checkout",
+        terms_version: "2026-04",
+        shipping_cold_chain_version: "2026-04",
+        returns_cancellations_version: "2026-04",
+      },
       status: "pending_csr",
       subtotal,
     })
