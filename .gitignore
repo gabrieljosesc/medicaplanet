@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+web/node_modules/
+
+# Next.js
+web/.next/
+web/out/
+
+# Environment (templates with *.example are tracked)
+.env
+.env.*
+!.env.example
+!web/.env.local.example
+!**/.env*.example
+
+# Vercel
+.vercel/
+web/.vercel/
+
+# TypeScript / misc
+*.tsbuildinfo
+*.pem
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Microsoft Office lock files
+~$*
+
+# IDE / tooling
+.cursor/
+
+# Duplicate image staging at repo root (canonical assets: web/public/images)
+/images/
+
+# Local catalog import sources — place files locally to run web import script
+*.xlsx
+*.docx
