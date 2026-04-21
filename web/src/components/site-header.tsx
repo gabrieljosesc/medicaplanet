@@ -2,7 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { CartBadge } from "@/components/cart-badge";
 import { HeaderSearch } from "@/components/header-search";
-import { IconUserCircle } from "@/components/nav-icons";
+import { UserMenu } from "@/components/user-menu";
 
 const nav = [
   { href: "/shop", label: "Shop" },
@@ -16,12 +16,19 @@ export async function SiteHeader() {
     data: { user },
   } = await supabase.auth.getUser();
   let isAdmin = false;
+  let profile: {
+    role: string | null;
+    avatar_url: string | null;
+    full_name: string | null;
+    email: string | null;
+  } | null = null;
   if (user) {
-    const { data: profile } = await supabase
+    const { data: p } = await supabase
       .from("profiles")
-      .select("role")
+      .select("role, avatar_url, full_name, email")
       .eq("id", user.id)
       .single();
+    profile = p;
     isAdmin = profile?.role === "admin";
   }
 
@@ -58,14 +65,15 @@ export async function SiteHeader() {
           <HeaderSearch />
           <CartBadge />
           {user ? (
-            <Link
-              href="/account"
-              title="View profile"
-              aria-label="View profile"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md text-emerald-800 hover:bg-emerald-50 hover:text-emerald-900"
-            >
-              <IconUserCircle className="h-[22px] w-[22px] shrink-0" />
-            </Link>
+            <UserMenu
+              email={profile?.email ?? user.email ?? ""}
+              displayName={
+                (profile?.full_name && profile.full_name.trim()) ||
+                user.email?.split("@")[0] ||
+                "Account"
+              }
+              avatarUrl={profile?.avatar_url ?? null}
+            />
           ) : (
             <Link href="/auth/login" className="font-medium text-emerald-800 hover:underline">
               Sign in
