@@ -23,39 +23,46 @@ export default function CartPage() {
         </p>
       ) : (
         <div className="mt-6 space-y-4">
-          <label className="inline-flex items-center gap-2 text-sm text-zinc-700">
+          <div className="grid grid-cols-[28px_minmax(0,1fr)_120px_150px_120px_90px] items-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium text-zinc-700 shadow-sm">
             <input
               type="checkbox"
               checked={allSelected}
               onChange={(e) => setAllSelected(e.target.checked)}
               className="size-4 rounded border-zinc-400"
             />
-            Select all
-          </label>
+            <span>Product</span>
+            <span className="text-right">Unit Price</span>
+            <span className="text-center">Quantity</span>
+            <span className="text-right">Total Price</span>
+            <span className="text-right">Action</span>
+          </div>
           {lines.map((l) => (
             <div
               key={l.slug}
-              className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm"
+              className="grid grid-cols-[28px_minmax(0,1fr)_120px_150px_120px_90px] items-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-4 shadow-sm"
             >
-              <div className="flex items-start gap-3">
-                <input
-                  type="checkbox"
-                  checked={l.selected === true}
-                  onChange={(e) => setSelected(l.slug, e.target.checked)}
-                  className="mt-1 size-4 rounded border-zinc-400"
-                />
-                <div>
+              <input
+                type="checkbox"
+                checked={l.selected === true}
+                onChange={(e) => setSelected(l.slug, e.target.checked)}
+                className="size-4 rounded border-zinc-400"
+              />
+              <div className="min-w-0">
                 <Link href={`/product/${l.slug}`} className="font-medium text-emerald-900 hover:underline">
                   {l.title}
                 </Link>
                 <p className="text-xs text-zinc-500">{l.slug}</p>
-                </div>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
+              <span className="text-right text-sm text-zinc-700">
+                {formatMoney(l.currency ?? "USD", l.unitPrice)}
+              </span>
+              <div className="flex justify-center">
                 <QtyStepper value={l.quantity} onChange={(n) => setQty(l.slug, n)} />
-                <span className="text-sm text-zinc-700">
-                  {formatMoney(l.currency ?? "USD", l.unitPrice * l.quantity)}
-                </span>
+              </div>
+              <span className="text-right text-sm text-zinc-700">
+                {formatMoney(l.currency ?? "USD", l.unitPrice * l.quantity)}
+              </span>
+              <div className="text-right">
                 <button
                   type="button"
                   className="text-sm text-red-700 hover:underline"
