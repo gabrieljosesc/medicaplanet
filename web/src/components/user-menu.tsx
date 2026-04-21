@@ -94,7 +94,7 @@ export function UserMenu({
       ) : null}
       {confirmLogoutOpen ? (
         <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-sm rounded-xl border border-zinc-200 bg-white p-5 shadow-xl">
+          <div className="w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-5 shadow-2xl">
             <h3 className="text-base font-semibold text-zinc-900">Log out?</h3>
             <p className="mt-2 text-sm text-zinc-600">
               Are you sure you want to log out of your account?
