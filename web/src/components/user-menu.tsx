@@ -15,6 +15,7 @@ export function UserMenu({
   avatarUrl: string | null;
 }) {
   const [open, setOpen] = useState(false);
+  const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -76,15 +77,46 @@ export function UserMenu({
           >
             My purchases
           </Link>
-          <form action={signOut} className="border-t border-zinc-100 pt-1">
+          <div className="border-t border-zinc-100 pt-1">
             <button
-              type="submit"
+              type="button"
               className="w-full px-3 py-2 text-left text-sm text-zinc-800 hover:bg-zinc-50"
               role="menuitem"
+              onClick={() => {
+                setOpen(false);
+                setConfirmLogoutOpen(true);
+              }}
             >
               Log out
             </button>
-          </form>
+          </div>
+        </div>
+      ) : null}
+      {confirmLogoutOpen ? (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-sm rounded-xl border border-zinc-200 bg-white p-5 shadow-xl">
+            <h3 className="text-base font-semibold text-zinc-900">Log out?</h3>
+            <p className="mt-2 text-sm text-zinc-600">
+              Are you sure you want to log out of your account?
+            </p>
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setConfirmLogoutOpen(false)}
+                className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+              >
+                Cancel
+              </button>
+              <form action={signOut}>
+                <button
+                  type="submit"
+                  className="rounded-full bg-emerald-800 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-900"
+                >
+                  Yes, log out
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
       ) : null}
     </div>

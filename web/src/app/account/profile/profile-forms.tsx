@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import {
   removeAvatar,
   updateProfile,
@@ -29,6 +29,7 @@ export function ProfileForms({
   const [profileState, profileAction] = useActionState(updateProfile, {} as ActionState);
   const [avatarState, avatarAction] = useActionState(uploadAvatar, {} as ActionState);
   const [removeAvatarState, removeAvatarAction] = useActionState(removeAvatar, {} as ActionState);
+  const [confirmRemoveOpen, setConfirmRemoveOpen] = useState(false);
 
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
@@ -151,15 +152,16 @@ export function ProfileForms({
           )}
         </div>
         {profile.avatar_url ? (
-          <form action={removeAvatarAction} className="mt-2 text-center">
+          <div className="mt-2 text-center">
             <button
-              type="submit"
+              type="button"
               className="inline-flex items-center gap-1 rounded-full border border-zinc-300 px-3 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-50"
               title="Remove photo"
+              onClick={() => setConfirmRemoveOpen(true)}
             >
               <span className="text-sm leading-none">X</span> Remove photo
             </button>
-          </form>
+          </div>
         ) : null}
         <form action={avatarAction} className="mt-4 space-y-2">
           <input
@@ -184,6 +186,33 @@ export function ProfileForms({
           </button>
         </form>
       </div>
+      {confirmRemoveOpen ? (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-sm rounded-xl border border-zinc-200 bg-white p-5 shadow-xl">
+            <h3 className="text-base font-semibold text-zinc-900">Remove profile photo?</h3>
+            <p className="mt-2 text-sm text-zinc-600">
+              Are you sure you want to remove your profile photo?
+            </p>
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setConfirmRemoveOpen(false)}
+                className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+              >
+                Cancel
+              </button>
+              <form action={removeAvatarAction}>
+                <button
+                  type="submit"
+                  className="rounded-full bg-emerald-800 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-900"
+                >
+                  Yes, remove
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
