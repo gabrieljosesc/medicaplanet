@@ -25,6 +25,9 @@ const checkoutSchema = z.object({
   country: z.string().min(2),
   customerNotes: z.string().optional(),
   paymentNotes: z.string().optional(),
+  doctorName: z.string().min(1),
+  doctorLicenseNumber: z.string().min(1),
+  doctorLicenseExpiry: z.string().min(1),
   policyAccepted: z.boolean().refine((v) => v === true, {
     message: "Policy acknowledgement is required.",
   }),
@@ -110,6 +113,9 @@ export async function submitOrder(
     postalCode: input.billingPostalCode,
     country: input.billingCountry,
     company: input.company ?? "",
+    doctorName: input.doctorName,
+    doctorLicenseNumber: input.doctorLicenseNumber,
+    doctorLicenseExpiry: input.doctorLicenseExpiry,
   };
   const fullName = `${input.firstName} ${input.lastName}`.trim();
 

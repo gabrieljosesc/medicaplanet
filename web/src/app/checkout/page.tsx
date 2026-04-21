@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cart-context";
 import { submitOrder } from "@/app/actions/orders";
+import { createClient } from "@/lib/supabase/client";
 
 export default function CheckoutPage() {
   const { lines, clear } = useCart();
@@ -13,7 +14,68 @@ export default function CheckoutPage() {
   const [pending, setPending] = useState(false);
   const [shipDifferent, setShipDifferent] = useState(false);
   const [shippingExpanded, setShippingExpanded] = useState(true);
+  const [prefillLoading, setPrefillLoading] = useState(true);
+  const [prefill, setPrefill] = useState({
+    firstName: "",
+    lastName: "",
+    doctorName: "",
+    email: "",
+    phone: "",
+    company: "",
+    billingLine1: "",
+    billingCountry: "United States (US)",
+    billingCity: "",
+    billingState: "",
+    billingPostalCode: "",
+    doctorLicenseNumber: "",
+    doctorLicenseExpiry: "",
+  });
   const subtotal = lines.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0);
+
+  useEffect(() => {
+    let mounted = true;
+    async function loadPrefill() {
+      try {
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user || !mounted) return;
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select(
+            "first_name,last_name,full_name,email,phone,company,delivery_address,country,city,state,postal_code,license_number,license_expiry"
+          )
+          .eq("id", user.id)
+          .single();
+        if (!profile || !mounted) return;
+        setPrefill((v) => ({
+          ...v,
+          firstName: profile.first_name ?? v.firstName,
+          lastName: profile.last_name ?? v.lastName,
+          doctorName: profile.full_name ?? `${profile.first_name ?? ""} ${profile.last_name ?? ""}`.trim(),
+          email: profile.email ?? user.email ?? v.email,
+          phone: profile.phone ?? v.phone,
+          company: profile.company ?? v.company,
+          billingLine1: profile.delivery_address ?? v.billingLine1,
+          billingCountry: profile.country ?? v.billingCountry,
+          billingCity: profile.city ?? v.billingCity,
+          billingState: profile.state ?? v.billingState,
+          billingPostalCode: profile.postal_code ?? v.billingPostalCode,
+          doctorLicenseNumber: profile.license_number ?? v.doctorLicenseNumber,
+          doctorLicenseExpiry: profile.license_expiry
+            ? String(profile.license_expiry).slice(0, 10)
+            : v.doctorLicenseExpiry,
+        }));
+      } finally {
+        if (mounted) setPrefillLoading(false);
+      }
+    }
+    void loadPrefill();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -50,6 +112,9 @@ export default function CheckoutPage() {
         (String(fd.get("paymentNotes") || "").trim()
           ? `\n${String(fd.get("paymentNotes"))}`
           : ""),
+      doctorName: String(fd.get("doctorName") || ""),
+      doctorLicenseNumber: String(fd.get("doctorLicenseNumber") || ""),
+      doctorLicenseExpiry: String(fd.get("doctorLicenseExpiry") || ""),
       policyAccepted: Boolean(fd.get("policyAck")),
       items: lines.map((l) => ({ slug: l.slug, quantity: l.quantity })),
     });
@@ -68,6 +133,10 @@ export default function CheckoutPage() {
         Your cart is empty. Add products before checkout.
       </p>
     );
+  }
+
+  if (prefillLoading) {
+    return <p className="text-sm text-zinc-600">Loading checkout details...</p>;
   }
 
   return (
@@ -98,43 +167,55 @@ export default function CheckoutPage() {
             <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
                 <label className="text-xs font-medium text-zinc-600">First name</label>
-                <input name="firstName" required className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+                <input name="firstName" defaultValue={prefill.firstName} required className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
               </div>
               <div>
                 <label className="text-xs font-medium text-zinc-600">Last name</label>
-                <input name="lastName" required className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+                <input name="lastName" defaultValue={prefill.lastName} required className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
               </div>
               <div>
                 <label className="text-xs font-medium text-zinc-600">Company (optional)</label>
-                <input name="company" className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+                <input name="company" defaultValue={prefill.company} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
               </div>
               <div>
                 <label className="text-xs font-medium text-zinc-600">Email</label>
-                <input name="email" type="email" required className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+                <input name="email" type="email" defaultValue={prefill.email} required className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-zinc-600">Doctor's name</label>
+                <input name="doctorName" defaultValue={prefill.doctorName} required className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-zinc-600">Doctor's license number</label>
+                <input name="doctorLicenseNumber" defaultValue={prefill.doctorLicenseNumber} required className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-zinc-600">Expiration date of license</label>
+                <input name="doctorLicenseExpiry" type="date" defaultValue={prefill.doctorLicenseExpiry} required className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
               </div>
               <div className="sm:col-span-2">
                 <label className="text-xs font-medium text-zinc-600">Billing address line 1</label>
-                <input name="billingLine1" required className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+                <input name="billingLine1" defaultValue={prefill.billingLine1} required className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
               </div>
               <div>
                 <label className="text-xs font-medium text-zinc-600">Country</label>
-                <input name="billingCountry" required defaultValue="United States (US)" className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+                <input name="billingCountry" required defaultValue={prefill.billingCountry} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
               </div>
               <div>
                 <label className="text-xs font-medium text-zinc-600">City</label>
-                <input name="billingCity" required className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+                <input name="billingCity" defaultValue={prefill.billingCity} required className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
               </div>
               <div>
                 <label className="text-xs font-medium text-zinc-600">State / province</label>
-                <input name="billingState" required className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+                <input name="billingState" defaultValue={prefill.billingState} required className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
               </div>
               <div>
                 <label className="text-xs font-medium text-zinc-600">ZIP code</label>
-                <input name="billingPostalCode" required className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+                <input name="billingPostalCode" defaultValue={prefill.billingPostalCode} required className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
               </div>
               <div className="sm:col-span-2">
                 <label className="text-xs font-medium text-zinc-600">Phone</label>
-                <input name="phone" className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+                <input name="phone" defaultValue={prefill.phone} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
               </div>
             </div>
           </section>

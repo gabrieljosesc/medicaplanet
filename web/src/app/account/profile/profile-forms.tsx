@@ -2,7 +2,12 @@
 
 import Image from "next/image";
 import { useActionState } from "react";
-import { updateProfile, uploadAvatar, type ActionState } from "@/app/actions/account";
+import {
+  removeAvatar,
+  updateProfile,
+  uploadAvatar,
+  type ActionState,
+} from "@/app/actions/account";
 
 export function ProfileForms({
   profile,
@@ -23,6 +28,7 @@ export function ProfileForms({
 }) {
   const [profileState, profileAction] = useActionState(updateProfile, {} as ActionState);
   const [avatarState, avatarAction] = useActionState(uploadAvatar, {} as ActionState);
+  const [removeAvatarState, removeAvatarAction] = useActionState(removeAvatar, {} as ActionState);
 
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
@@ -98,19 +104,21 @@ export function ProfileForms({
                 type="date"
                 name="date_of_birth"
                 defaultValue={profile.date_of_birth ? String(profile.date_of_birth).slice(0, 10) : ""}
-                className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm sm:max-w-xs"
+                className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 pr-10 text-sm sm:max-w-sm"
               />
             </label>
             {profileState.error ? (
               <p className="text-sm text-red-600">{profileState.error}</p>
             ) : null}
             {profileState.ok ? <p className="text-sm text-emerald-800">{profileState.ok}</p> : null}
-            <button
-              type="submit"
-              className="rounded-full bg-emerald-800 px-6 py-2 text-sm font-medium text-white hover:bg-emerald-900"
-            >
-              Save
-            </button>
+            <div className="pt-1 text-center">
+              <button
+                type="submit"
+                className="rounded-full bg-emerald-800 px-8 py-2 text-sm font-medium text-white hover:bg-emerald-900"
+              >
+                Save
+              </button>
+            </div>
           </form>
         </section>
 
@@ -142,6 +150,17 @@ export function ProfileForms({
             </div>
           )}
         </div>
+        {profile.avatar_url ? (
+          <form action={removeAvatarAction} className="mt-2 text-center">
+            <button
+              type="submit"
+              className="inline-flex items-center gap-1 rounded-full border border-zinc-300 px-3 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-50"
+              title="Remove photo"
+            >
+              <span className="text-sm leading-none">X</span> Remove photo
+            </button>
+          </form>
+        ) : null}
         <form action={avatarAction} className="mt-4 space-y-2">
           <input
             name="avatar"
@@ -151,6 +170,12 @@ export function ProfileForms({
           />
           {avatarState.error ? <p className="text-xs text-red-600">{avatarState.error}</p> : null}
           {avatarState.ok ? <p className="text-xs text-emerald-800">{avatarState.ok}</p> : null}
+          {removeAvatarState.error ? (
+            <p className="text-xs text-red-600">{removeAvatarState.error}</p>
+          ) : null}
+          {removeAvatarState.ok ? (
+            <p className="text-xs text-emerald-800">{removeAvatarState.ok}</p>
+          ) : null}
           <button
             type="submit"
             className="w-full rounded-full border border-emerald-800 py-2 text-sm font-medium text-emerald-900 hover:bg-emerald-50"

@@ -142,6 +142,24 @@ export async function uploadAvatar(_prev: ActionState, formData: FormData): Prom
   return { ok: "Photo updated." };
 }
 
+export async function removeAvatar(_prev: ActionState, _formData: FormData): Promise<ActionState> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not signed in." };
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ avatar_url: null, updated_at: new Date().toISOString() })
+    .eq("id", user.id);
+  if (error) return { error: error.message };
+
+  revalidatePath("/account", "layout");
+  revalidatePath("/", "layout");
+  return { ok: "Photo removed." };
+}
+
 export async function changePassword(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const supabase = await createClient();
   const {
