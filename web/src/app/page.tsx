@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { CatalogHighlightCard } from "@/components/catalog-highlight-card";
 import { createClient } from "@/lib/supabase/server";
-import { ProductCard } from "@/components/product-card";
+import { nextImageUnoptimized, resolveProductMainImage } from "@/lib/product-image";
+import { withStorageImageTransform } from "@/lib/storage-image";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -8,7 +10,7 @@ export default async function HomePage() {
     supabase.from("categories").select("slug,name,description,sort_order").order("sort_order"),
     supabase
       .from("products")
-      .select("slug,title,base_price,currency,rating,review_count, product_images(url)")
+      .select("slug,title,base_price,currency,rating,review_count,price_tiers, product_images(url)")
       .eq("is_active", true)
       .order("is_featured", { ascending: false })
       .order("title")
@@ -22,10 +24,22 @@ export default async function HomePage() {
       .limit(3),
   ]);
 
-  const feat = (featured ?? []).map((p) => ({
-    ...p,
-    imageUrl: Array.isArray(p.product_images) ? p.product_images[0]?.url : null,
-  }));
+  const feat = (featured ?? []).map((p) => {
+    const imageUrl = Array.isArray(p.product_images) ? p.product_images[0]?.url : null;
+    let heroImageSrc = resolveProductMainImage(p.slug, imageUrl ?? null, p.title);
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_IMAGE_TRANSFORM === "1" &&
+      heroImageSrc.includes("/storage/v1/object/public/")
+    ) {
+      heroImageSrc = withStorageImageTransform(heroImageSrc, 520);
+    }
+    return {
+      ...p,
+      imageUrl,
+      heroImageSrc,
+      imageUnoptimized: nextImageUnoptimized(heroImageSrc),
+    };
+  });
 
   return (
     <div className="space-y-14">
@@ -105,15 +119,17 @@ export default async function HomePage() {
             </p>
           ) : (
             feat.map((p) => (
-              <ProductCard
+              <CatalogHighlightCard
                 key={p.slug}
                 slug={p.slug}
                 title={p.title}
-                price={Number(p.base_price)}
+                basePrice={Number(p.base_price)}
                 currency={p.currency}
                 rating={Number(p.rating)}
                 reviewCount={p.review_count}
-                imageUrl={p.imageUrl}
+                heroImageSrc={p.heroImageSrc}
+                imageUnoptimized={p.imageUnoptimized}
+                priceTiersRaw={p.price_tiers}
               />
             ))
           )}
