@@ -28,7 +28,7 @@ export default function CartPage() {
               type="checkbox"
               checked={allSelected}
               onChange={(e) => setAllSelected(e.target.checked)}
-              className="size-4 rounded border-zinc-400"
+              className="size-4 rounded border-emerald-300 text-emerald-700 accent-emerald-700 focus:ring-emerald-300"
             />
             <span>Product</span>
             <span className="text-right">Unit Price</span>
@@ -45,7 +45,7 @@ export default function CartPage() {
                 type="checkbox"
                 checked={l.selected === true}
                 onChange={(e) => setSelected(l.slug, e.target.checked)}
-                className="size-4 rounded border-zinc-400"
+                className="size-4 rounded border-emerald-300 text-emerald-700 accent-emerald-700 focus:ring-emerald-300"
               />
               <div className="min-w-0">
                 <Link href={`/product/${l.slug}`} className="font-medium text-emerald-900 hover:underline">
