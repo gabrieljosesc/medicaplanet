@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cart-context";
 import {
   formatMoney,
@@ -28,6 +29,7 @@ export function ProductBuyBox({
 }) {
   const tiers = useMemo(() => parsePriceTiersJson(priceTiersRaw), [priceTiersRaw]);
   const { addLine } = useCart();
+  const router = useRouter();
   const [qty, setQty] = useState(1);
   const [msg, setMsg] = useState<string | null>(null);
 
@@ -76,6 +78,8 @@ export function ProductBuyBox({
       <div className="flex flex-wrap items-center gap-3">
         <span className="text-sm text-zinc-600">Qty</span>
         <QtyStepper value={qty} onChange={setQty} disabled={disabled} />
+      </div>
+      <div className="flex flex-wrap items-center gap-3">
         <button
           type="button"
           disabled={disabled}
@@ -87,6 +91,7 @@ export function ProductBuyBox({
               quantity: qty,
               currency,
               priceTiers: tiers.length ? tiers : undefined,
+              selected: false,
             });
             setMsg("Added to cart");
             setTimeout(() => setMsg(null), 2000);
@@ -94,6 +99,25 @@ export function ProductBuyBox({
           className="rounded-full bg-emerald-800 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Add to cart
+        </button>
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => {
+            addLine({
+              slug,
+              title,
+              unitPrice: unit,
+              quantity: qty,
+              currency,
+              priceTiers: tiers.length ? tiers : undefined,
+              selected: true,
+            });
+            router.push("/cart");
+          }}
+          className="rounded-full border border-emerald-800 px-6 py-2.5 text-sm font-semibold text-emerald-900 hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Buy now
         </button>
         {msg && <span className="text-sm text-emerald-800">{msg}</span>}
       </div>

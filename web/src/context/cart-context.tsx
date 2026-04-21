@@ -15,11 +15,22 @@ const STORAGE_KEY = "medicaplanet-cart-v1";
 
 type CartContextValue = {
   lines: CartLine[];
-  addLine: (line: Omit<CartLine, "quantity"> & { quantity?: number }) => void;
+  addLine: (
+    line: Omit<CartLine, "quantity"> & {
+      quantity?: number;
+      selected?: boolean;
+      deselectOthers?: boolean;
+    }
+  ) => void;
   setQty: (slug: string, quantity: number) => void;
+  setSelected: (slug: string, selected: boolean) => void;
+  setAllSelected: (selected: boolean) => void;
   removeLine: (slug: string) => void;
   clear: () => void;
   count: number;
+  selectedLines: CartLine[];
+  selectedCount: number;
+  selectedSubtotal: number;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -30,7 +41,8 @@ function readStorage(): CartLine[] {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as CartLine[];
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map((l) => ({ ...l, selected: l.selected === true }));
   } catch {
     return [];
   }
@@ -49,13 +61,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const addLine = useCallback(
-    (line: Omit<CartLine, "quantity"> & { quantity?: number }) => {
+    (
+      line: Omit<CartLine, "quantity"> & {
+        quantity?: number;
+        selected?: boolean;
+        deselectOthers?: boolean;
+      }
+    ) => {
       const qty = line.quantity ?? 1;
       setLines((prev) => {
+        const normalizedPrev = prev.map((l) => ({ ...l, selected: l.selected === true }));
         const idx = prev.findIndex((l) => l.slug === line.slug);
         let next: CartLine[];
         if (idx >= 0) {
-          next = [...prev];
+          next = [...normalizedPrev];
           const existing = next[idx];
           const mergedTiers =
             existing.priceTiers && existing.priceTiers.length > 0
@@ -71,10 +90,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             quantity: newQty,
             unitPrice,
             priceTiers: mergedTiers,
+            selected: line.selected ?? existing.selected ?? false,
             currency: line.currency ?? existing.currency,
           };
         } else {
-          next = [...prev, { ...line, quantity: qty }];
+          next = [
+            ...normalizedPrev,
+            { ...line, quantity: qty, selected: line.selected ?? false },
+          ];
+        }
+        if (line.deselectOthers) {
+          next = next.map((l) =>
+            l.slug === line.slug ? { ...l, selected: true } : { ...l, selected: false }
+          );
         }
         localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
         return next;
@@ -101,6 +129,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const setSelected = useCallback((slug: string, selected: boolean) => {
+    setLines((prev) => {
+      const next = prev.map((l) => (l.slug === slug ? { ...l, selected } : l));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const setAllSelected = useCallback((selected: boolean) => {
+    setLines((prev) => {
+      const next = prev.map((l) => ({ ...l, selected }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
   const removeLine = useCallback((slug: string) => {
     setLines((prev) => {
       const next = prev.filter((l) => l.slug !== slug);
@@ -119,11 +163,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       lines,
       addLine,
       setQty,
+      setSelected,
+      setAllSelected,
       removeLine,
       clear,
       count: lines.reduce((s, l) => s + l.quantity, 0),
+      selectedLines: lines.filter((l) => l.selected === true),
+      selectedCount: lines.filter((l) => l.selected === true).reduce((s, l) => s + l.quantity, 0),
+      selectedSubtotal: lines
+        .filter((l) => l.selected === true)
+        .reduce((s, l) => s + l.unitPrice * l.quantity, 0),
     }),
-    [lines, addLine, setQty, removeLine, clear]
+    [lines, addLine, setQty, setSelected, setAllSelected, removeLine, clear]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

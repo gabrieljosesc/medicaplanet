@@ -29,6 +29,7 @@ export type CartLine = {
   title: string;
   unitPrice: number;
   quantity: number;
+  selected?: boolean;
   currency?: string;
   /** When set, cart qty changes recompute unitPrice from tiers. */
   priceTiers?: PriceTierRow[];

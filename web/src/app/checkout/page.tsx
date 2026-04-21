@@ -8,7 +8,7 @@ import { submitOrder } from "@/app/actions/orders";
 import { createClient } from "@/lib/supabase/client";
 
 export default function CheckoutPage() {
-  const { lines, clear } = useCart();
+  const { lines, selectedLines, removeLine } = useCart();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -30,7 +30,7 @@ export default function CheckoutPage() {
     doctorLicenseNumber: "",
     doctorLicenseExpiry: "",
   });
-  const subtotal = lines.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0);
+  const subtotal = selectedLines.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0);
 
   useEffect(() => {
     let mounted = true;
@@ -116,14 +116,14 @@ export default function CheckoutPage() {
       doctorLicenseNumber: String(fd.get("doctorLicenseNumber") || ""),
       doctorLicenseExpiry: String(fd.get("doctorLicenseExpiry") || ""),
       policyAccepted: Boolean(fd.get("policyAck")),
-      items: lines.map((l) => ({ slug: l.slug, quantity: l.quantity })),
+      items: selectedLines.map((l) => ({ slug: l.slug, quantity: l.quantity })),
     });
     setPending(false);
     if (!res.ok) {
       setError(res.message);
       return;
     }
-    clear();
+    selectedLines.forEach((l) => removeLine(l.slug));
     router.push(`/checkout/success?id=${res.orderId}`);
   }
 
@@ -131,6 +131,14 @@ export default function CheckoutPage() {
     return (
       <p className="text-sm text-zinc-600">
         Your cart is empty. Add products before checkout.
+      </p>
+    );
+  }
+
+  if (selectedLines.length === 0) {
+    return (
+      <p className="text-sm text-zinc-600">
+        No selected items for checkout. Go back to <Link href="/cart" className="font-medium text-emerald-800 hover:underline">cart</Link> and select product(s).
       </p>
     );
   }
@@ -332,7 +340,7 @@ export default function CheckoutPage() {
           <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
             <h2 className="text-sm font-semibold text-zinc-900">Your order</h2>
             <ul className="mt-3 space-y-2 border-b border-zinc-200 pb-3 text-sm">
-              {lines.map((l) => (
+              {selectedLines.map((l) => (
                 <li key={l.slug} className="flex items-start justify-between gap-3">
                   <span className="text-zinc-700">
                     {l.title} <span className="text-zinc-500">× {l.quantity}</span>
