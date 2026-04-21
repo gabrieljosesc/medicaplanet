@@ -201,7 +201,12 @@ export function ProfileForms({
               >
                 Cancel
               </button>
-              <form action={removeAvatarAction}>
+              <form
+                action={removeAvatarAction}
+                onSubmit={() => {
+                  setConfirmRemoveOpen(false);
+                }}
+              >
                 <button
                   type="submit"
                   className="rounded-full bg-emerald-800 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-900"
