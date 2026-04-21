@@ -117,7 +117,15 @@ export async function uploadAvatar(_prev: ActionState, formData: FormData): Prom
     contentType: type,
     upsert: true,
   });
-  if (upErr) return { error: upErr.message };
+  if (upErr) {
+    if (/bucket not found/i.test(upErr.message)) {
+      return {
+        error:
+          "Avatar storage is not ready yet. Apply Supabase migration 20260420150000_account_profile_addresses_avatars.sql, then try again.",
+      };
+    }
+    return { error: upErr.message };
+  }
 
   const {
     data: { publicUrl },

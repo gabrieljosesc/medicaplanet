@@ -142,7 +142,7 @@ export function ProfileForms({
             </div>
           )}
         </div>
-        <form action={avatarAction} encType="multipart/form-data" className="mt-4 space-y-2">
+        <form action={avatarAction} className="mt-4 space-y-2">
           <input
             name="avatar"
             type="file"
