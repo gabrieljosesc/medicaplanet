@@ -25,6 +25,10 @@ export async function signInWithPassword(formData: FormData): Promise<void> {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
     const q = new URLSearchParams({ error: error.message });
+    if (/email not confirmed/i.test(error.message)) {
+      q.set("unverified", "1");
+      if (email) q.set("email", email);
+    }
     if (next) q.set("next", next);
     redirect(`/auth/login?${q.toString()}`);
   }
@@ -34,7 +38,7 @@ export async function signInWithPassword(formData: FormData): Promise<void> {
 
 export type RegisterFormState =
   | null
-  | { fieldErrors: Record<string, string> }
+  | { fieldErrors: Record<string, string>; values?: Record<string, string> }
   | { error: string };
 
 export async function registerWithProfile(
@@ -61,7 +65,7 @@ export async function registerWithProfile(
 
   const parsed = registrationSchema.safeParse(raw);
   if (!parsed.success) {
-    return { fieldErrors: flattenZodErrors(parsed.error) };
+    return { fieldErrors: flattenZodErrors(parsed.error), values: raw };
   }
 
   const v = parsed.data;
@@ -118,7 +122,9 @@ export async function registerWithProfile(
 
   revalidatePath("/", "layout");
   const next = safeAuthRedirectTarget(String(formData.get("next") ?? ""));
-  redirect(next ?? "/shop");
+  const q = new URLSearchParams({ verify: "sent", email: v.email });
+  if (next) q.set("next", next);
+  redirect(`/auth/login?${q.toString()}`);
 }
 
 /** Legacy minimal signup — kept for compatibility */
@@ -136,5 +142,32 @@ export async function signUpWithPassword(formData: FormData): Promise<void> {
     redirect("/auth/register?error=" + encodeURIComponent(error.message));
   }
   revalidatePath("/", "layout");
-  redirect("/shop");
+  const q = new URLSearchParams({ verify: "sent", email });
+  redirect(`/auth/login?${q.toString()}`);
+}
+
+export async function resendVerificationEmail(formData: FormData): Promise<void> {
+  const email = String(formData.get("email") ?? "").trim();
+  const nextRaw = String(formData.get("next") ?? "");
+  const next = safeAuthRedirectTarget(nextRaw);
+  const q = new URLSearchParams();
+  if (next) q.set("next", next);
+  if (email) q.set("email", email);
+
+  if (!email) {
+    q.set("error", "Please provide your email address.");
+    q.set("unverified", "1");
+    redirect(`/auth/login?${q.toString()}`);
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resend({ type: "signup", email });
+  if (error) {
+    q.set("error", error.message);
+    q.set("unverified", "1");
+    redirect(`/auth/login?${q.toString()}`);
+  }
+
+  q.set("verify", "resent");
+  redirect(`/auth/login?${q.toString()}`);
 }

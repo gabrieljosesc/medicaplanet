@@ -21,7 +21,6 @@ const BY_SLUG: Record<string, string> = {
   osteoporosis: U("1587854692152-cbe660dbde88"),
   "fat-removal": U("1519494026892-80bbd2d6fd0d"),
   mesotherapy: U("1570172619643-d9fc15271326"),
-  "orthopedic-injections": U("1576091160399-112ba8d25d1d"),
   "dermal-filler-removal": U("1584308666744-24d5c474e2ae"),
   anaesthetics: U("1576091160399-112ba8d25d1d"),
   "weight-loss": U("1559757148-5c350d0d3c56"),

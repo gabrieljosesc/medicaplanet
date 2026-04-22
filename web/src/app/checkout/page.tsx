@@ -1,19 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cart-context";
 import { submitOrder } from "@/app/actions/orders";
 import { createClient } from "@/lib/supabase/client";
 
+type ReviewSummary = {
+  fullName: string;
+  email: string;
+  phone: string;
+  company: string;
+  doctorName: string;
+  doctorLicenseNumber: string;
+  doctorLicenseExpiry: string;
+  billingAddress: string;
+  shippingAddress: string;
+  paymentMethod: string;
+};
+
 export default function CheckoutPage() {
   const { lines, selectedLines, removeLine } = useCart();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [stepError, setStepError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [shipDifferent, setShipDifferent] = useState(false);
   const [shippingExpanded, setShippingExpanded] = useState(true);
+  const [review, setReview] = useState<ReviewSummary | null>(null);
   const [prefillLoading, setPrefillLoading] = useState(true);
   const [prefill, setPrefill] = useState({
     firstName: "",
@@ -31,6 +47,7 @@ export default function CheckoutPage() {
     doctorLicenseExpiry: "",
   });
   const subtotal = selectedLines.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0);
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -79,7 +96,9 @@ export default function CheckoutPage() {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (step !== 3) return;
     setError(null);
+    setStepError(null);
     setPending(true);
     const fd = new FormData(e.currentTarget);
     const billingLine1 = String(fd.get("billingLine1"));
@@ -127,6 +146,87 @@ export default function CheckoutPage() {
     router.push(`/checkout/success?id=${res.orderId}`);
   }
 
+  function validateStep(targetStep: 1 | 2 | 3): boolean {
+    const form = formRef.current;
+    if (!form) return false;
+    const container = form.querySelector<HTMLElement>(`[data-step="${targetStep}"]`);
+    if (!container) return false;
+    const controls = container.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
+      "input, select, textarea"
+    );
+    for (const el of controls) {
+      if (!el.willValidate) continue;
+      if (!el.checkValidity()) {
+        el.reportValidity();
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function buildReviewSummary(): ReviewSummary | null {
+    const form = formRef.current;
+    if (!form) return null;
+    const fd = new FormData(form);
+    const firstName = String(fd.get("firstName") || "").trim();
+    const lastName = String(fd.get("lastName") || "").trim();
+    const billingLine1 = String(fd.get("billingLine1") || "").trim();
+    const billingCity = String(fd.get("billingCity") || "").trim();
+    const billingState = String(fd.get("billingState") || "").trim();
+    const billingPostalCode = String(fd.get("billingPostalCode") || "").trim();
+    const billingCountry = String(fd.get("billingCountry") || "").trim();
+    const shipToDifferentAddress = Boolean(fd.get("shipToDifferentAddress"));
+    const paymentMethodRaw = String(fd.get("paymentMethod") || "credit_card");
+    const paymentMethod =
+      paymentMethodRaw === "bank_transfer" ? "Direct bank transfer" : "Credit card";
+
+    const billingAddress = [billingLine1, `${billingCity}, ${billingState} ${billingPostalCode}`.trim(), billingCountry]
+      .filter(Boolean)
+      .join(" · ");
+    const shippingAddress = shipToDifferentAddress
+      ? [
+          String(fd.get("line1") || "").trim(),
+          String(fd.get("line2") || "").trim(),
+          `${String(fd.get("city") || "").trim()}, ${String(fd.get("state") || "").trim()} ${String(fd.get("postalCode") || "").trim()}`.trim(),
+          String(fd.get("country") || "").trim(),
+        ]
+          .filter(Boolean)
+          .join(" · ")
+      : billingAddress;
+
+    return {
+      fullName: `${firstName} ${lastName}`.trim(),
+      email: String(fd.get("email") || "").trim(),
+      phone: String(fd.get("phone") || "").trim() || "Not provided",
+      company: String(fd.get("company") || "").trim() || "Not provided",
+      doctorName: String(fd.get("doctorName") || "").trim(),
+      doctorLicenseNumber: String(fd.get("doctorLicenseNumber") || "").trim(),
+      doctorLicenseExpiry: String(fd.get("doctorLicenseExpiry") || "").trim(),
+      billingAddress,
+      shippingAddress,
+      paymentMethod,
+    };
+  }
+
+  function goNext() {
+    setError(null);
+    if (!validateStep(step)) {
+      setStepError("Please complete required fields in this step.");
+      return;
+    }
+    setStepError(null);
+    if (step === 2) {
+      setReview(buildReviewSummary());
+    }
+    setStep((s) => (s < 3 ? ((s + 1) as 1 | 2 | 3) : s));
+  }
+
+  function goBack() {
+    setError(null);
+    setStepError(null);
+    setStep((s) => (s > 1 ? ((s - 1) as 1 | 2 | 3) : s));
+  }
+
   if (lines.length === 0) {
     return (
       <p className="text-sm text-zinc-600">
@@ -160,13 +260,14 @@ export default function CheckoutPage() {
         <Link href="/legal/returns-cancellations" className="underline hover:no-underline">Returns & Cancellations Policy</Link>.
       </p>
       <ol className="mt-4 flex flex-wrap items-center gap-2 text-xs font-medium">
-        <li className="rounded-full bg-emerald-100 px-3 py-1 text-emerald-900">1. Billing</li>
-        <li className="rounded-full bg-zinc-100 px-3 py-1 text-zinc-700">2. Shipping</li>
-        <li className="rounded-full bg-zinc-100 px-3 py-1 text-zinc-700">3. Review & submit</li>
+        <li className={`rounded-full px-3 py-1 ${step >= 1 ? "bg-emerald-100 text-emerald-900" : "bg-zinc-100 text-zinc-700"}`}>1. Billing</li>
+        <li className={`rounded-full px-3 py-1 ${step >= 2 ? "bg-emerald-100 text-emerald-900" : "bg-zinc-100 text-zinc-700"}`}>2. Shipping</li>
+        <li className={`rounded-full px-3 py-1 ${step >= 3 ? "bg-emerald-100 text-emerald-900" : "bg-zinc-100 text-zinc-700"}`}>3. Review & submit</li>
       </ol>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <form onSubmit={onSubmit} className="space-y-5">
+        <form ref={formRef} onSubmit={onSubmit} className="space-y-5">
+          <div data-step="1" className={step === 1 ? "space-y-5" : "hidden"}>
           <section className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
             <h2 className="text-sm font-semibold text-zinc-900">Billing details</h2>
             <p className="mt-1 text-xs text-zinc-500">
@@ -227,7 +328,9 @@ export default function CheckoutPage() {
               </div>
             </div>
           </section>
+          </div>
 
+          <div data-step="2" className={step === 2 ? "space-y-5" : "hidden"}>
           <section className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
             <label className="flex items-start gap-2 text-sm text-zinc-700">
               <input
@@ -312,6 +415,44 @@ export default function CheckoutPage() {
               <textarea name="paymentNotes" rows={2} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
             </div>
           </section>
+          </div>
+
+          <div data-step="3" className={step === 3 ? "space-y-5" : "hidden"}>
+          <section className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+            <h2 className="text-sm font-semibold text-zinc-900">Review details before submit</h2>
+            <p className="mt-1 text-xs text-zinc-500">
+              Confirm your billing details, shipping preference, and order notes are correct, then submit.
+            </p>
+            {review ? (
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Contact</p>
+                  <p className="mt-1 text-sm font-medium text-zinc-900">{review.fullName}</p>
+                  <p className="text-sm text-zinc-700">{review.email}</p>
+                  <p className="text-sm text-zinc-700">{review.phone}</p>
+                  <p className="text-xs text-zinc-500">Company: {review.company}</p>
+                </div>
+                <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">License</p>
+                  <p className="mt-1 text-sm font-medium text-zinc-900">{review.doctorName}</p>
+                  <p className="text-sm text-zinc-700">License #: {review.doctorLicenseNumber}</p>
+                  <p className="text-sm text-zinc-700">Expiry: {review.doctorLicenseExpiry}</p>
+                </div>
+                <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 sm:col-span-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Addresses</p>
+                  <p className="mt-1 text-sm text-zinc-700">
+                    <span className="font-medium text-zinc-900">Billing:</span> {review.billingAddress}
+                  </p>
+                  <p className="mt-1 text-sm text-zinc-700">
+                    <span className="font-medium text-zinc-900">Shipping:</span> {review.shippingAddress}
+                  </p>
+                  <p className="mt-1 text-sm text-zinc-700">
+                    <span className="font-medium text-zinc-900">Payment method:</span> {review.paymentMethod}
+                  </p>
+                </div>
+              </div>
+            ) : null}
+          </section>
 
           <label className="flex items-start gap-2 text-xs text-zinc-700">
             <input
@@ -326,14 +467,38 @@ export default function CheckoutPage() {
               delivery will follow required storage and local regulatory standards.
             </span>
           </label>
+          </div>
+
+          {stepError && <p className="text-sm text-red-700">{stepError}</p>}
           {error && <p className="text-sm text-red-700">{error}</p>}
-          <button
-            type="submit"
-            disabled={pending}
-            className="w-full rounded-full bg-emerald-800 py-3 text-sm font-semibold text-white hover:bg-emerald-900 disabled:opacity-60"
-          >
-            {pending ? "Submitting..." : "Place order (CSR verification & follow-up)"}
-          </button>
+          <div className="flex flex-wrap items-center gap-3">
+            {step > 1 ? (
+              <button
+                type="button"
+                onClick={goBack}
+                className="rounded-full border border-zinc-300 px-5 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
+              >
+                Back
+              </button>
+            ) : null}
+            {step < 3 ? (
+              <button
+                type="button"
+                onClick={goNext}
+                className="rounded-full bg-emerald-800 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-900"
+              >
+                Continue to {step === 1 ? "Shipping" : "Review"}
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={pending}
+                className="rounded-full bg-emerald-800 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-900 disabled:opacity-60"
+              >
+                {pending ? "Submitting..." : "Place order"}
+              </button>
+            )}
+          </div>
         </form>
 
         <aside className="lg:sticky lg:top-24 lg:self-start">

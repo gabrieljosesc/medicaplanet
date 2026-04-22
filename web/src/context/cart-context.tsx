@@ -11,7 +11,11 @@ import {
 import type { CartLine } from "@/lib/types";
 import { unitPriceForQuantity } from "@/lib/price-tiers";
 
-const STORAGE_KEY = "medicaplanet-cart-v1";
+const STORAGE_KEY_BASE = "medicaplanet-cart-v1";
+
+function storageKeyFor(ownerKey?: string | null): string {
+  return ownerKey ? `${STORAGE_KEY_BASE}:${ownerKey}` : `${STORAGE_KEY_BASE}:guest`;
+}
 
 type CartContextValue = {
   lines: CartLine[];
@@ -35,10 +39,10 @@ type CartContextValue = {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-function readStorage(): CartLine[] {
+function readStorage(storageKey: string): CartLine[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(storageKey);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as CartLine[];
     if (!Array.isArray(parsed)) return [];
@@ -48,11 +52,18 @@ function readStorage(): CartLine[] {
   }
 }
 
-export function CartProvider({ children }: { children: React.ReactNode }) {
+export function CartProvider({
+  children,
+  cartOwnerKey,
+}: {
+  children: React.ReactNode;
+  cartOwnerKey?: string | null;
+}) {
   const [lines, setLines] = useState<CartLine[]>([]);
+  const storageKey = useMemo(() => storageKeyFor(cartOwnerKey), [cartOwnerKey]);
 
   useEffect(() => {
-    const syncFromStorage = () => setLines(readStorage());
+    const syncFromStorage = () => setLines(readStorage(storageKey));
     syncFromStorage();
 
     // Keep cart badge/state consistent when tab regains focus or storage updates.
@@ -61,7 +72,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (document.visibilityState === "visible") syncFromStorage();
     };
     const onStorage = (e: StorageEvent) => {
-      if (!e.key || e.key === STORAGE_KEY) syncFromStorage();
+      if (!e.key || e.key === storageKey) syncFromStorage();
     };
 
     window.addEventListener("focus", onFocus);
@@ -72,12 +83,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("storage", onStorage);
     };
-  }, []);
+  }, [storageKey]);
 
   const persist = useCallback((next: CartLine[]) => {
     setLines(next);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-  }, []);
+    localStorage.setItem(storageKey, JSON.stringify(next));
+  }, [storageKey]);
 
   const addLine = useCallback(
     (
@@ -123,11 +134,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             l.slug === line.slug ? { ...l, selected: true } : { ...l, selected: false }
           );
         }
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+        localStorage.setItem(storageKey, JSON.stringify(next));
         return next;
       });
     },
-    []
+    [storageKey]
   );
 
   const setQty = useCallback((slug: string, quantity: number) => {
@@ -143,39 +154,39 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
               }
               return { ...l, quantity };
             });
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      localStorage.setItem(storageKey, JSON.stringify(next));
       return next;
     });
-  }, []);
+  }, [storageKey]);
 
   const setSelected = useCallback((slug: string, selected: boolean) => {
     setLines((prev) => {
       const next = prev.map((l) => (l.slug === slug ? { ...l, selected } : l));
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      localStorage.setItem(storageKey, JSON.stringify(next));
       return next;
     });
-  }, []);
+  }, [storageKey]);
 
   const setAllSelected = useCallback((selected: boolean) => {
     setLines((prev) => {
       const next = prev.map((l) => ({ ...l, selected }));
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      localStorage.setItem(storageKey, JSON.stringify(next));
       return next;
     });
-  }, []);
+  }, [storageKey]);
 
   const removeLine = useCallback((slug: string) => {
     setLines((prev) => {
       const next = prev.filter((l) => l.slug !== slug);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      localStorage.setItem(storageKey, JSON.stringify(next));
       return next;
     });
-  }, []);
+  }, [storageKey]);
 
   const clear = useCallback(() => {
     setLines([]);
-    localStorage.removeItem(STORAGE_KEY);
-  }, []);
+    localStorage.removeItem(storageKey);
+  }, [storageKey]);
 
   const value = useMemo<CartContextValue>(
     () => ({

@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { ProductCard } from "@/components/product-card";
+import { CatalogHighlightCard } from "@/components/catalog-highlight-card";
+import { nextImageUnoptimized, resolveProductMainImage } from "@/lib/product-image";
 import { searchActiveProducts } from "@/lib/search-products";
+import { withStorageImageTransform } from "@/lib/storage-image";
 
 type Props = { searchParams: Promise<{ q?: string }> };
 
@@ -9,7 +11,21 @@ export default async function SearchPage({ searchParams }: Props) {
   const { q } = await searchParams;
   const term = (q ?? "").trim();
   const supabase = await createClient();
-  const rows = term.length >= 2 ? await searchActiveProducts(supabase, term, 60) : [];
+  const rowsRaw = term.length >= 2 ? await searchActiveProducts(supabase, term, 60) : [];
+  const rows = rowsRaw.map((p) => {
+    let heroImageSrc = resolveProductMainImage(p.slug, p.imageUrl ?? null, p.title);
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_IMAGE_TRANSFORM === "1" &&
+      heroImageSrc.includes("/storage/v1/object/public/")
+    ) {
+      heroImageSrc = withStorageImageTransform(heroImageSrc, 520);
+    }
+    return {
+      ...p,
+      heroImageSrc,
+      imageUnoptimized: nextImageUnoptimized(heroImageSrc),
+    };
+  });
 
   const ambiguous = rows.length >= 2;
 
@@ -43,7 +59,7 @@ export default async function SearchPage({ searchParams }: Props) {
               </p>
             </div>
           )}
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-7">
             {rows.length === 0 ? (
               <p className="col-span-full text-sm text-zinc-600">
                 No matches. Try different keywords or{" "}
@@ -54,16 +70,19 @@ export default async function SearchPage({ searchParams }: Props) {
               </p>
             ) : (
               rows.map((p) => (
-                <ProductCard
+                <CatalogHighlightCard
                   key={p.slug}
                   slug={p.slug}
                   title={p.title}
-                  price={p.base_price}
+                  description={p.description}
+                  subtitle={p.categoryName}
+                  basePrice={p.base_price}
                   currency={p.currency}
                   rating={p.rating}
                   reviewCount={p.review_count}
-                  imageUrl={p.imageUrl}
-                  subtitle={p.categoryName}
+                  heroImageSrc={p.heroImageSrc}
+                  imageUnoptimized={p.imageUnoptimized}
+                  priceTiersRaw={p.price_tiers}
                 />
               ))
             )}

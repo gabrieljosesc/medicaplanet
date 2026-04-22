@@ -21,6 +21,11 @@ function hasFieldError(state: RegisterFormState, key: string): boolean {
   return Boolean(fieldErr(state, key));
 }
 
+function fieldValue(state: RegisterFormState, key: string): string {
+  if (!state || !("values" in state) || !state.values) return "";
+  return state.values[key] ?? "";
+}
+
 function RegisterFormWithQuery() {
   const searchParams = useSearchParams();
   const urlError = searchParams.get("error");
@@ -93,6 +98,7 @@ function RegisterFormInner({
             name="email"
             type="email"
             autoComplete="email"
+            defaultValue={fieldValue(state, "email")}
             className={`${pill} ${hasFieldError(state, "email") ? pillError : ""}`}
             placeholder="Email *"
           />
@@ -110,6 +116,7 @@ function RegisterFormInner({
               name="password"
               type="password"
               autoComplete="new-password"
+              defaultValue={fieldValue(state, "password")}
               className={`${pill} ${hasFieldError(state, "password") || hasFieldError(state, "confirm_password") ? pillError : ""}`}
               placeholder="Password *"
             />
@@ -125,6 +132,7 @@ function RegisterFormInner({
               name="confirm_password"
               type="password"
               autoComplete="new-password"
+              defaultValue={fieldValue(state, "confirm_password")}
               className={`${pill} ${hasFieldError(state, "confirm_password") ? pillError : ""}`}
               placeholder="Confirm password *"
             />
@@ -142,6 +150,7 @@ function RegisterFormInner({
             <input
               name="first_name"
               autoComplete="given-name"
+              defaultValue={fieldValue(state, "first_name")}
               className={`${pill} ${hasFieldError(state, "first_name") ? pillError : ""}`}
               placeholder="First name *"
             />
@@ -156,6 +165,7 @@ function RegisterFormInner({
             <input
               name="last_name"
               autoComplete="family-name"
+              defaultValue={fieldValue(state, "last_name")}
               className={`${pill} ${hasFieldError(state, "last_name") ? pillError : ""}`}
               placeholder="Last Name *"
             />
@@ -173,6 +183,7 @@ function RegisterFormInner({
             <input
               name="delivery_address"
               autoComplete="street-address"
+              defaultValue={fieldValue(state, "delivery_address")}
               className={`${pill} ${hasFieldError(state, "delivery_address") ? pillError : ""}`}
               placeholder="Delivery Address *"
             />
@@ -186,7 +197,7 @@ function RegisterFormInner({
             </label>
             <select
               name="country"
-              defaultValue=""
+              defaultValue={fieldValue(state, "country") || ""}
               required
               className={`${pill} cursor-pointer appearance-none bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat ${hasFieldError(state, "country") ? pillError : ""}`}
               style={{
@@ -216,6 +227,7 @@ function RegisterFormInner({
             <input
               name="city"
               autoComplete="address-level2"
+              defaultValue={fieldValue(state, "city")}
               className={`${pill} ${hasFieldError(state, "city") ? pillError : ""}`}
               placeholder="City *"
             />
@@ -231,6 +243,7 @@ function RegisterFormInner({
               <input
                 name="state"
                 autoComplete="address-level1"
+                defaultValue={fieldValue(state, "state")}
                 className={`${pill} ${hasFieldError(state, "state") ? pillError : ""}`}
                 placeholder="State *"
               />
@@ -245,6 +258,7 @@ function RegisterFormInner({
               <input
                 name="postal_code"
                 autoComplete="postal-code"
+                defaultValue={fieldValue(state, "postal_code")}
                 className={`${pill} ${hasFieldError(state, "postal_code") ? pillError : ""}`}
                 placeholder="Zip *"
               />
@@ -263,6 +277,7 @@ function RegisterFormInner({
             name="confirm_email"
             type="email"
             autoComplete="email"
+            defaultValue={fieldValue(state, "confirm_email")}
             className={`${pill} ${hasFieldError(state, "confirm_email") ? pillError : ""}`}
             placeholder="Re-enter your email *"
           />
@@ -280,6 +295,7 @@ function RegisterFormInner({
               name="phone"
               type="tel"
               autoComplete="tel"
+              defaultValue={fieldValue(state, "phone")}
               className={`${pill} ${hasFieldError(state, "phone") ? pillError : ""}`}
               placeholder="Phone *"
             />
@@ -294,6 +310,7 @@ function RegisterFormInner({
             <input
               name="profession"
               autoComplete="organization-title"
+              defaultValue={fieldValue(state, "profession")}
               className={`${pill} ${hasFieldError(state, "profession") ? pillError : ""}`}
               placeholder="Profession *"
             />
@@ -311,6 +328,7 @@ function RegisterFormInner({
             <input
               name="license_number"
               autoComplete="off"
+              defaultValue={fieldValue(state, "license_number")}
               className={`${pill} ${hasFieldError(state, "license_number") ? pillError : ""}`}
               placeholder="License Number *"
             />
@@ -325,6 +343,7 @@ function RegisterFormInner({
             <input
               name="license_expiry"
               type="date"
+              defaultValue={fieldValue(state, "license_expiry")}
               className={`${pill} cursor-pointer ${hasFieldError(state, "license_expiry") ? pillError : ""}`}
             />
             {fieldErr(state, "license_expiry") && (

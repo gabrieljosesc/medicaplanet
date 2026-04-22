@@ -12,7 +12,11 @@ export default async function HomePage() {
   const { user, profile, isAdmin } = await getSiteUserContext();
   const supabase = await createClient();
   const [{ data: categories }, { data: featured }, { data: posts }] = await Promise.all([
-    supabase.from("categories").select("slug,name,description,sort_order").order("sort_order"),
+    supabase
+      .from("categories")
+      .select("slug,name,description,sort_order")
+      .not("slug", "in", "(orthopedic-injections,orthopaedics)")
+      .order("sort_order"),
     supabase
       .from("products")
       .select("slug,title,description,base_price,currency,rating,review_count,price_tiers, product_images(url)")

@@ -70,15 +70,17 @@ export function categoryListParamsActive(p: CategoryListParams): boolean {
 }
 
 const PRODUCT_SELECT =
-  "slug,title,base_price,currency,rating,review_count,product_images(url),is_featured,created_at" as const;
+  "slug,title,description,base_price,currency,rating,review_count,price_tiers,product_images(url),is_featured,created_at" as const;
 
 export type CategoryProductRow = {
   slug: string;
   title: string;
+  description: string | null;
   base_price: number;
   currency: string;
   rating: number;
   review_count: number;
+  price_tiers: unknown;
   product_images: { url: string }[] | null;
 };
 

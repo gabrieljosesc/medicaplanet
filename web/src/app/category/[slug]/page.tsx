@@ -2,13 +2,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { CategoryProductToolbar } from "@/components/category-product-toolbar";
-import { ProductCard } from "@/components/product-card";
+import { CatalogHighlightCard } from "@/components/catalog-highlight-card";
 import {
   categoryListParamsActive,
   fetchCategoryProducts,
   parseCategoryListParams,
 } from "@/lib/category-product-list";
+import { nextImageUnoptimized, resolveProductMainImage } from "@/lib/product-image";
 import { createClient } from "@/lib/supabase/server";
+import { withStorageImageTransform } from "@/lib/storage-image";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -21,6 +23,9 @@ export default async function CategoryPage({ params, searchParams }: Props) {
     const { redirect } = await import("next/navigation");
     redirect("/peptides");
   }
+  if (slug === "orthopedic-injections" || slug === "orthopaedics") {
+    notFound();
+  }
   const sp = await searchParams;
   const listParams = parseCategoryListParams(sp);
   const supabase = await createClient();
@@ -31,6 +36,20 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const rows = products.map((p) => ({
     ...p,
     imageUrl: Array.isArray(p.product_images) ? p.product_images[0]?.url : null,
+    heroImageSrc: (() => {
+      let src = resolveProductMainImage(
+        p.slug,
+        Array.isArray(p.product_images) ? p.product_images[0]?.url : null,
+        p.title
+      );
+      if (
+        process.env.NEXT_PUBLIC_SUPABASE_IMAGE_TRANSFORM === "1" &&
+        src.includes("/storage/v1/object/public/")
+      ) {
+        src = withStorageImageTransform(src, 520);
+      }
+      return src;
+    })(),
   }));
   const filtered = categoryListParamsActive(listParams);
 
@@ -50,7 +69,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
         <CategoryProductToolbar basePath={`/category/${slug}`} />
       </Suspense>
 
-      <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-7">
         {rows.length === 0 && !filtered ? (
           <div className="col-span-full rounded-xl border border-amber-200 bg-amber-50/80 px-5 py-6 text-sm text-amber-950">
             <p className="font-medium">No products in this category yet.</p>
@@ -74,15 +93,18 @@ export default async function CategoryPage({ params, searchParams }: Props) {
           </div>
         ) : (
           rows.map((p) => (
-            <ProductCard
+            <CatalogHighlightCard
               key={p.slug}
               slug={p.slug}
               title={p.title}
-              price={Number(p.base_price)}
+              description={p.description}
+              basePrice={Number(p.base_price)}
               currency={p.currency}
               rating={Number(p.rating)}
               reviewCount={p.review_count}
-              imageUrl={p.imageUrl}
+              heroImageSrc={p.heroImageSrc}
+              imageUnoptimized={nextImageUnoptimized(p.heroImageSrc)}
+              priceTiersRaw={p.price_tiers}
             />
           ))
         )}

@@ -30,6 +30,7 @@ export function CatalogHighlightCard({
   slug,
   title,
   description,
+  subtitle,
   basePrice,
   currency,
   rating,
@@ -41,6 +42,7 @@ export function CatalogHighlightCard({
   slug: string;
   title: string;
   description?: string | null;
+  subtitle?: string | null;
   basePrice: number;
   currency: string;
   rating: number;
@@ -158,6 +160,7 @@ export function CatalogHighlightCard({
         <h3 className="line-clamp-2 text-lg font-bold tracking-tight text-zinc-900 transition group-hover:text-emerald-900">
           {title}
         </h3>
+        {subtitle ? <p className="mt-1 text-xs font-medium text-emerald-800/90">{subtitle}</p> : null}
         <p className="mt-1.5 line-clamp-2 text-sm font-normal leading-snug text-zinc-500">{blurb}</p>
       </Link>
     </div>

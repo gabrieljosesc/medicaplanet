@@ -5,15 +5,17 @@ export function escapeIlike(s: string): string {
 }
 
 const PRODUCT_SEARCH_SELECT =
-  "slug,title,base_price,currency,rating,review_count,product_images(url),categories(name)" as const;
+  "slug,title,description,base_price,currency,rating,review_count,price_tiers,product_images(url),categories(name)" as const;
 
 export type ProductSearchHit = {
   slug: string;
   title: string;
+  description: string | null;
   base_price: number;
   currency: string;
   rating: number;
   review_count: number;
+  price_tiers: unknown;
   imageUrl: string | null;
   categoryName: string | null;
 };
@@ -21,10 +23,12 @@ export type ProductSearchHit = {
 type DbProductRow = {
   slug: string;
   title: string;
+  description: string | null;
   base_price: number;
   currency: string;
   rating: number;
   review_count: number;
+  price_tiers: unknown;
   product_images: { url: string }[] | null;
   categories: { name: string } | { name: string }[] | null;
 };
@@ -39,10 +43,12 @@ function mapRow(p: DbProductRow): ProductSearchHit {
   return {
     slug: p.slug,
     title: p.title,
+    description: p.description,
     base_price: Number(p.base_price),
     currency: p.currency,
     rating: Number(p.rating),
     review_count: p.review_count,
+    price_tiers: p.price_tiers,
     imageUrl: Array.isArray(p.product_images) ? (p.product_images[0]?.url ?? null) : null,
     categoryName: normalizeCategory(p.categories),
   };

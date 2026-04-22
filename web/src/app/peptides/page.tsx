@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { CategoryProductToolbar } from "@/components/category-product-toolbar";
-import { ProductCard } from "@/components/product-card";
+import { CatalogHighlightCard } from "@/components/catalog-highlight-card";
 import {
   categoryListParamsActive,
   fetchCategoryProducts,
   parseCategoryListParams,
 } from "@/lib/category-product-list";
+import { nextImageUnoptimized, resolveProductMainImage } from "@/lib/product-image";
 import { createClient } from "@/lib/supabase/server";
+import { withStorageImageTransform } from "@/lib/storage-image";
 
 type Props = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -27,6 +29,20 @@ export default async function PeptidesPage({ searchParams }: Props) {
   const rows = products.map((p) => ({
     ...p,
     imageUrl: Array.isArray(p.product_images) ? p.product_images[0]?.url : null,
+    heroImageSrc: (() => {
+      let src = resolveProductMainImage(
+        p.slug,
+        Array.isArray(p.product_images) ? p.product_images[0]?.url : null,
+        p.title
+      );
+      if (
+        process.env.NEXT_PUBLIC_SUPABASE_IMAGE_TRANSFORM === "1" &&
+        src.includes("/storage/v1/object/public/")
+      ) {
+        src = withStorageImageTransform(src, 520);
+      }
+      return src;
+    })(),
   }));
   const filtered = categoryListParamsActive(listParams);
 
@@ -48,7 +64,7 @@ export default async function PeptidesPage({ searchParams }: Props) {
         </Suspense>
       ) : null}
 
-      <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-7">
         {!cat || (rows.length === 0 && !filtered) ? (
           <p className="text-sm text-zinc-600">
             No peptide products in the database yet. Run{" "}
@@ -68,15 +84,18 @@ export default async function PeptidesPage({ searchParams }: Props) {
           </div>
         ) : (
           rows.map((p) => (
-            <ProductCard
+            <CatalogHighlightCard
               key={p.slug}
               slug={p.slug}
               title={p.title}
-              price={Number(p.base_price)}
+              description={p.description}
+              basePrice={Number(p.base_price)}
               currency={p.currency}
               rating={Number(p.rating)}
               reviewCount={p.review_count}
-              imageUrl={p.imageUrl}
+              heroImageSrc={p.heroImageSrc}
+              imageUnoptimized={nextImageUnoptimized(p.heroImageSrc)}
+              priceTiersRaw={p.price_tiers}
             />
           ))
         )}
