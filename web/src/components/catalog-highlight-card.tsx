@@ -2,15 +2,34 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { IconCartBag, IconHeart } from "@/components/nav-icons";
 import { useCart } from "@/context/cart-context";
-import { IconCartBag } from "@/components/nav-icons";
 import { parsePriceTiersJson, unitPriceForQuantity } from "@/lib/price-tiers";
+
+const WISHLIST_KEY = "medicaplanet-wishlist-slugs-v1";
+
+function readWishlistSlugs(): Set<string> {
+  if (typeof window === "undefined") return new Set();
+  try {
+    const raw = localStorage.getItem(WISHLIST_KEY);
+    const arr = raw ? (JSON.parse(raw) as unknown) : [];
+    if (!Array.isArray(arr)) return new Set();
+    return new Set(arr.filter((x): x is string => typeof x === "string"));
+  } catch {
+    return new Set();
+  }
+}
+
+function writeWishlistSlugs(next: Set<string>) {
+  localStorage.setItem(WISHLIST_KEY, JSON.stringify([...next]));
+}
 
 export function CatalogHighlightCard({
   slug,
   title,
+  description,
   basePrice,
   currency,
   rating,
@@ -21,6 +40,7 @@ export function CatalogHighlightCard({
 }: {
   slug: string;
   title: string;
+  description?: string | null;
   basePrice: number;
   currency: string;
   rating: number;
@@ -35,17 +55,40 @@ export function CatalogHighlightCard({
 
   const displayFrom =
     basePrice > 0 ? basePrice : tiers.length > 0 ? tiers[0].price : 0;
-  const priceLabel =
-    basePrice > 0 || tiers.length > 0
-      ? `From ${currency === "USD" ? "$" : currency + " "}${displayFrom.toFixed(0)}`
-      : "Request pricing";
+  const cur = (currency && currency.trim()) || "USD";
+  const priceBadge =
+    hasPrice && Number.isFinite(displayFrom) ? `${cur} ${Math.round(displayFrom)}` : null;
+
+  const blurb =
+    description && description.trim().length > 0
+      ? description.trim()
+      : `Rated ${rating.toFixed(2)} / 5 · ${reviewCount} reviews`;
 
   const { addLine } = useCart();
   const router = useRouter();
 
+  const [wishlisted, setWishlisted] = useState(false);
+
+  useEffect(() => {
+    setWishlisted(readWishlistSlugs().has(slug));
+  }, [slug]);
+
+  const toggleWishlist = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const prev = readWishlistSlugs();
+      if (prev.has(slug)) prev.delete(slug);
+      else prev.add(slug);
+      writeWishlistSlugs(prev);
+      setWishlisted(prev.has(slug));
+    },
+    [slug]
+  );
+
   return (
-    <div className="group flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition hover:border-emerald-300 hover:shadow-md">
-      <div className="relative aspect-[5/4] w-full bg-zinc-100">
+    <div className="group flex flex-col rounded-[1.65rem] bg-white p-2 shadow-md ring-1 ring-zinc-100 transition hover:shadow-lg hover:ring-zinc-200/90">
+      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-zinc-100">
         <Link
           href={`/product/${slug}`}
           className="absolute inset-0 z-0 block outline-none"
@@ -60,6 +103,26 @@ export function CatalogHighlightCard({
             unoptimized={imageUnoptimized}
           />
         </Link>
+
+        <button
+          type="button"
+          aria-label={wishlisted ? `Remove ${title} from wishlist` : `Save ${title} to wishlist`}
+          aria-pressed={wishlisted}
+          className="absolute right-3 top-3 z-[25] flex h-10 w-10 items-center justify-center rounded-full border border-white/55 bg-white/45 text-zinc-700 shadow-sm backdrop-blur-md transition hover:bg-white/70 hover:text-rose-600"
+          onClick={toggleWishlist}
+        >
+          <IconHeart
+            filled={wishlisted}
+            className={`h-[1.15rem] w-[1.15rem] shrink-0 ${wishlisted ? "text-rose-600" : ""}`}
+          />
+        </button>
+
+        {priceBadge ? (
+          <div className="pointer-events-none absolute bottom-3 right-3 z-[25] rounded-xl border border-zinc-200/90 bg-white/92 px-3 py-1.5 text-xs font-semibold text-zinc-900 shadow-md backdrop-blur-sm tabular-nums ring-1 ring-black/5">
+            {priceBadge}
+          </div>
+        ) : null}
+
         {hasPrice ? (
           <div
             className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center p-4 opacity-100 transition-opacity duration-200 [@media(hover:hover)_and_(pointer:fine)]:opacity-0 [@media(hover:hover)_and_(pointer:fine)]:group-hover:opacity-100 [@media(hover:hover)_and_(pointer:fine)]:group-focus-within:opacity-100"
@@ -90,17 +153,12 @@ export function CatalogHighlightCard({
           </div>
         ) : null}
       </div>
-      <Link
-        href={`/product/${slug}`}
-        className="flex flex-1 flex-col gap-1 p-4"
-      >
-        <h3 className="line-clamp-2 text-sm font-semibold text-zinc-900 group-hover:text-emerald-900">
+
+      <Link href={`/product/${slug}`} className="flex flex-1 flex-col px-2 pb-3 pt-4">
+        <h3 className="line-clamp-2 text-lg font-bold tracking-tight text-zinc-900 transition group-hover:text-emerald-900">
           {title}
         </h3>
-        <p className="text-xs text-zinc-500">
-          Rated {rating.toFixed(2)} / 5 · {reviewCount} reviews
-        </p>
-        <p className="mt-auto text-sm font-semibold text-emerald-800">{priceLabel}</p>
+        <p className="mt-1.5 line-clamp-2 text-sm font-normal leading-snug text-zinc-500">{blurb}</p>
       </Link>
     </div>
   );

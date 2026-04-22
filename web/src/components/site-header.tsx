@@ -1,67 +1,46 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
 import { CartBadge } from "@/components/cart-badge";
 import { HeaderSearch } from "@/components/header-search";
 import { UserMenu } from "@/components/user-menu";
-
-const nav = [
-  { href: "/shop", label: "Shop" },
-  { href: "/peptides", label: "Peptides" },
-  { href: "/blog", label: "Blog" },
-];
+import { SITE_NAV } from "@/lib/nav-config";
+import { getSiteUserContext } from "@/lib/site-user-context";
 
 export async function SiteHeader() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  let isAdmin = false;
-  let profile: {
-    role: string | null;
-    avatar_url: string | null;
-    full_name: string | null;
-    email: string | null;
-  } | null = null;
-  if (user) {
-    const { data: p } = await supabase
-      .from("profiles")
-      .select("role, avatar_url, full_name, email")
-      .eq("id", user.id)
-      .single();
-    profile = p;
-    isAdmin = profile?.role === "admin";
-  }
+  const { user, profile, isAdmin } = await getSiteUserContext();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-emerald-900/10 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
-        <Link href="/" className="text-lg font-semibold tracking-tight text-emerald-900">
-          MedicaPlanet
-        </Link>
-        <nav className="flex flex-wrap items-center gap-4 text-sm font-medium text-zinc-700">
-          {nav.map((n) => (
-            <Link key={n.href} href={n.href} className="hover:text-emerald-800">
-              {n.label}
-            </Link>
-          ))}
-          {isAdmin && (
-            <Link href="/admin" className="text-emerald-700 hover:underline">
-              Admin
-            </Link>
-          )}
-        </nav>
-        <div className="flex items-center gap-3 text-sm">
-          <a
-            href="https://api.whatsapp.com/send?phone=18005551234"
-            className="hidden text-emerald-800 hover:underline sm:inline"
-            target="_blank"
-            rel="noreferrer"
+    <header className="sticky top-0 z-40 border-b border-zinc-200/40 bg-zinc-50/75 py-3 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4">
+        <div className="flex min-w-0 max-w-full flex-[1_1_16rem] flex-wrap items-center gap-1 rounded-full border border-zinc-200/80 bg-white/75 px-3 py-2 shadow-sm backdrop-blur-xl sm:flex-1 sm:gap-0 sm:px-4">
+          <Link
+            href="/"
+            className="shrink-0 pr-2 text-base font-semibold tracking-tight text-emerald-900 sm:pr-3"
           >
-            WhatsApp
-          </a>
-          <a href="tel:+18005551234" className="text-zinc-600 hover:text-emerald-800">
-            (800) 555-1234
-          </a>
+            MedicaPlanet
+          </Link>
+          <span className="hidden h-5 w-px shrink-0 bg-zinc-200/90 sm:mx-1 sm:block" aria-hidden />
+          <nav className="flex flex-wrap items-center gap-0.5 text-sm font-medium sm:gap-1">
+            {SITE_NAV.map((n) => (
+              <Link
+                key={n.href}
+                href={n.href}
+                className="rounded-full px-2.5 py-1.5 text-zinc-700 transition hover:bg-white/80 hover:text-emerald-900 sm:px-3"
+              >
+                {n.label}
+              </Link>
+            ))}
+            {isAdmin ? (
+              <Link
+                href="/admin"
+                className="rounded-full px-2.5 py-1.5 text-emerald-800 transition hover:bg-emerald-50/90 sm:px-3"
+              >
+                Admin
+              </Link>
+            ) : null}
+          </nav>
+        </div>
+
+        <div className="flex shrink-0 flex-wrap items-center justify-end gap-1 rounded-full border border-zinc-200/80 bg-white/75 px-2 py-1.5 shadow-sm backdrop-blur-xl sm:gap-1.5 sm:px-3">
           <HeaderSearch />
           <CartBadge />
           {user ? (
@@ -75,7 +54,10 @@ export async function SiteHeader() {
               avatarUrl={profile?.avatar_url ?? null}
             />
           ) : (
-            <Link href="/auth/login" className="font-medium text-emerald-800 hover:underline">
+            <Link
+              href="/auth/login"
+              className="rounded-full px-3 py-1.5 text-sm font-semibold text-emerald-900 transition hover:bg-emerald-50/90"
+            >
               Sign in
             </Link>
           )}

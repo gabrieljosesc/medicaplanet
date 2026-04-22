@@ -9,7 +9,8 @@ type SuggestItem = { slug: string; title: string; category: string | null };
 
 const DEBOUNCE_MS = 280;
 
-export function HeaderSearch() {
+export function HeaderSearch({ variant = "default" }: { variant?: "default" | "hero" }) {
+  const hero = variant === "hero";
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
@@ -135,12 +136,19 @@ export function HeaderSearch() {
   const showPanel = open && q.trim().length >= 2;
 
   return (
-    <div ref={wrapRef} className="relative flex items-center">
+    <div
+      ref={wrapRef}
+      className={hero ? "relative z-[115] flex items-center" : "relative z-[60] flex items-center"}
+    >
       <div
         className={
           open
-            ? "flex h-9 w-[min(18rem,calc(100vw-9rem))] max-w-[18rem] items-center rounded-full border border-zinc-200 bg-white pl-3 shadow-sm transition-[width,box-shadow,border-color] duration-300 ease-out"
-            : "flex h-9 w-9 items-center justify-center rounded-full border border-transparent bg-transparent transition-[width,box-shadow,border-color] duration-300 ease-out"
+            ? hero
+              ? "flex h-9 w-[min(18rem,calc(100vw-10rem))] max-w-[18rem] items-center rounded-full border border-white/45 bg-white/20 pl-3 shadow-lg backdrop-blur-md transition-[width,box-shadow,border-color] duration-300 ease-out"
+              : "flex h-9 w-[min(18rem,calc(100vw-9rem))] max-w-[18rem] items-center rounded-full border border-zinc-200/90 bg-white/90 pl-3 shadow-md backdrop-blur-md transition-[width,box-shadow,border-color] duration-300 ease-out"
+            : hero
+              ? "flex h-9 w-9 items-center justify-center rounded-full border border-transparent bg-transparent transition-[width,box-shadow,border-color] duration-300 ease-out"
+              : "flex h-9 w-9 items-center justify-center rounded-full border border-transparent bg-transparent transition-[width,box-shadow,border-color] duration-300 ease-out"
         }
       >
         <input
@@ -175,7 +183,9 @@ export function HeaderSearch() {
           aria-expanded={showPanel && suggestions.length > 0}
           className={
             open
-              ? "min-w-0 flex-1 border-0 bg-transparent py-1 pr-1 text-sm text-zinc-900 outline-none placeholder:text-zinc-400"
+              ? hero
+                ? "min-w-0 flex-1 border-0 bg-transparent py-1 pr-1 text-sm text-white outline-none placeholder:text-white/55"
+                : "min-w-0 flex-1 border-0 bg-transparent py-1 pr-1 text-sm text-zinc-900 outline-none placeholder:text-zinc-400"
               : "pointer-events-none w-0 border-0 p-0 opacity-0"
           }
         />
@@ -188,7 +198,11 @@ export function HeaderSearch() {
             if (open) runFullSearch();
             else setOpen(true);
           }}
-          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-emerald-800 hover:bg-emerald-50 hover:text-emerald-900"
+          className={
+            hero
+              ? "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white hover:bg-white/15"
+              : "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-emerald-800 hover:bg-emerald-50 hover:text-emerald-900"
+          }
         >
           <IconSearch className="h-[22px] w-[22px] shrink-0" />
         </button>
@@ -197,7 +211,7 @@ export function HeaderSearch() {
       {showPanel && (
         <div
           id="header-search-suggestions"
-          className="absolute left-0 top-[calc(100%+0.25rem)] z-50 w-[min(20rem,calc(100vw-2rem))] max-w-[min(20rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-zinc-200 bg-white py-1 text-sm shadow-lg"
+          className={`absolute left-0 top-[calc(100%+0.35rem)] w-[min(20rem,calc(100vw-2rem))] max-w-[min(20rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-zinc-200/70 bg-white/88 py-1 text-sm text-zinc-900 shadow-xl backdrop-blur-xl backdrop-saturate-150 ring-1 ring-black/5 ${hero ? "z-[120]" : "z-[70]"}`}
           role="listbox"
           aria-label="Product suggestions"
         >

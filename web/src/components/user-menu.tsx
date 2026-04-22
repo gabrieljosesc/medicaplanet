@@ -10,10 +10,12 @@ export function UserMenu({
   email,
   displayName,
   avatarUrl,
+  variant = "default",
 }: {
   email: string;
   displayName: string;
   avatarUrl: string | null;
+  variant?: "default" | "light";
 }) {
   const [open, setOpen] = useState(false);
   const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
@@ -37,11 +39,21 @@ export function UserMenu({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex max-w-[200px] items-center gap-2 rounded-md px-1 py-1 text-left text-sm text-emerald-900 hover:bg-emerald-50"
+        className={
+          variant === "light"
+            ? "flex max-w-[200px] items-center gap-2 rounded-full px-1 py-1 text-left text-sm text-white hover:bg-white/10"
+            : "flex max-w-[200px] items-center gap-2 rounded-md px-1 py-1 text-left text-sm text-emerald-900 hover:bg-emerald-50"
+        }
         aria-expanded={open}
         aria-haspopup="menu"
       >
-        <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full bg-zinc-100 ring-1 ring-zinc-200">
+        <span
+          className={
+            variant === "light"
+              ? "relative h-9 w-9 shrink-0 overflow-hidden rounded-full bg-white/20 ring-1 ring-white/40"
+              : "relative h-9 w-9 shrink-0 overflow-hidden rounded-full bg-zinc-100 ring-1 ring-zinc-200"
+          }
+        >
           {avatarUrl ? (
             <Image
               src={avatarUrl}
@@ -52,16 +64,26 @@ export function UserMenu({
               unoptimized={avatarUrl.includes("%")}
             />
           ) : (
-            <span className="flex h-full w-full items-center justify-center text-xs font-semibold text-emerald-800">
+            <span
+              className={
+                variant === "light"
+                  ? "flex h-full w-full items-center justify-center text-xs font-semibold text-white"
+                  : "flex h-full w-full items-center justify-center text-xs font-semibold text-emerald-800"
+              }
+            >
               {displayName.slice(0, 1).toUpperCase()}
             </span>
           )}
         </span>
-        <span className="hidden min-w-0 truncate font-medium sm:inline">{displayName}</span>
+        <span
+          className={`hidden min-w-0 truncate font-medium sm:inline ${variant === "light" ? "text-white" : ""}`}
+        >
+          {displayName}
+        </span>
       </button>
       {open ? (
         <div
-          className="absolute right-0 z-50 mt-1 w-52 rounded-lg border border-zinc-200 bg-white py-1 shadow-lg"
+          className={`absolute right-0 mt-2 w-56 rounded-2xl border border-zinc-200/60 bg-white/85 py-1.5 text-zinc-900 shadow-xl backdrop-blur-xl backdrop-saturate-150 ring-1 ring-black/5 ${variant === "light" ? "z-[115]" : "z-[60]"}`}
           role="menu"
         >
           <p className="truncate px-3 py-2 text-xs text-zinc-500" title={email}>
@@ -69,7 +91,7 @@ export function UserMenu({
           </p>
           <Link
             href="/account/profile"
-            className="block px-3 py-2 text-sm text-zinc-800 hover:bg-zinc-50"
+            className="block px-3 py-2 text-sm text-zinc-800 transition hover:bg-white/60"
             role="menuitem"
             onClick={() => setOpen(false)}
           >
@@ -77,16 +99,16 @@ export function UserMenu({
           </Link>
           <Link
             href="/account/purchases"
-            className="block px-3 py-2 text-sm text-zinc-800 hover:bg-zinc-50"
+            className="block px-3 py-2 text-sm text-zinc-800 transition hover:bg-white/60"
             role="menuitem"
             onClick={() => setOpen(false)}
           >
             My purchases
           </Link>
-          <div className="border-t border-zinc-100 pt-1">
+          <div className="mt-0.5 border-t border-zinc-200/50 pt-1">
             <button
               type="button"
-              className="w-full px-3 py-2 text-left text-sm text-zinc-800 hover:bg-zinc-50"
+              className="w-full px-3 py-2 text-left text-sm text-zinc-800 transition hover:bg-white/60"
               role="menuitem"
               onClick={() => {
                 setOpen(false);
@@ -100,8 +122,8 @@ export function UserMenu({
       ) : null}
       {mounted && confirmLogoutOpen
         ? createPortal(
-            <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/40 p-4">
-              <div className="w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-5 shadow-2xl">
+            <div className="fixed inset-0 z-[130] flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
+              <div className="w-full max-w-sm rounded-2xl border border-zinc-200/70 bg-white/90 p-5 shadow-2xl backdrop-blur-xl backdrop-saturate-150 ring-1 ring-black/5">
                 <h3 className="text-base font-semibold text-zinc-900">Log out?</h3>
                 <p className="mt-2 text-sm text-zinc-600">
                   Are you sure you want to log out of your account?

@@ -52,7 +52,26 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [lines, setLines] = useState<CartLine[]>([]);
 
   useEffect(() => {
-    setLines(readStorage());
+    const syncFromStorage = () => setLines(readStorage());
+    syncFromStorage();
+
+    // Keep cart badge/state consistent when tab regains focus or storage updates.
+    const onFocus = () => syncFromStorage();
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") syncFromStorage();
+    };
+    const onStorage = (e: StorageEvent) => {
+      if (!e.key || e.key === STORAGE_KEY) syncFromStorage();
+    };
+
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("storage", onStorage);
+    };
   }, []);
 
   const persist = useCallback((next: CartLine[]) => {
