@@ -10,13 +10,8 @@ const checkoutSchema = z.object({
   lastName: z.string().min(1),
   company: z.string().optional(),
   email: z.string().email(),
-  phone: z.string().optional(),
-  billingLine1: z.string().min(2),
-  billingCity: z.string().min(1),
-  billingState: z.string().min(1),
-  billingPostalCode: z.string().min(2),
-  billingCountry: z.string().min(2),
-  shipToDifferentAddress: z.boolean().optional(),
+  phone: z.string().min(3),
+  recipientName: z.string().min(2),
   line1: z.string().min(2),
   line2: z.string().optional(),
   city: z.string().min(1),
@@ -99,6 +94,8 @@ export async function submitOrder(
   }
 
   const shipping_address = {
+    recipientName: input.recipientName,
+    phone: input.phone,
     line1: input.line1,
     line2: input.line2 ?? "",
     city: input.city,
@@ -106,13 +103,16 @@ export async function submitOrder(
     postalCode: input.postalCode,
     country: input.country,
   };
+  /** Same physical address as shipping; license + company kept here for CSR records. */
   const billing_address = {
-    line1: input.billingLine1,
-    city: input.billingCity,
-    state: input.billingState,
-    postalCode: input.billingPostalCode,
-    country: input.billingCountry,
+    line1: input.line1,
+    city: input.city,
+    state: input.state,
+    postalCode: input.postalCode,
+    country: input.country,
     company: input.company ?? "",
+    recipientName: input.recipientName,
+    phone: input.phone,
     doctorName: input.doctorName,
     doctorLicenseNumber: input.doctorLicenseNumber,
     doctorLicenseExpiry: input.doctorLicenseExpiry,

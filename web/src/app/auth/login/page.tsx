@@ -49,6 +49,11 @@ export default async function LoginPage({ searchParams }: Props) {
           Verification email resent. Please check your inbox.
         </p>
       )}
+      {verify === "confirmed" && (
+        <p className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
+          Email confirmed successfully. You can sign in now.
+        </p>
+      )}
       {unverified && (
         <form action={resendVerificationEmail} className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
           {next ? <input type="hidden" name="next" value={next} /> : null}

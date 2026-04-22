@@ -9,6 +9,16 @@ import {
   registrationSchema,
 } from "@/app/auth/register/registration-schema";
 
+function getAuthEmailRedirectTo(): string {
+  const rawBase =
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    process.env.NEXT_PUBLIC_APP_URL ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+
+  const base = rawBase.replace(/\/+$/, "");
+  return `${base}/auth/login?verify=confirmed`;
+}
+
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
@@ -76,6 +86,7 @@ export async function registerWithProfile(
     email: v.email,
     password: v.password,
     options: {
+      emailRedirectTo: getAuthEmailRedirectTo(),
       data: {
         full_name,
         first_name: v.first_name,
@@ -161,7 +172,11 @@ export async function resendVerificationEmail(formData: FormData): Promise<void>
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.resend({ type: "signup", email });
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email,
+    options: { emailRedirectTo: getAuthEmailRedirectTo() },
+  });
   if (error) {
     q.set("error", error.message);
     q.set("unverified", "1");
