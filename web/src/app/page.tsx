@@ -3,6 +3,7 @@ import { CatalogHighlightCard } from "@/components/catalog-highlight-card";
 import { CategoriesBand } from "@/components/categories-band";
 import { HomeHero } from "@/components/home-hero";
 import { HomeHeroChrome } from "@/components/home-hero-chrome";
+import { getSiteBlogPosts } from "@/lib/site-blog";
 import { createClient } from "@/lib/supabase/server";
 import { nextImageUnoptimized, resolveProductMainImage } from "@/lib/product-image";
 import { getSiteUserContext } from "@/lib/site-user-context";
@@ -11,7 +12,7 @@ import { withStorageImageTransform } from "@/lib/storage-image";
 export default async function HomePage() {
   const { user, profile, isAdmin } = await getSiteUserContext();
   const supabase = await createClient();
-  const [{ data: categories }, { data: productsRaw }, { data: posts }] = await Promise.all([
+  const [{ data: categories }, { data: productsRaw }] = await Promise.all([
     supabase
       .from("categories")
       .select("slug,name,description,sort_order")
@@ -26,14 +27,8 @@ export default async function HomePage() {
       .order("is_featured", { ascending: false })
       .order("title")
       .limit(120),
-    supabase
-      .from("blog_posts")
-      .select("slug,title,excerpt,published_at")
-      .eq("is_published", true)
-      .lte("published_at", new Date().toISOString())
-      .order("published_at", { ascending: false })
-      .limit(3),
   ]);
+  const featuredBlogPosts = getSiteBlogPosts(3);
 
   const picked = new Set<string>();
   const feat = (productsRaw ?? [])
@@ -116,7 +111,7 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
-          {(posts ?? []).map((b) => (
+          {featuredBlogPosts.map((b) => (
             <Link
               key={b.slug}
               href={`/blog/${b.slug}`}
