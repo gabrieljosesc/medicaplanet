@@ -16,6 +16,17 @@ type ReviewSummary = {
   doctorLicenseExpiry: string;
   shippingAddress: string;
   paymentMethod: string;
+  cardSummary?: string;
+};
+
+type SavedCardRow = {
+  id: string;
+  brand: string | null;
+  last4: string;
+  exp_month: number;
+  exp_year: number;
+  name_on_card: string;
+  is_default: boolean;
 };
 
 type SavedAddressRow = {
@@ -76,6 +87,9 @@ export default function CheckoutPage() {
   const [addressMode, setAddressMode] = useState<"saved" | "manual">("manual");
   const [selectedSavedId, setSelectedSavedId] = useState<string | null>(null);
   const [shipping, setShipping] = useState<ShippingFields>(emptyShipping);
+  const [savedCards, setSavedCards] = useState<SavedCardRow[]>([]);
+  const [checkoutPayment, setCheckoutPayment] = useState<"saved_card" | "bank_transfer">("bank_transfer");
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
 
   const subtotal = selectedLines.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0);
   const formRef = useRef<HTMLFormElement>(null);
@@ -103,7 +117,7 @@ export default function CheckoutPage() {
         } = await supabase.auth.getUser();
         if (!user || !mounted) return;
 
-        const [{ data: profile }, { data: addrRows }] = await Promise.all([
+        const [{ data: profile }, { data: addrRows }, cardRes] = await Promise.all([
           supabase
             .from("profiles")
             .select(
@@ -116,7 +130,13 @@ export default function CheckoutPage() {
             .select("id,label,recipient_name,phone,line1,line2,city,state,postal_code,country,is_default")
             .eq("user_id", user.id)
             .order("is_default", { ascending: false }),
+          supabase
+            .from("user_saved_cards")
+            .select("id,brand,last4,exp_month,exp_year,name_on_card,is_default")
+            .eq("user_id", user.id)
+            .order("is_default", { ascending: false }),
         ]);
+        const cardRows = cardRes.error ? null : cardRes.data;
 
         if (!mounted) return;
 
@@ -136,6 +156,17 @@ export default function CheckoutPage() {
 
         const list = (addrRows ?? []) as SavedAddressRow[];
         setSavedAddresses(list);
+
+        const cards = (cardRows ?? []) as SavedCardRow[];
+        setSavedCards(cards);
+        if (cards.length > 0) {
+          const cdef = cards.find((c) => c.is_default) ?? cards[0];
+          setSelectedCardId(cdef.id);
+          setCheckoutPayment("saved_card");
+        } else {
+          setSelectedCardId(null);
+          setCheckoutPayment("bank_transfer");
+        }
 
         if (list.length > 0) {
           const def = list.find((a) => a.is_default) ?? list[0];
@@ -187,14 +218,14 @@ export default function CheckoutPage() {
       postalCode: shipping.postalCode.trim(),
       country: shipping.country.trim(),
       customerNotes: String(fd.get("customerNotes") || ""),
-      paymentNotes:
-        `Payment method: ${String(fd.get("paymentMethod") || "credit_card")}` +
-        (String(fd.get("paymentNotes") || "").trim() ? `\n${String(fd.get("paymentNotes"))}` : ""),
+      paymentNotes: String(fd.get("paymentNotes") || "").trim() || undefined,
       doctorName: String(fd.get("doctorName") || ""),
       doctorLicenseNumber: String(fd.get("doctorLicenseNumber") || ""),
       doctorLicenseExpiry: String(fd.get("doctorLicenseExpiry") || ""),
       policyAccepted: Boolean(fd.get("policyAck")),
       items: selectedLines.map((l) => ({ slug: l.slug, quantity: l.quantity })),
+      checkoutType: checkoutPayment === "saved_card" && selectedCardId ? "saved_manual_card" : "bank_transfer",
+      userSavedCardId: checkoutPayment === "saved_card" && selectedCardId ? selectedCardId : undefined,
     });
     setPending(false);
     if (!res.ok) {
@@ -222,6 +253,14 @@ export default function CheckoutPage() {
       if (String(s.phone).trim().length < 3) {
         return { ok: false, message: "Please enter a valid phone number for shipping." };
       }
+      if (checkoutPayment === "saved_card") {
+        if (savedCards.length === 0) {
+          return { ok: false, message: "Add a card under Banks & cards, or choose bank transfer." };
+        }
+        if (!selectedCardId) {
+          return { ok: false, message: "Please select a saved card, or choose direct bank transfer." };
+        }
+      }
     }
     const container = form.querySelector<HTMLElement>(`[data-step="${targetStep}"]`);
     if (!container) return { ok: false, message: "Missing step content." };
@@ -244,9 +283,15 @@ export default function CheckoutPage() {
     const fd = new FormData(form);
     const firstName = String(fd.get("firstName") || "").trim();
     const lastName = String(fd.get("lastName") || "").trim();
-    const paymentMethodRaw = String(fd.get("paymentMethod") || "credit_card");
+    const card = savedCards.find((c) => c.id === selectedCardId);
     const paymentMethod =
-      paymentMethodRaw === "bank_transfer" ? "Direct bank transfer" : "Credit card";
+      checkoutPayment === "saved_card" && card
+        ? `Saved card · ${card.brand ?? "card"} ····${card.last4}`
+        : "Direct bank transfer";
+    const cardSummary =
+      checkoutPayment === "saved_card" && card
+        ? `${card.brand ?? "Card"} ····${card.last4} · exp ${String(card.exp_month).padStart(2, "0")}/${String(card.exp_year).slice(-2)} · ${card.name_on_card}`
+        : undefined;
 
     const shippingAddress = [
       `${shipping.recipientName} · ${shipping.phone}`.trim(),
@@ -267,6 +312,7 @@ export default function CheckoutPage() {
       doctorLicenseExpiry: String(fd.get("doctorLicenseExpiry") || "").trim(),
       shippingAddress,
       paymentMethod,
+      cardSummary,
     };
   }
 
@@ -539,17 +585,64 @@ export default function CheckoutPage() {
 
             <section className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
               <p className="text-sm font-semibold text-zinc-900">Payment & order notes</p>
-              <p className="mt-1 text-xs text-zinc-500">Select preferred payment route; CSR confirms final payment instructions after review.</p>
-              <div className="mt-3 space-y-2 text-sm text-zinc-700">
-                <label className="flex items-center gap-2">
-                  <input type="radio" name="paymentMethod" value="credit_card" defaultChecked className="size-4" />
-                  Credit card
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="radio" name="paymentMethod" value="bank_transfer" className="size-4" />
-                  Direct bank transfer
-                </label>
-              </div>
+              <p className="mt-1 text-xs text-zinc-500">
+                No card is charged at submit. CSR reviews the order, then processes payment using the card on file or your
+                bank transfer choice.
+              </p>
+              {savedCards.length > 0 ? (
+                <div className="mt-3 space-y-3 text-sm text-zinc-800">
+                  <p className="text-xs font-medium text-zinc-600">How should we take payment after approval?</p>
+                  <label className="flex items-start gap-2">
+                    <input
+                      type="radio"
+                      name="checkoutPaymentUi"
+                      checked={checkoutPayment === "saved_card"}
+                      onChange={() => setCheckoutPayment("saved_card")}
+                      className="mt-0.5 size-4"
+                    />
+                    <span>
+                      <span className="font-medium">Use a saved card</span> (CSR uses encrypted details from this order)
+                    </span>
+                  </label>
+                  {checkoutPayment === "saved_card" ? (
+                    <div className="ml-6">
+                      <label className="text-xs font-medium text-zinc-600">Card on file</label>
+                      <select
+                        className="mt-1 w-full max-w-md rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm"
+                        value={selectedCardId ?? ""}
+                        onChange={(e) => setSelectedCardId(e.target.value || null)}
+                      >
+                        {savedCards.map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {(c.brand ? c.brand.toUpperCase() : "Card")} ···· {c.last4}
+                            {c.is_default ? " (Default)" : ""}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  ) : null}
+                  <label className="flex items-start gap-2">
+                    <input
+                      type="radio"
+                      name="checkoutPaymentUi"
+                      checked={checkoutPayment === "bank_transfer"}
+                      onChange={() => setCheckoutPayment("bank_transfer")}
+                      className="mt-0.5 size-4"
+                    />
+                    <span>
+                      <span className="font-medium">Direct bank transfer</span> (CSR will send transfer details)
+                    </span>
+                  </label>
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-zinc-700">
+                  <span className="font-medium">Direct bank transfer</span> for this order.{" "}
+                  <Link href="/account/payment-methods" className="font-medium text-emerald-800 hover:underline">
+                    Add a card under Banks &amp; cards
+                  </Link>{" "}
+                  to use a saved card at checkout.
+                </p>
+              )}
               <div className="mt-3">
                 <label className="text-xs font-medium text-zinc-600">Order notes</label>
                 <textarea name="customerNotes" rows={3} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
@@ -585,6 +678,9 @@ export default function CheckoutPage() {
                     <p className="mt-2 text-sm text-zinc-700">
                       <span className="font-medium text-zinc-900">Payment method:</span> {review.paymentMethod}
                     </p>
+                    {review.cardSummary ? (
+                      <p className="mt-1 break-all font-mono text-xs text-zinc-600">CSR: {review.cardSummary}</p>
+                    ) : null}
                   </div>
                 </div>
               ) : null}

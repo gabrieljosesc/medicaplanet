@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 
 const accountLinks = [
   { href: "/account/profile", label: "Profile" },
-  { href: "/account/payment-methods", label: "Payment methods" },
+  { href: "/account/payment-methods", label: "Banks & cards" },
   { href: "/account/addresses", label: "Addresses" },
   { href: "/account/password", label: "Change password" },
   { href: "/account/privacy", label: "Privacy" },

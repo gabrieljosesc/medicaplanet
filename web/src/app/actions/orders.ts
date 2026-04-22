@@ -34,7 +34,12 @@ const checkoutSchema = z.object({
       })
     )
     .min(1),
-});
+  checkoutType: z.enum(["saved_manual_card", "bank_transfer"]),
+  userSavedCardId: z.string().uuid().optional(),
+}).refine(
+  (d) => d.checkoutType !== "saved_manual_card" || Boolean(d.userSavedCardId),
+  { message: "Select a saved card or choose bank transfer.", path: ["userSavedCardId"] }
+);
 
 export type CheckoutResult =
   | { ok: true; orderId: string }
@@ -119,6 +124,48 @@ export async function submitOrder(
   };
   const fullName = `${input.firstName} ${input.lastName}`.trim();
 
+  let paymentCardSnapshot: {
+    source: "manual_encrypted";
+    saved_card_id: string;
+    brand: string | null;
+    last4: string;
+    exp_month: number;
+    exp_year: number;
+    name_on_card: string;
+    pan_encrypted: string;
+  } | null = null;
+
+  if (input.checkoutType === "saved_manual_card") {
+    const { data: card, error: cardErr } = await supabase
+      .from("user_saved_cards")
+      .select("id, brand, last4, exp_month, exp_year, name_on_card, pan_encrypted")
+      .eq("id", input.userSavedCardId as string)
+      .eq("user_id", user.id)
+      .single();
+    if (cardErr || !card) {
+      return {
+        ok: false,
+        message: "Invalid or missing saved card. Add a card under Banks & cards or choose bank transfer.",
+      };
+    }
+    paymentCardSnapshot = {
+      source: "manual_encrypted",
+      saved_card_id: card.id,
+      brand: card.brand,
+      last4: card.last4,
+      exp_month: card.exp_month,
+      exp_year: card.exp_year,
+      name_on_card: card.name_on_card,
+      pan_encrypted: card.pan_encrypted,
+    };
+  }
+
+  const paymentHeader =
+    input.checkoutType === "saved_manual_card" && paymentCardSnapshot
+      ? `Payment: saved card · ${paymentCardSnapshot.brand ?? "card"} ····${paymentCardSnapshot.last4} · ${paymentCardSnapshot.name_on_card}\n`
+      : `Payment: direct bank transfer (CSR will follow up with instructions)\n`;
+  const mergedPaymentNotes = `${paymentHeader}${input.paymentNotes ?? ""}`.trim() || null;
+
   const baseOrderInsert = {
     user_id: user.id,
     email: input.email,
@@ -126,10 +173,11 @@ export async function submitOrder(
     phone: input.phone ?? null,
     shipping_address,
     billing_address: billing_address,
-    payment_notes: input.paymentNotes ?? null,
+    payment_notes: mergedPaymentNotes,
     customer_notes: input.customerNotes ?? null,
     status: "pending_csr" as const,
     subtotal,
+    payment_card_snapshot: paymentCardSnapshot,
   };
 
   const withPolicy = {
@@ -166,6 +214,28 @@ export async function submitOrder(
       const retry = await svc.from("orders").insert(baseOrderInsert).select("id").single();
       order = retry.data;
       oErr = retry.error;
+    }
+  }
+  if (!order && oErr) {
+    const msg = String(oErr.message ?? "");
+    if (msg.includes("payment_card_snapshot")) {
+      const noCardCols = {
+        user_id: user.id,
+        email: input.email,
+        full_name: fullName,
+        phone: input.phone ?? null,
+        shipping_address,
+        billing_address,
+        payment_notes: mergedPaymentNotes,
+        customer_notes: input.customerNotes ?? null,
+        status: "pending_csr" as const,
+        subtotal,
+        policy_acknowledged_at: withPolicy.policy_acknowledged_at,
+        policy_acknowledgement: withPolicy.policy_acknowledgement,
+      };
+      const res = await svc.from("orders").insert(noCardCols).select("id").single();
+      order = res.data;
+      oErr = res.error;
     }
   }
 

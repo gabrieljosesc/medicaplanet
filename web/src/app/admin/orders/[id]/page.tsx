@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { updateOrderAction } from "@/app/actions/admin";
+import { decryptCardPan } from "@/lib/payment-card-crypto";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -16,6 +17,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
   if (!order) notFound();
   const items = Array.isArray(order.order_items) ? order.order_items : [];
   const policyAck = order.policy_acknowledgement as Record<string, unknown> | null;
+  const paySnap = order.payment_card_snapshot as Record<string, unknown> | null;
 
   return (
     <div>
@@ -32,6 +34,36 @@ export default async function AdminOrderDetailPage({ params }: Props) {
         <p>Shipping: {JSON.stringify(order.shipping_address)}</p>
         {order.customer_notes && <p>Customer notes: {order.customer_notes}</p>}
         {order.payment_notes && <p>Payment notes: {order.payment_notes}</p>}
+        {paySnap && Object.keys(paySnap).length > 0 ? (
+          <div className="mt-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-950">
+            <p className="font-medium text-emerald-900">Saved card (customer)</p>
+            <p className="mt-1">
+              {(paySnap.brand as string) ?? "Card"} ···· {String(paySnap.last4 ?? "????")}{" "}
+              {paySnap.exp_month != null && paySnap.exp_year != null
+                ? ` · exp ${String(paySnap.exp_month).padStart(2, "0")}/${String(paySnap.exp_year).slice(-2)}`
+                : ""}
+            </p>
+            {typeof paySnap.name_on_card === "string" && paySnap.name_on_card ? (
+              <p className="mt-0.5">Name on card: {paySnap.name_on_card}</p>
+            ) : null}
+            {paySnap.source === "manual_encrypted" && typeof paySnap.pan_encrypted === "string" ? (
+              <p className="mt-2 font-mono text-[11px] leading-relaxed text-zinc-900">
+                Full PAN (admin):{" "}
+                {(() => {
+                  try {
+                    return decryptCardPan(paySnap.pan_encrypted as string);
+                  } catch {
+                    return "— could not decrypt (check PAYMENT_CARD_SECRET matches the value used when the order was placed)";
+                  }
+                })()}
+              </p>
+            ) : null}
+            <p className="mt-1 text-[11px] text-emerald-800">
+              Treat as highly sensitive. CVV was not stored; use your processor&apos;s rules for card-not-present
+              transactions.
+            </p>
+          </div>
+        ) : null}
         <div className="mt-2 rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-700">
           <p className="font-medium text-zinc-900">Policy acknowledgement</p>
           <p className="mt-1">
