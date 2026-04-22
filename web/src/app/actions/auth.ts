@@ -29,7 +29,7 @@ export async function signInWithPassword(formData: FormData): Promise<void> {
     redirect(`/auth/login?${q.toString()}`);
   }
   revalidatePath("/", "layout");
-  redirect(next ?? "/account");
+  redirect(next ?? "/shop");
 }
 
 export type RegisterFormState =
@@ -118,7 +118,7 @@ export async function registerWithProfile(
 
   revalidatePath("/", "layout");
   const next = safeAuthRedirectTarget(String(formData.get("next") ?? ""));
-  redirect(next ?? "/account");
+  redirect(next ?? "/shop");
 }
 
 /** Legacy minimal signup — kept for compatibility */
@@ -136,5 +136,5 @@ export async function signUpWithPassword(formData: FormData): Promise<void> {
     redirect("/auth/register?error=" + encodeURIComponent(error.message));
   }
   revalidatePath("/", "layout");
-  redirect("/account");
+  redirect("/shop");
 }
