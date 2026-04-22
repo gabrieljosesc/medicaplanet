@@ -1,6 +1,4 @@
-import Image from "next/image";
 import Link from "next/link";
-import { categoryHeroImageUrl } from "@/lib/category-hero-images";
 
 export type ShopCategoryRow = {
   slug: string;
@@ -34,10 +32,9 @@ function CapsuleMark() {
   );
 }
 
-/** Matches catalog highlight cards: 4:5 image, glass chips, no buy-now overlay, no wishlist. */
 function ShopCategoryCard({ slug, name, description }: ShopCategoryRow) {
   const href = categoryHref(slug);
-  const src = categoryHeroImageUrl(slug);
+  const initial = name.trim().slice(0, 1).toUpperCase();
 
   return (
     <li>
@@ -45,22 +42,14 @@ function ShopCategoryCard({ slug, name, description }: ShopCategoryRow) {
         href={href}
         className="group flex flex-col overflow-hidden rounded-[1.65rem] bg-white p-2 shadow-md ring-1 ring-zinc-100 transition hover:shadow-lg hover:ring-zinc-200/90"
       >
-        <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-zinc-100">
-          <Image
-            src={src}
-            alt={name}
-            fill
-            className="object-cover transition duration-300 [@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-[1.02]"
-            sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 33vw"
-          />
-          <div
-            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-black/10"
-            aria-hidden
-          />
-          <div className="pointer-events-none absolute right-3 top-3 z-[25] sm:right-4 sm:top-4">
+        <div className="relative flex min-h-[9.5rem] items-center justify-between rounded-2xl border border-zinc-200 bg-gradient-to-br from-zinc-50 to-white px-4 py-4">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-emerald-200/90 bg-emerald-50 text-2xl font-bold text-emerald-800">
+            {initial}
+          </div>
+          <div className="pointer-events-none absolute right-3 top-3 z-[25]">
             <CapsuleMark />
           </div>
-          <div className="pointer-events-none absolute bottom-3 right-3 z-[25] rounded-xl border border-zinc-200/90 bg-white/92 px-3 py-1.5 text-xs font-semibold text-zinc-900 shadow-md backdrop-blur-sm tabular-nums ring-1 ring-black/5 sm:text-sm">
+          <div className="pointer-events-none absolute bottom-3 right-3 z-[25] rounded-xl border border-zinc-200/90 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-900 shadow-sm tabular-nums ring-1 ring-black/5 sm:text-sm">
             View range →
           </div>
         </div>
@@ -79,31 +68,22 @@ function ShopCategoryCard({ slug, name, description }: ShopCategoryRow) {
 
 function FeaturedCategoryCard({ slug, name, description }: ShopCategoryRow) {
   const href = categoryHref(slug);
-  const src = categoryHeroImageUrl(slug);
+  const initial = name.trim().slice(0, 1).toUpperCase();
 
   return (
     <li className="md:col-span-2 lg:col-span-3">
       <Link
         href={href}
-        className="group flex min-h-[min(20rem,48vw)] flex-col overflow-hidden rounded-[1.75rem] bg-white p-2 shadow-lg ring-1 ring-zinc-100 transition hover:shadow-xl hover:ring-zinc-200/90 md:min-h-[15rem] md:flex-row"
+        className="group flex min-h-[14rem] flex-col overflow-hidden rounded-[1.75rem] bg-white p-2 shadow-lg ring-1 ring-zinc-100 transition hover:shadow-xl hover:ring-zinc-200/90 md:flex-row"
       >
-        <div className="relative h-56 w-full shrink-0 overflow-hidden rounded-2xl bg-zinc-100 md:h-auto md:min-h-full md:w-[min(42%,24rem)]">
-          <Image
-            src={src}
-            alt={name}
-            fill
-            className="object-cover transition duration-300 [@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-[1.02]"
-            sizes="(max-width:768px) 100vw, 50vw"
-            priority
-          />
-          <div
-            className="pointer-events-none absolute inset-0 bg-gradient-to-br from-black/25 via-transparent to-black/35"
-            aria-hidden
-          />
+        <div className="relative flex h-48 w-full shrink-0 items-center justify-center rounded-2xl border border-zinc-200 bg-gradient-to-br from-emerald-50 via-white to-zinc-50 md:h-auto md:min-h-full md:w-[min(34%,18rem)]">
+          <div className="flex h-20 w-20 items-center justify-center rounded-3xl border border-emerald-200/90 bg-white text-4xl font-bold text-emerald-800 shadow-sm">
+            {initial}
+          </div>
           <div className="pointer-events-none absolute right-4 top-4 z-[25]">
             <CapsuleMark />
           </div>
-          <div className="pointer-events-none absolute bottom-4 right-4 z-[25] rounded-xl border border-zinc-200/90 bg-white/92 px-3 py-1.5 text-xs font-semibold text-zinc-900 shadow-md backdrop-blur-sm sm:text-sm">
+          <div className="pointer-events-none absolute bottom-4 right-4 z-[25] rounded-xl border border-zinc-200/90 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-900 shadow-sm sm:text-sm">
             View range →
           </div>
         </div>

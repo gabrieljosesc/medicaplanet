@@ -11,7 +11,7 @@ import { withStorageImageTransform } from "@/lib/storage-image";
 export default async function HomePage() {
   const { user, profile, isAdmin } = await getSiteUserContext();
   const supabase = await createClient();
-  const [{ data: categories }, { data: featured }, { data: posts }] = await Promise.all([
+  const [{ data: categories }, { data: productsRaw }, { data: posts }] = await Promise.all([
     supabase
       .from("categories")
       .select("slug,name,description,sort_order")
@@ -19,11 +19,13 @@ export default async function HomePage() {
       .order("sort_order"),
     supabase
       .from("products")
-      .select("slug,title,description,base_price,currency,rating,review_count,price_tiers, product_images(url)")
+      .select(
+        "slug,title,description,base_price,currency,rating,review_count,price_tiers,category_id,categories(slug,name), product_images(url)"
+      )
       .eq("is_active", true)
       .order("is_featured", { ascending: false })
       .order("title")
-      .limit(8),
+      .limit(120),
     supabase
       .from("blog_posts")
       .select("slug,title,excerpt,published_at")
@@ -33,7 +35,19 @@ export default async function HomePage() {
       .limit(3),
   ]);
 
-  const feat = (featured ?? []).map((p) => {
+  const picked = new Set<string>();
+  const feat = (productsRaw ?? [])
+    .filter((p) => {
+      const categoryKey = String(p.category_id ?? "");
+      const rel = p.categories as { slug?: string } | { slug?: string }[] | null;
+      const categorySlug = Array.isArray(rel) ? rel[0]?.slug : rel?.slug;
+      if (!categoryKey || picked.has(categoryKey)) return false;
+      if (categorySlug === "orthopedic-injections" || categorySlug === "orthopaedics") return false;
+      picked.add(categoryKey);
+      return true;
+    })
+    .slice(0, 12)
+    .map((p) => {
     const imageUrl = Array.isArray(p.product_images) ? p.product_images[0]?.url : null;
     let heroImageSrc = resolveProductMainImage(p.slug, imageUrl ?? null, p.title);
     if (
@@ -48,7 +62,9 @@ export default async function HomePage() {
       heroImageSrc,
       imageUnoptimized: nextImageUnoptimized(heroImageSrc),
     };
-  });
+    })
+    .filter((p) => !p.heroImageSrc.includes("placehold.co"))
+    .slice(0, 8);
 
   return (
     <>
