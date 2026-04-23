@@ -100,6 +100,28 @@ export default async function PeptidesPage({ searchParams }: Props) {
           ))
         )}
       </div>
+
+      <section className="mt-12 rounded-2xl border border-zinc-200 bg-white p-5 text-sm text-zinc-700 shadow-sm sm:p-6">
+        <h2 className="text-base font-semibold text-zinc-900">Research use disclaimer</h2>
+        <p className="mt-3 leading-relaxed">
+          Peptide products listed on this website are supplied for research use only. They are not
+          intended for human or veterinary use, clinical treatment, or diagnostic application.
+        </p>
+        <p className="mt-2 leading-relaxed">
+          Statements on this website have not been evaluated by the U.S. Food and Drug
+          Administration and are not intended to diagnose, treat, cure, or prevent any disease.
+        </p>
+        <p className="mt-3 leading-relaxed">
+          By purchasing peptide products from MedicaPlanet, you confirm that you are ordering for
+          lawful research or professional purposes and agree to the full policy terms.
+        </p>
+        <Link
+          href="/legal/research-use-only"
+          className="mt-4 inline-block font-medium text-emerald-800 underline hover:no-underline"
+        >
+          Read the full Research Use Only policy
+        </Link>
+      </section>
     </div>
   );
 }

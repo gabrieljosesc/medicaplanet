@@ -43,6 +43,11 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
+              <Link href="/legal/research-use-only" className="hover:underline">
+                Research use only policy
+              </Link>
+            </li>
+            <li>
               <Link href="/legal/terms" className="hover:underline">
                 Terms of supply
               </Link>
@@ -63,6 +68,41 @@ export function SiteFooter() {
               </Link>
             </li>
           </ul>
+        </div>
+      </div>
+      <div className="mx-auto w-full max-w-6xl border-t border-emerald-800/60 px-4 py-5">
+        <p className="text-xs font-medium uppercase tracking-wide text-emerald-200">We accept</p>
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <img
+            src="https://cdn.simpleicons.org/visa/ffffff"
+            alt="Visa"
+            className="h-7 w-auto rounded bg-emerald-900/40 p-1.5"
+            loading="lazy"
+          />
+          <img
+            src="https://cdn.simpleicons.org/mastercard/ffffff"
+            alt="Mastercard"
+            className="h-7 w-auto rounded bg-emerald-900/40 p-1.5"
+            loading="lazy"
+          />
+          <img
+            src="https://cdn.simpleicons.org/americanexpress/ffffff"
+            alt="American Express"
+            className="h-7 w-auto rounded bg-emerald-900/40 p-1.5"
+            loading="lazy"
+          />
+          <img
+            src="https://cdn.simpleicons.org/googlepay/ffffff"
+            alt="Google Pay"
+            className="h-7 w-auto rounded bg-emerald-900/40 p-1.5"
+            loading="lazy"
+          />
+          <img
+            src="https://cdn.simpleicons.org/applepay/ffffff"
+            alt="Apple Pay"
+            className="h-7 w-auto rounded bg-emerald-900/40 p-1.5"
+            loading="lazy"
+          />
         </div>
       </div>
       <div className="border-t border-emerald-800/60 px-4 py-4 text-center text-xs text-emerald-300/80">
