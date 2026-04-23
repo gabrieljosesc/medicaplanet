@@ -74,33 +74,33 @@ export function SiteFooter() {
         <p className="text-xs font-medium uppercase tracking-wide text-emerald-200">We accept</p>
         <div className="mt-3 flex flex-wrap items-center gap-3">
           <img
-            src="https://cdn.simpleicons.org/visa/ffffff"
+            src="https://cdn.simpleicons.org/visa"
             alt="Visa"
-            className="h-7 w-auto rounded bg-emerald-900/40 p-1.5"
+            className="h-10 w-auto rounded-lg border border-emerald-800/60 bg-white px-3 py-2 shadow-sm"
             loading="lazy"
           />
           <img
-            src="https://cdn.simpleicons.org/mastercard/ffffff"
+            src="https://cdn.simpleicons.org/mastercard"
             alt="Mastercard"
-            className="h-7 w-auto rounded bg-emerald-900/40 p-1.5"
+            className="h-10 w-auto rounded-lg border border-emerald-800/60 bg-white px-3 py-2 shadow-sm"
             loading="lazy"
           />
           <img
-            src="https://cdn.simpleicons.org/americanexpress/ffffff"
+            src="https://cdn.simpleicons.org/americanexpress"
             alt="American Express"
-            className="h-7 w-auto rounded bg-emerald-900/40 p-1.5"
+            className="h-10 w-auto rounded-lg border border-emerald-800/60 bg-white px-3 py-2 shadow-sm"
             loading="lazy"
           />
           <img
-            src="https://cdn.simpleicons.org/googlepay/ffffff"
+            src="https://cdn.simpleicons.org/googlepay"
             alt="Google Pay"
-            className="h-7 w-auto rounded bg-emerald-900/40 p-1.5"
+            className="h-10 w-auto rounded-lg border border-emerald-800/60 bg-white px-3 py-2 shadow-sm"
             loading="lazy"
           />
           <img
-            src="https://cdn.simpleicons.org/applepay/ffffff"
+            src="https://cdn.simpleicons.org/applepay"
             alt="Apple Pay"
-            className="h-7 w-auto rounded bg-emerald-900/40 p-1.5"
+            className="h-10 w-auto rounded-lg border border-emerald-800/60 bg-white px-3 py-2 shadow-sm"
             loading="lazy"
           />
         </div>
