@@ -33,6 +33,11 @@ export function SiteFooter() {
           <p className="font-medium text-white">Policies</p>
           <ul className="mt-2 space-y-1 text-emerald-200/90">
             <li>
+              <Link href="/about-us" className="hover:underline">
+                About us
+              </Link>
+            </li>
+            <li>
               <Link href="/legal/verification" className="hover:underline">
                 Professional verification
               </Link>

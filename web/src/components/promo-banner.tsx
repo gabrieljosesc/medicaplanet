@@ -1,5 +1,16 @@
 import { createClient } from "@/lib/supabase/server";
 
+function sanitizePromoMessage(input: string): string {
+  return input
+    .replace(/\borthopaedics?\b/gi, "")
+    .replace(/\borthopedics?\b/gi, "")
+    .replace(/\s+,/g, ",")
+    .replace(/,\s*,/g, ",")
+    .replace(/\s{2,}/g, " ")
+    .replace(/\s+([,.])/g, "$1")
+    .trim();
+}
+
 export async function PromoBanner() {
   const supabase = await createClient();
   const { data } = await supabase
@@ -16,10 +27,11 @@ export async function PromoBanner() {
         : typeof v === "object" && v && "text" in v && typeof v.text === "string"
           ? v.text
           : "Licensed professionals: contact us for wholesale pricing and cold-chain shipping options.";
-  if (!message) return null;
+  const safeMessage = sanitizePromoMessage(message);
+  if (!safeMessage) return null;
   return (
     <div className="bg-amber-100 px-4 py-2 text-center text-sm text-amber-950">
-      {message}
+      {safeMessage}
     </div>
   );
 }
