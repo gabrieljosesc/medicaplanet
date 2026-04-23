@@ -108,7 +108,7 @@ export async function submitOrder(
     postalCode: input.postalCode,
     country: input.country,
   };
-  /** Same physical address as shipping; license + company kept here for CSR records. */
+  /** Same physical address as shipping; license + company kept for order review records. */
   const billing_address = {
     line1: input.line1,
     city: input.city,
@@ -163,7 +163,7 @@ export async function submitOrder(
   const paymentHeader =
     input.checkoutType === "saved_manual_card" && paymentCardSnapshot
       ? `Payment: saved card · ${paymentCardSnapshot.brand ?? "card"} ····${paymentCardSnapshot.last4} · ${paymentCardSnapshot.name_on_card}\n`
-      : `Payment: direct bank transfer (CSR will follow up with instructions)\n`;
+      : "Payment: direct bank transfer (transfer instructions sent after order review)\n";
   const mergedPaymentNotes = `${paymentHeader}${input.paymentNotes ?? ""}`.trim() || null;
 
   const baseOrderInsert = {

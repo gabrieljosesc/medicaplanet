@@ -22,7 +22,7 @@ export function NotificationsForm({
         />
         <span>
           <span className="font-medium text-zinc-800">Order updates</span>
-          <span className="block text-zinc-600">Status changes, shipping notes, and CSR messages.</span>
+          <span className="block text-zinc-600">Status changes, shipping notes, and support messages.</span>
         </span>
       </label>
       <label className="flex cursor-pointer items-start gap-3 text-sm">

@@ -51,7 +51,7 @@ export default async function PeptidesPage({ searchParams }: Props) {
       <h1 className="text-2xl font-semibold text-zinc-900">Peptides</h1>
       <p className="mt-3 max-w-3xl text-sm text-zinc-700">
         {cat?.description ??
-          "Research-use peptide descriptions for professional reference. Verify local regulations; CSR confirms account suitability."}
+          "Research-use peptide descriptions for professional reference. Verify local regulations and professional account requirements before ordering."}
       </p>
       <section className="mt-8 rounded-xl border border-amber-200 bg-amber-50/80 p-5 text-sm text-amber-950">
         <strong>Imagery:</strong> PDPs use neutral placeholders until you upload assets in Admin

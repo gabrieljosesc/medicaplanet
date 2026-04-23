@@ -28,8 +28,8 @@ export default async function PaymentMethodsPage() {
       <div>
         <h1 className="text-2xl font-semibold text-zinc-900">Banks &amp; cards</h1>
         <p className="mt-1 text-sm text-zinc-600">
-          Save a card for faster checkout. Card numbers are encrypted on the server; CSR can view full details on the
-          admin order page when you submit an order using that card.
+          Save a card for faster checkout. Card numbers are encrypted on the server and can be accessed only by authorized
+          admin users when needed for order processing.
         </p>
       </div>
       <PaymentMethodsClient initialMethods={(safeRows ?? []) as SavedCardRow[]} />

@@ -90,7 +90,7 @@ export default async function PurchasesPage({
       <div>
         <h1 className="text-2xl font-semibold text-zinc-900">My purchases</h1>
         <p className="mt-1 text-sm text-zinc-600">
-          Orders placed with MedicaPlanet. CSR may contact you while status is pending review.
+          Orders placed with MedicaPlanet. Our team may contact you while status is pending review.
         </p>
       </div>
 

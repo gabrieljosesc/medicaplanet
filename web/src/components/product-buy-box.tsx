@@ -44,7 +44,7 @@ export function ProductBuyBox({
     return (
       <div className="mt-6">
         <p className="text-lg font-semibold text-zinc-600">Request pricing</p>
-        <p className="mt-2 text-sm text-zinc-500">CSR will confirm availability and pricing.</p>
+        <p className="mt-2 text-sm text-zinc-500">Our team will confirm availability and pricing.</p>
       </div>
     );
   }

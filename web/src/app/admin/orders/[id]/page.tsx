@@ -98,7 +98,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
         <div>
           <label className="text-xs font-medium text-zinc-600">Status</label>
           <select name="status" defaultValue={order.status} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm">
-            <option value="pending_csr">pending_csr</option>
+            <option value="pending_csr">pending review</option>
             <option value="confirmed">confirmed</option>
             <option value="shipped">shipped</option>
             <option value="cancelled">cancelled</option>

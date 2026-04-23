@@ -9,7 +9,7 @@ export default function TermsPage() {
       <section className="space-y-2 text-sm text-zinc-700">
         <h2 className="text-base font-semibold text-zinc-900">Order process</h2>
         <p>
-          Checkout submissions are reviewed by CSR. Submission does not guarantee acceptance,
+          Checkout submissions are reviewed by our order team. Submission does not guarantee acceptance,
           pricing, or immediate dispatch until compliance and stock checks are complete.
         </p>
       </section>

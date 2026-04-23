@@ -5,7 +5,7 @@ export default function AdminHomePage() {
     <div>
       <h1 className="text-2xl font-semibold text-zinc-900">Admin</h1>
       <p className="mt-2 text-sm text-zinc-600">
-        Manage catalog, review CSR orders, and publish blog posts.
+        Manage catalog, review incoming orders, and publish blog posts.
       </p>
       <ul className="mt-6 list-disc space-y-2 pl-5 text-sm text-emerald-900">
         <li>
@@ -15,7 +15,7 @@ export default function AdminHomePage() {
         </li>
         <li>
           <Link href="/admin/orders" className="hover:underline">
-            Orders (pending CSR)
+            Orders (pending review)
           </Link>
         </li>
         <li>

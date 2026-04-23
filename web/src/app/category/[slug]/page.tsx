@@ -59,7 +59,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
       {cat.description && <p className="mt-3 max-w-3xl text-sm text-zinc-700">{cat.description}</p>}
       <div className="prose prose-sm mt-6 max-w-3xl text-zinc-700">
         <p>
-          MedicaPlanet supplies licensed professionals. CSR may request license verification before
+          MedicaPlanet supplies licensed professionals. We may request license verification before
           fulfillment. Pricing tiers from your internal export are reflected as &quot;From&quot;
           amounts when volume breaks exist.
         </p>

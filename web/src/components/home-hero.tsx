@@ -48,8 +48,8 @@ export function HomeHero() {
             Original injectables & research peptides at wholesale-style pricing
           </h1>
           <p className="mt-5 max-w-lg text-sm leading-relaxed text-white/85 md:ml-auto">
-            Dermal fillers, toxins, mesotherapy, skincare, and peptides — reviewed by CSR;
-            payment completed offline per your workflow.
+            Dermal fillers, toxins, mesotherapy, skincare, and peptides curated for licensed
+            professionals, with secure order review and fulfillment support.
           </p>
 
           <div className="mt-10 flex flex-col items-stretch gap-6 md:items-end">

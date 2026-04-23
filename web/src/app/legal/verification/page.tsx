@@ -4,8 +4,7 @@ export default function VerificationPolicyPage() {
       <h1 className="text-2xl font-semibold text-zinc-900">Professional Verification Policy</h1>
       <p className="text-sm text-zinc-700">
         MedicaPlanet supplies restricted products to licensed professionals and eligible clinical
-        businesses. Account registration and orders are subject to review by our compliance and CSR
-        team.
+        businesses. Account registration and orders are subject to review by our compliance team.
       </p>
       <section className="space-y-2 text-sm text-zinc-700">
         <h2 className="text-base font-semibold text-zinc-900">What we verify</h2>

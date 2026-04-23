@@ -8,7 +8,7 @@ export function SiteFooter() {
           <p className="text-lg font-semibold">MedicaPlanet</p>
           <p className="mt-2 text-sm text-emerald-200/90">
             Wholesale-style supply for licensed aesthetic and medical professionals. Cold-chain
-            awareness where required; CSR verifies licenses before fulfillment.
+            awareness where required, with professional verification before fulfillment.
           </p>
         </div>
 

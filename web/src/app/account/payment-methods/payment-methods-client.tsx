@@ -38,8 +38,8 @@ function AddCardModal({ onClose }: { onClose: () => void }) {
         </div>
         <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-900">
           For your protection, the full card number is encrypted on our servers.{" "}
-          <strong>We never store your CVV</strong> (security standard). CSR may contact you if a one-time security code
-          is needed for processing.
+          <strong>We never store your CVV</strong> (security standard). Our team may contact you if a one-time security
+          code is needed for processing.
         </div>
         <form onSubmit={handleSubmit} className="mt-4 space-y-3">
           <div>
@@ -114,8 +114,8 @@ export function PaymentMethodsClient({ initialMethods }: { initialMethods: Saved
   return (
     <div className="space-y-6">
       <p className="text-sm text-zinc-600">
-        Add cards here to reuse them at checkout. Full numbers are encrypted; CSR can view decrypted details in the admin
-        order screen after you place an order.
+        Add cards here to reuse them at checkout. Full numbers are encrypted and viewable only by authorized admin users
+        when processing an approved order.
       </p>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
 

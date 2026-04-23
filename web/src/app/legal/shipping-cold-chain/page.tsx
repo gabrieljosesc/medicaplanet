@@ -3,7 +3,7 @@ export default function ShippingColdChainPage() {
     <article className="mx-auto max-w-3xl space-y-6">
       <h1 className="text-2xl font-semibold text-zinc-900">Shipping & Cold-Chain Policy</h1>
       <p className="text-sm text-zinc-700">
-        Certain products require controlled handling. Dispatch methods are selected by CSR based on
+        Certain products require controlled handling. Dispatch methods are selected by our fulfillment team based on
         destination, regulatory constraints, and temperature sensitivity.
       </p>
       <section className="space-y-2 text-sm text-zinc-700">

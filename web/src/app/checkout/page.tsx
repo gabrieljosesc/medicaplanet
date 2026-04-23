@@ -367,8 +367,8 @@ export default function CheckoutPage() {
     <div className="mx-auto max-w-6xl">
       <h1 className="text-2xl font-semibold text-zinc-900">Checkout</h1>
       <p className="mt-2 text-sm text-zinc-600">
-        No card is charged at checkout. CSR reviews each order for professional verification, compliance, and shipping
-        constraints, then confirms payment and dispatch with you.
+        No card is charged at checkout. Each order is reviewed for professional verification, compliance, and shipping
+        constraints before payment and dispatch are confirmed with you.
       </p>
       <p className="mt-2 text-xs text-zinc-600">
         By submitting, you agree to our{" "}
@@ -586,8 +586,8 @@ export default function CheckoutPage() {
             <section className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
               <p className="text-sm font-semibold text-zinc-900">Payment & order notes</p>
               <p className="mt-1 text-xs text-zinc-500">
-                No card is charged at submit. CSR reviews the order, then processes payment using the card on file or your
-                bank transfer choice.
+                No card is charged at submit. Once your order is approved, payment is processed using the card on file or
+                your bank transfer choice.
               </p>
               {savedCards.length > 0 ? (
                 <div className="mt-3 space-y-3 text-sm text-zinc-800">
@@ -601,7 +601,8 @@ export default function CheckoutPage() {
                       className="mt-0.5 size-4"
                     />
                     <span>
-                      <span className="font-medium">Use a saved card</span> (CSR uses encrypted details from this order)
+                      <span className="font-medium">Use a saved card</span> (encrypted details are used for order
+                      processing)
                     </span>
                   </label>
                   {checkoutPayment === "saved_card" ? (
@@ -630,7 +631,8 @@ export default function CheckoutPage() {
                       className="mt-0.5 size-4"
                     />
                     <span>
-                      <span className="font-medium">Direct bank transfer</span> (CSR will send transfer details)
+                      <span className="font-medium">Direct bank transfer</span> (transfer details are sent after order
+                      approval)
                     </span>
                   </label>
                 </div>
@@ -679,7 +681,7 @@ export default function CheckoutPage() {
                       <span className="font-medium text-zinc-900">Payment method:</span> {review.paymentMethod}
                     </p>
                     {review.cardSummary ? (
-                      <p className="mt-1 break-all font-mono text-xs text-zinc-600">CSR: {review.cardSummary}</p>
+                      <p className="mt-1 break-all font-mono text-xs text-zinc-600">Card: {review.cardSummary}</p>
                     ) : null}
                   </div>
                 </div>
@@ -747,7 +749,7 @@ export default function CheckoutPage() {
               </p>
               <p className="flex items-center justify-between text-zinc-600">
                 <span>Shipping</span>
-                <span>CSR quote</span>
+                <span>Quoted after review</span>
               </p>
               <p className="flex items-center justify-between border-t border-zinc-200 pt-2 font-semibold text-zinc-900">
                 <span>Total</span>
