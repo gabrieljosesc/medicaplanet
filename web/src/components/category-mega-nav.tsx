@@ -179,7 +179,7 @@ export function CategoryMegaNav({
                   className="absolute left-0 top-full z-[58] hidden h-2 w-full sm:block"
                   aria-hidden
                 />
-                <div className="invisible absolute left-0 top-full z-[60] pt-2 opacity-0 transition group-hover:visible group-hover:opacity-100 sm:pt-2">
+                <div className="absolute right-0 top-full z-[60] hidden pt-2 group-hover:block sm:pt-2">
                   <div
                     className="w-[min(calc(100vw-2rem),24rem)] rounded-2xl border border-filler-pink-500/30 bg-filler-pink-400/95 py-2 pl-3.5 pr-2 shadow-xl"
                     role="menu"
