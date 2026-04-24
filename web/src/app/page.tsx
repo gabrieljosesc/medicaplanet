@@ -92,20 +92,19 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section>
-          <h2 className="mb-2 text-2xl font-bold tracking-tight text-filler-ink sm:text-3xl">
+      </div>
+
+      <section className="w-full border-t border-filler-peach-200/50 bg-white py-14 sm:py-20">
+        <div className="mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-10">
+          <h2 className="mb-10 text-2xl font-bold tracking-tight text-neutral-900 sm:mb-12 sm:text-3xl">
             Featured products
           </h2>
-          <p className="mb-8 max-w-2xl text-sm text-filler-ink/75 sm:text-base">
-            Highlights from the catalog—mark items as featured in admin, or pin specific product slugs
-            in the project config.
-          </p>
-          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-16 lg:grid-cols-3 lg:gap-x-10 lg:gap-y-20">
             {feat.length === 0 ? (
-              <p className="text-sm text-filler-ink/60 sm:col-span-2 lg:col-span-3">
+              <p className="text-sm text-neutral-500 sm:col-span-2 lg:col-span-3">
                 No active products yet. Apply the Supabase migration and run{" "}
-                <code className="rounded bg-filler-peach-200/80 px-1">npm run import:catalog</code> from
-                the repo root.
+                <code className="rounded bg-neutral-100 px-1.5 py-0.5 text-xs">npm run import:catalog</code>{" "}
+                from the repo root.
               </p>
             ) : (
               feat.map((p) => {
@@ -133,8 +132,8 @@ export default async function HomePage() {
               })
             )}
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </>
   );
 }

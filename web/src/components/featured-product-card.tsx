@@ -12,7 +12,7 @@ import { parsePriceTiersJson, unitPriceForQuantity } from "@/lib/price-tiers";
 function StarRow({ rating }: { rating: number }) {
   const r = Math.min(5, Math.max(0, Math.round(rating)));
   return (
-    <div className="flex gap-0.5 text-amber-400" aria-label={`${r} of 5 stars`}>
+    <div className="flex gap-0.5 text-[13px] leading-none text-amber-400" aria-label={`${r} of 5 stars`}>
       {[1, 2, 3, 4, 5].map((i) => (
         <span key={i} className={i <= r ? "opacity-100" : "opacity-20"}>
           ★
@@ -39,7 +39,7 @@ function InfoIcon({ className }: { className?: string }) {
 }
 
 /**
- * FillerSupplies-style row: image + blob, tags, title, stars, From price, Info + Add to cart.
+ * Open catalog row (FillerSupplies-style): no card chrome, no image blobs—full-bleed grid cell.
  */
 export function FeaturedProductCard({
   slug,
@@ -79,10 +79,8 @@ export function FeaturedProductCard({
   const display = Number.isFinite(minPrice) && minPrice > 0 ? minPrice : basePrice;
   const cur = (currency && currency.trim()) || "USD";
   const prefix = cur === "USD" ? "$" : `${cur} `;
-  const priceLine =
-    hasPrice && Number.isFinite(display) && display > 0
-      ? `${tiers.length > 0 ? "From " : ""}${prefix}${Math.round(display)}`
-      : "Request pricing";
+  const showFrom = tiers.length > 0;
+  const amount = hasPrice && Number.isFinite(display) && display > 0 ? Math.round(display) : null;
 
   const { addLine } = useCart();
   const router = useRouter();
@@ -94,74 +92,78 @@ export function FeaturedProductCard({
     !cat.name.toLowerCase().includes(firstWord.toLowerCase().slice(0, 3));
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-filler-peach-200/80 bg-white p-3 shadow-sm sm:flex-row sm:gap-4 sm:p-4">
-      <div className="relative flex min-h-[11rem] w-full shrink-0 items-center justify-center sm:w-[42%] sm:max-w-[220px]">
-        <div
-          className="pointer-events-none absolute inset-0 -z-0 scale-105 rounded-[1.75rem] bg-gradient-to-br from-amber-50/90 via-filler-peach-200/50 to-filler-pink-200/50"
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute -bottom-2 -left-1 h-24 w-24 rounded-full bg-filler-pink-300/35 blur-2xl"
-          aria-hidden
-        />
-        <div className="relative h-48 w-full sm:h-52">
-          <Link
-            href={`/product/${slug}`}
-            className="absolute inset-0 z-10 block p-2 sm:p-3"
-            aria-label={title}
-          >
+    <div className="flex h-full min-h-0 flex-col gap-4 sm:flex-row sm:items-start sm:gap-6 lg:gap-8">
+      <div className="relative flex w-full shrink-0 items-center justify-center sm:w-[38%] sm:max-w-[200px] lg:max-w-[240px]">
+        <div className="relative aspect-[4/5] w-full max-w-[200px] sm:max-w-none">
+          <Link href={`/product/${slug}`} className="absolute inset-0 z-10" aria-label={title}>
             <Image
               src={heroImageSrc}
               alt={title}
               fill
-              className="object-contain object-center drop-shadow-sm"
-              sizes="(max-width: 640px) 90vw, 220px"
+              className="object-contain object-center"
+              sizes="(max-width: 640px) 45vw, 240px"
               unoptimized={imageUnoptimized}
             />
           </Link>
         </div>
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col text-filler-ink">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] font-medium sm:text-xs">
+      <div className="flex min-w-0 flex-1 flex-col text-neutral-900">
+        {reviewCount > 0 && rating > 0 ? (
+          <div className="flex w-full items-start justify-end">
+            <StarRow rating={rating} />
+          </div>
+        ) : null}
+
+        {amount != null ? (
+          <p className={`text-sm text-neutral-800 ${reviewCount > 0 && rating > 0 ? "mt-1" : "mt-0"}`}>
+            {showFrom ? "From " : null}
+            <span className="text-2xl font-bold tabular-nums text-neutral-900 sm:text-3xl">
+              {prefix}
+              {amount}
+            </span>
+          </p>
+        ) : (
+          <p
+            className={`text-sm font-medium text-neutral-600 ${reviewCount > 0 && rating > 0 ? "mt-1" : "mt-0"}`}
+          >
+            Request pricing
+          </p>
+        )}
+
+        <div className="mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-zinc-500 sm:text-sm">
           {cat ? (
             <Link
               href={categoryHref(cat.slug)}
-              className="text-filler-rose-800 underline decoration-filler-rose-600/50 underline-offset-2 hover:decoration-filler-rose-800"
+              className="underline decoration-zinc-300 underline-offset-2 transition hover:text-neutral-700"
             >
               {cat.name}
             </Link>
           ) : null}
           {showBrandTag ? (
             <>
-              {cat ? <span className="text-filler-ink/35">·</span> : null}
+              {cat ? <span className="text-zinc-300">·</span> : null}
               <Link
                 href={`/search?q=${encodeURIComponent(firstWord)}`}
-                className="text-filler-rose-800 underline decoration-filler-rose-600/50 underline-offset-2"
+                className="underline decoration-zinc-300 underline-offset-2 transition hover:text-neutral-700"
               >
                 {firstWord}
               </Link>
             </>
           ) : null}
         </div>
+
         <Link
           href={`/product/${slug}`}
-          className="mt-1.5 text-base font-bold leading-snug text-filler-ink hover:text-filler-rose-800"
+          className="mt-1.5 text-base font-bold leading-snug text-neutral-900 sm:text-lg"
         >
           {title}
         </Link>
-        {reviewCount > 0 && rating > 0 ? (
-          <div className="mt-2">
-            <StarRow rating={rating} />
-          </div>
-        ) : null}
-        <p className="mt-2 text-sm font-semibold text-filler-ink tabular-nums sm:text-base">
-          {priceLine}
-        </p>
-        <div className="mt-auto flex flex-wrap items-center gap-2 pt-4 sm:pt-3">
+
+        <div className="mt-4 flex flex-wrap items-center gap-2 sm:mt-5">
           <Link
             href={`/product/${slug}`}
-            className="inline-flex items-center gap-1.5 rounded-full border border-filler-ink/15 bg-filler-cream/80 px-3 py-1.5 text-xs font-semibold text-filler-ink/90 transition hover:border-filler-ink/30 hover:bg-filler-peach-200/60"
+            className="inline-flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-2 text-xs font-semibold text-neutral-800 transition hover:border-neutral-300 hover:bg-neutral-50"
           >
             <InfoIcon className="h-3.5 w-3.5" />
             Product
@@ -169,7 +171,7 @@ export function FeaturedProductCard({
           {hasPrice ? (
             <button
               type="button"
-              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-filler-rose-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-filler-rose-700"
+              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-[#e07a7a] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#d45c5c] sm:px-5"
               onClick={() => {
                 addLine({
                   slug,
