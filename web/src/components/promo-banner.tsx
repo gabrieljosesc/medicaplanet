@@ -30,7 +30,7 @@ export async function PromoBanner() {
   const safeMessage = sanitizePromoMessage(message);
   if (!safeMessage) return null;
   return (
-    <div className="border-b border-teal-900/20 bg-gradient-to-r from-slate-900 via-slate-900 to-teal-950 px-4 py-2.5 text-center text-sm text-teal-50">
+    <div className="border-b border-filler-pink-300/40 bg-gradient-to-r from-filler-peach-200/90 via-filler-pink-200/80 to-filler-peach-200/90 px-4 py-2.5 text-center text-sm font-medium text-filler-ink/90">
       {safeMessage}
     </div>
   );

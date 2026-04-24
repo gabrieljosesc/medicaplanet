@@ -2,15 +2,12 @@ import Link from "next/link";
 import { CatalogHighlightCard } from "@/components/catalog-highlight-card";
 import { CategoriesBand } from "@/components/categories-band";
 import { HomeHero } from "@/components/home-hero";
-import { HomeHeroChrome } from "@/components/home-hero-chrome";
 import { getSiteBlogPosts } from "@/lib/site-blog";
 import { createClient } from "@/lib/supabase/server";
 import { nextImageUnoptimized, resolveProductMainImage } from "@/lib/product-image";
-import { getSiteUserContext } from "@/lib/site-user-context";
 import { withStorageImageTransform } from "@/lib/storage-image";
 
 export default async function HomePage() {
-  const { user, profile, isAdmin } = await getSiteUserContext();
   const supabase = await createClient();
   const [{ data: categories }, { data: productsRaw }] = await Promise.all([
     supabase
@@ -43,86 +40,93 @@ export default async function HomePage() {
     })
     .slice(0, 12)
     .map((p) => {
-    const imageUrl = Array.isArray(p.product_images) ? p.product_images[0]?.url : null;
-    let heroImageSrc = resolveProductMainImage(p.slug, imageUrl ?? null, p.title);
-    if (
-      process.env.NEXT_PUBLIC_SUPABASE_IMAGE_TRANSFORM === "1" &&
-      heroImageSrc.includes("/storage/v1/object/public/")
-    ) {
-      heroImageSrc = withStorageImageTransform(heroImageSrc, 520);
-    }
-    return {
-      ...p,
-      imageUrl,
-      heroImageSrc,
-      imageUnoptimized: nextImageUnoptimized(heroImageSrc),
-    };
+      const imageUrl = Array.isArray(p.product_images) ? p.product_images[0]?.url : null;
+      let heroImageSrc = resolveProductMainImage(p.slug, imageUrl ?? null, p.title);
+      if (
+        process.env.NEXT_PUBLIC_SUPABASE_IMAGE_TRANSFORM === "1" &&
+        heroImageSrc.includes("/storage/v1/object/public/")
+      ) {
+        heroImageSrc = withStorageImageTransform(heroImageSrc, 520);
+      }
+      return {
+        ...p,
+        imageUrl,
+        heroImageSrc,
+        imageUnoptimized: nextImageUnoptimized(heroImageSrc),
+      };
     })
     .filter((p) => !p.heroImageSrc.includes("placehold.co"))
     .slice(0, 8);
 
   return (
     <>
-      <HomeHeroChrome user={user} profile={profile} isAdmin={isAdmin} />
       <HomeHero />
-      <div className="mx-auto max-w-6xl space-y-14 px-4 py-12">
-      <section>
-        <CategoriesBand
-          categories={(categories ?? []).map((c) => ({ slug: c.slug, name: c.name }))}
-        />
-      </section>
+      <div className="mx-auto max-w-6xl space-y-16 px-4 py-12 sm:py-14">
+        <section>
+          <CategoriesBand
+            categories={(categories ?? []).map((c) => ({ slug: c.slug, name: c.name }))}
+          />
+        </section>
 
-      <section>
-        <h2 className="mb-6 font-serif text-2xl font-medium tracking-tight text-slate-900 sm:text-3xl">
-          Catalog highlights
-        </h2>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-7">
-          {feat.length === 0 ? (
-            <p className="text-sm text-zinc-600">
-              No active products yet. Apply the Supabase migration and run{" "}
-              <code className="rounded bg-zinc-100 px-1">npm run import:catalog</code> from the repo
-              root.
-            </p>
-          ) : (
-            feat.map((p) => (
-              <CatalogHighlightCard
-                key={p.slug}
-                slug={p.slug}
-                title={p.title}
-                description={typeof p.description === "string" ? p.description : null}
-                basePrice={Number(p.base_price)}
-                currency={p.currency}
-                rating={Number(p.rating)}
-                reviewCount={p.review_count}
-                heroImageSrc={p.heroImageSrc}
-                imageUnoptimized={p.imageUnoptimized}
-                priceTiersRaw={p.price_tiers}
-              />
-            ))
-          )}
-        </div>
-      </section>
-
-      <section>
-        <div className="mb-4 flex items-end justify-between gap-4">
-          <h2 className="font-serif text-xl font-medium text-slate-900 sm:text-2xl">From the blog</h2>
-          <Link href="/blog" className="text-sm font-medium text-teal-800 hover:underline">
-            All posts
-          </Link>
-        </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          {featuredBlogPosts.map((b) => (
+        <section>
+          <div className="mb-4 flex items-end justify-between gap-4">
+            <h2 className="text-xl font-semibold text-filler-ink sm:text-2xl">From the blog</h2>
             <Link
-              key={b.slug}
-              href={`/blog/${b.slug}`}
-              className="group rounded-xl border border-slate-200/90 bg-white p-5 shadow-sm transition hover:border-teal-200 hover:shadow-md"
+              href="/blog"
+              className="text-sm font-medium text-filler-rose-800 hover:underline"
             >
-              <h3 className="font-medium text-slate-900 group-hover:text-teal-900">{b.title}</h3>
-              {b.excerpt && <p className="mt-2 line-clamp-3 text-sm text-zinc-600">{b.excerpt}</p>}
+              All posts
             </Link>
-          ))}
-        </div>
-      </section>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {featuredBlogPosts.map((b) => (
+              <Link
+                key={b.slug}
+                href={`/blog/${b.slug}`}
+                className="group rounded-xl border border-filler-peach-200/80 bg-white p-5 shadow-sm transition hover:border-filler-pink-300 hover:shadow-md"
+              >
+                <h3 className="font-medium text-filler-ink group-hover:text-filler-rose-800">
+                  {b.title}
+                </h3>
+                {b.excerpt && <p className="mt-2 line-clamp-3 text-sm text-filler-ink/70">{b.excerpt}</p>}
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-2 text-2xl font-bold tracking-tight text-filler-ink sm:text-3xl">
+            Featured products
+          </h2>
+          <p className="mb-6 max-w-2xl text-sm text-filler-ink/75 sm:text-base">
+            A selection of our catalog. Browse the shop for the full range.
+          </p>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-7">
+            {feat.length === 0 ? (
+              <p className="text-sm text-filler-ink/60">
+                No active products yet. Apply the Supabase migration and run{" "}
+                <code className="rounded bg-filler-peach-200/80 px-1">npm run import:catalog</code>{" "}
+                from the repo root.
+              </p>
+            ) : (
+              feat.map((p) => (
+                <CatalogHighlightCard
+                  key={p.slug}
+                  slug={p.slug}
+                  title={p.title}
+                  description={typeof p.description === "string" ? p.description : null}
+                  basePrice={Number(p.base_price)}
+                  currency={p.currency}
+                  rating={Number(p.rating)}
+                  reviewCount={p.review_count}
+                  heroImageSrc={p.heroImageSrc}
+                  imageUnoptimized={p.imageUnoptimized}
+                  priceTiersRaw={p.price_tiers}
+                />
+              ))
+            )}
+          </div>
+        </section>
       </div>
     </>
   );

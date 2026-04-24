@@ -1,11 +1,10 @@
 @import "tailwindcss";
 
-/* Redesign: clinical slate + teal, soft surface, Fraunces for display via --font-fraunces */
+/* Filler-supplies–inspired: warm cream, peach, rose / pink; clean sans. */
 :root {
-  --background: #f4f6f8;
-  --foreground: #0f172a;
-  --mp-surface: #f1f5f9;
-  --mp-hero-tint: color-mix(in srgb, #0d9488 8%, transparent);
+  --background: #fffbf7;
+  --foreground: #3d2a26;
+  --mp-surface: #fffbf7;
 }
 
 @theme inline {
@@ -13,7 +12,22 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
+  /* Brand palette (utilities: bg-filler-cream, text-filler-ink, …) */
+  --color-filler-cream: #fffbf7;
+  --color-filler-ink: #3d2a26;
+  --color-filler-peach-200: #fce5d6;
+  --color-filler-peach-300: #fad4c0;
+  --color-filler-peach-400: #f0c2a8;
+  --color-filler-pink-200: #fcd4d4;
+  --color-filler-pink-300: #f5b4b4;
+  --color-filler-pink-400: #ed9a9a;
+  --color-filler-pink-500: #e07a7a;
+  --color-filler-rose-600: #c75c5c;
+  --color-filler-rose-700: #b45353;
+  --color-filler-rose-800: #8f3d3d;
+  --color-filler-coral-400: #e8a598;
+  --color-filler-mustard-400: #c9a227;
+  --color-filler-mint-500: #5a9a7a;
 }
 
 body {
@@ -23,6 +37,6 @@ body {
 }
 
 ::selection {
-  background: color-mix(in srgb, #0d9488 24%, white);
-  color: #0f172a;
+  background: color-mix(in srgb, #e07a7a 32%, white);
+  color: #2d1f1c;
 }

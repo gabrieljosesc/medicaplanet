@@ -89,8 +89,8 @@ export function CatalogHighlightCard({
   );
 
   return (
-    <div className="group flex flex-col rounded-[1.65rem] bg-white p-2 shadow-md ring-1 ring-zinc-100 transition hover:shadow-lg hover:ring-zinc-200/90">
-      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-zinc-100">
+    <div className="group flex flex-col rounded-[1.65rem] bg-white p-2 shadow-md ring-1 ring-filler-peach-200/90 transition hover:shadow-lg hover:ring-filler-pink-300/80">
+      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-filler-cream">
         <Link
           href={`/product/${slug}`}
           className="absolute inset-0 z-0 block outline-none"
@@ -157,11 +157,15 @@ export function CatalogHighlightCard({
       </div>
 
       <Link href={`/product/${slug}`} className="flex flex-1 flex-col px-2 pb-3 pt-4">
-        <h3 className="line-clamp-2 text-lg font-bold tracking-tight text-zinc-900 transition group-hover:text-teal-900">
+        <h3 className="line-clamp-2 text-lg font-bold tracking-tight text-filler-ink transition group-hover:text-filler-rose-800">
           {title}
         </h3>
-        {subtitle ? <p className="mt-1 text-xs font-medium text-teal-800/90">{subtitle}</p> : null}
-        <p className="mt-1.5 line-clamp-2 text-sm font-normal leading-snug text-zinc-500">{blurb}</p>
+        {subtitle ? (
+          <p className="mt-1 text-xs font-medium text-filler-rose-800/90">{subtitle}</p>
+        ) : null}
+        <p className="mt-1.5 line-clamp-2 text-sm font-normal leading-snug text-filler-ink/55">
+          {blurb}
+        </p>
       </Link>
     </div>
   );

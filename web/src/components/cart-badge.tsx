@@ -50,7 +50,7 @@ export function CartBadge({
       className={
         isLight
           ? "relative inline-flex h-9 w-9 items-center justify-center rounded-full text-white hover:bg-white/10"
-          : "relative inline-flex h-9 w-9 items-center justify-center rounded-md text-teal-800 hover:bg-teal-50 hover:text-teal-900"
+          : "relative inline-flex h-9 w-9 items-center justify-center rounded-md text-filler-rose-800 hover:bg-filler-peach-200/90 hover:text-filler-ink"
       }
     >
       <IconCartBag className="h-[22px] w-[22px] shrink-0" />
@@ -59,7 +59,7 @@ export function CartBadge({
           className={
             isLight
               ? "absolute right-0 top-0 flex h-4 min-w-4 translate-x-0.5 -translate-y-0.5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-medium text-white"
-              : "absolute right-0 top-0 flex h-4 min-w-4 translate-x-0.5 -translate-y-0.5 items-center justify-center rounded-full bg-teal-700 px-1 text-[10px] font-medium text-white"
+              : "absolute right-0 top-0 flex h-4 min-w-4 translate-x-0.5 -translate-y-0.5 items-center justify-center rounded-full bg-filler-rose-700 px-1 text-[10px] font-medium text-white"
           }
         >
           {count > 9 ? "9+" : count}

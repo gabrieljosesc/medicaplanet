@@ -42,7 +42,7 @@ export function UserMenu({
         className={
           variant === "light"
             ? "flex max-w-[200px] items-center gap-2 rounded-full px-1 py-1 text-left text-sm text-white hover:bg-white/10"
-            : "flex max-w-[200px] items-center gap-2 rounded-md px-1 py-1 text-left text-sm text-teal-900 hover:bg-teal-50"
+            : "flex max-w-[200px] items-center gap-2 rounded-md px-1 py-1 text-left text-sm text-filler-ink hover:bg-filler-peach-200/90"
         }
         aria-expanded={open}
         aria-haspopup="menu"
@@ -68,7 +68,7 @@ export function UserMenu({
               className={
                 variant === "light"
                   ? "flex h-full w-full items-center justify-center text-xs font-semibold text-white"
-                  : "flex h-full w-full items-center justify-center text-xs font-semibold text-teal-800"
+                  : "flex h-full w-full items-center justify-center text-xs font-semibold text-filler-rose-800"
               }
             >
               {displayName.slice(0, 1).toUpperCase()}
@@ -139,7 +139,7 @@ export function UserMenu({
                   <form action={signOut}>
                     <button
                       type="submit"
-                      className="rounded-full bg-teal-800 px-4 py-2 text-sm font-medium text-white hover:bg-teal-900"
+                      className="rounded-full bg-filler-rose-800 px-4 py-2 text-sm font-medium text-white hover:bg-filler-rose-700"
                     >
                       Yes, log out
                     </button>

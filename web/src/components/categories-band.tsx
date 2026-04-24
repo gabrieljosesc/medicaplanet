@@ -25,7 +25,7 @@ function ViewAllLink() {
   return (
     <Link
       href="/shop"
-      className="inline-flex items-center gap-1 text-sm font-medium text-zinc-900 transition hover:text-teal-800"
+      className="inline-flex items-center gap-1 text-sm font-medium text-filler-ink transition hover:text-filler-rose-800"
     >
       View all
       <span aria-hidden className="tracking-tighter">
@@ -40,8 +40,8 @@ function CapsuleGlyph({ emphasized }: { emphasized: boolean }) {
     <span
       className={
         emphasized
-          ? "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-800 ring-1 ring-teal-200/80"
-          : "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-100/90 text-zinc-400 ring-1 ring-zinc-200/50"
+          ? "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-filler-pink-200/90 text-filler-rose-800 ring-1 ring-filler-pink-400/80"
+          : "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-filler-peach-200/80 text-filler-ink/35 ring-1 ring-filler-peach-300/50"
       }
       aria-hidden
     >
@@ -72,9 +72,9 @@ export function CategoriesBand({
 
   if (categories.length === 0) {
     return (
-      <section className="rounded-2xl bg-white px-5 py-10 shadow-sm ring-1 ring-zinc-200/80 sm:px-8">
-        <h2 className="font-serif text-2xl font-medium tracking-tight text-slate-900 sm:text-3xl">Categories</h2>
-        <p className="mt-6 text-sm text-zinc-500">No categories yet.</p>
+      <section className="rounded-2xl bg-white px-5 py-10 shadow-sm ring-1 ring-filler-peach-300/70 sm:px-8">
+        <h2 className="text-2xl font-bold tracking-tight text-filler-ink sm:text-3xl">Categories</h2>
+        <p className="mt-6 text-sm text-filler-ink/55">No categories yet.</p>
         <div className="mt-10 flex justify-end sm:mt-12">
           <ViewAllLink />
         </div>
@@ -83,8 +83,8 @@ export function CategoriesBand({
   }
 
   return (
-    <section className="rounded-2xl bg-white px-5 py-8 shadow-sm ring-1 ring-zinc-200/80 sm:px-8 sm:py-10">
-      <h2 className="font-serif text-2xl font-medium tracking-tight text-slate-900 sm:text-3xl">Categories</h2>
+    <section className="rounded-2xl bg-white px-5 py-8 shadow-sm ring-1 ring-filler-peach-300/70 sm:px-8 sm:py-10">
+      <h2 className="text-2xl font-bold tracking-tight text-filler-ink sm:text-3xl">Categories</h2>
 
       <div
         className="mt-6 flex flex-wrap content-start items-center gap-x-4 gap-y-4 sm:gap-x-8 sm:gap-y-5"
@@ -116,8 +116,8 @@ export function CategoriesBand({
               <span
                 className={
                   emphasized
-                    ? "text-xl font-bold leading-snug tracking-tight text-zinc-900 transition-[color,font-weight] duration-150 sm:text-2xl md:text-[1.65rem]"
-                    : "text-xl font-light leading-snug tracking-tight text-zinc-400 transition-[color,font-weight] duration-150 sm:text-2xl md:text-[1.65rem]"
+                    ? "text-xl font-bold leading-snug tracking-tight text-filler-ink transition-[color,font-weight] duration-150 sm:text-2xl md:text-[1.65rem]"
+                    : "text-xl font-light leading-snug tracking-tight text-filler-ink/30 transition-[color,font-weight] duration-150 sm:text-2xl md:text-[1.65rem]"
                 }
               >
                 {c.name}

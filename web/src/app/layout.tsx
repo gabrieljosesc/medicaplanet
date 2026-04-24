@@ -1,14 +1,9 @@
 import type { Metadata } from "next";
-import { Fraunces, Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/cart-context";
 import { LayoutShell } from "@/components/layout-shell";
 import { createClient } from "@/lib/supabase/server";
-
-const displaySerif = Fraunces({
-  variable: "--font-fraunces",
-  subsets: ["latin"],
-});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,11 +35,8 @@ export default async function RootLayout({
   } = await supabase.auth.getUser();
 
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${displaySerif.variable} h-full`}
-    >
-      <body className="flex min-h-full flex-col bg-[var(--mp-surface)] text-zinc-900 antialiased">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full`}>
+      <body className="flex min-h-full flex-col bg-filler-cream text-filler-ink antialiased">
         <CartProvider cartOwnerKey={user?.id ?? null}>
           <LayoutShell>{children}</LayoutShell>
         </CartProvider>

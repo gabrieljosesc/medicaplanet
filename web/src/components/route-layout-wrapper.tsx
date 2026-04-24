@@ -15,7 +15,7 @@ export function RouteLayoutWrapper({
 
   return (
     <>
-      {!isHome ? defaultChrome : null}
+      {defaultChrome}
       <div
         className={
           isHome
