@@ -61,12 +61,12 @@ export function HomeHeroSlideshow({ slides }: { slides: MonthlyHighlightSlide[] 
               href={`/product/${s.slug}`}
               className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-filler-rose-600/50 focus-visible:ring-offset-2"
             >
-              <div className="relative aspect-[4/3] w-full">
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-gradient-to-b from-filler-pink-100/45 via-filler-cream/80 to-filler-peach-100/50 ring-1 ring-filler-peach-200/30">
                 <Image
                   src={s.heroImageSrc}
                   alt={s.title}
                   fill
-                  className="object-contain object-center"
+                  className="object-contain object-center bg-transparent"
                   sizes="(max-width: 768px) 90vw, 420px"
                   unoptimized={s.imageUnoptimized}
                   priority={i === 0}
