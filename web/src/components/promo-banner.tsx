@@ -1,5 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 
+const PROMO_LINE =
+  "Wholesale Pricing for Licensed Professionals";
+
 function sanitizePromoMessage(input: string): string {
   return input
     .replace(/\borthopaedics?\b/gi, "")
@@ -9,6 +12,19 @@ function sanitizePromoMessage(input: string): string {
     .replace(/\s{2,}/g, " ")
     .replace(/\s+([,.])/g, "$1")
     .trim();
+}
+
+/** Replace long legacy default copy stored in `site_settings` with the current line. */
+function normalizePromoText(raw: string): string {
+  const t = raw.trim();
+  if (
+    t.toLowerCase().startsWith("licensed professionals:") &&
+    t.length > 40 &&
+    t.toLowerCase().includes("dermal fillers")
+  ) {
+    return PROMO_LINE;
+  }
+  return t;
 }
 
 export async function PromoBanner() {
@@ -21,13 +37,13 @@ export async function PromoBanner() {
   const v = data?.value as { text?: string } | string | null | undefined;
   const message =
     v == null
-      ? "Wholesale Pricing for Licensed Professionals"
+      ? PROMO_LINE
       : typeof v === "string"
         ? v
         : typeof v === "object" && v && "text" in v && typeof v.text === "string"
           ? v.text
-          : "Wholesale Pricing for Licensed Professionals";
-  const safeMessage = sanitizePromoMessage(message);
+          : PROMO_LINE;
+  const safeMessage = sanitizePromoMessage(normalizePromoText(message));
   if (!safeMessage) return null;
   return (
     <div className="max-w-full overflow-x-hidden border-b border-filler-pink-300/40 bg-gradient-to-r from-filler-peach-200/90 via-filler-pink-200/80 to-filler-peach-200/90 px-3 py-2.5 text-center text-sm font-medium text-filler-ink/90 sm:px-4">

@@ -6,6 +6,7 @@ import { HomeBrandMarquee } from "@/components/home-brand-marquee";
 import { HomeHero } from "@/components/home-hero";
 import { MobileTopSellersStrip } from "@/components/mobile-top-sellers-strip";
 import { buildHomeBrandMarqueeItems } from "@/lib/home-brand-marquee";
+import { buildMonthlyHighlightSlides } from "@/lib/monthly-highlight-slides";
 import { getSiteBlogPosts } from "@/lib/site-blog";
 import { createClient } from "@/lib/supabase/server";
 import { mergeBestSellerSlots, resolveBestSellerSlots } from "@/lib/best-sellers-home";
@@ -81,17 +82,11 @@ export default async function HomePage() {
     .slice(0, 12);
 
   const brandMarqueeItems = buildHomeBrandMarqueeItems(relFiltered.map((p) => p.title));
-
-  const heroBestSellerPreviews = bestSellers.map((row) => ({
-    slug: row.product.slug,
-    title: row.product.title,
-    heroImageSrc: row.product.heroImageSrc,
-    imageUnoptimized: Boolean(row.product.imageUnoptimized),
-  }));
+  const monthlyHighlightSlides = buildMonthlyHighlightSlides(bestSellers);
 
   return (
     <>
-      <HomeHero bestSellerPreviews={heroBestSellerPreviews} />
+      <HomeHero slides={monthlyHighlightSlides} />
       <HomeBrandMarquee items={brandMarqueeItems} />
       <div className="mx-auto max-w-6xl space-y-16 px-4 py-12 sm:py-14">
         <section>
