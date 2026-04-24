@@ -26,7 +26,7 @@ export async function SiteHeader() {
                 MedicaPlanet
               </span>
               <span className="mt-0.5 hidden text-[10px] font-medium uppercase tracking-[0.18em] text-filler-ink/50 sm:block">
-                Professional supply
+                Trusted Supplier
               </span>
             </div>
           </Link>

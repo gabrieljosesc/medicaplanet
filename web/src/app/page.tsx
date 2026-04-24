@@ -82,9 +82,16 @@ export default async function HomePage() {
 
   const brandMarqueeItems = buildHomeBrandMarqueeItems(relFiltered.map((p) => p.title));
 
+  const heroBestSellerPreviews = bestSellers.map((row) => ({
+    slug: row.product.slug,
+    title: row.product.title,
+    heroImageSrc: row.product.heroImageSrc,
+    imageUnoptimized: Boolean(row.product.imageUnoptimized),
+  }));
+
   return (
     <>
-      <HomeHero />
+      <HomeHero bestSellerPreviews={heroBestSellerPreviews} />
       <HomeBrandMarquee items={brandMarqueeItems} />
       <div className="mx-auto max-w-6xl space-y-16 px-4 py-12 sm:py-14">
         <section>
@@ -131,7 +138,10 @@ export default async function HomePage() {
 
       </div>
 
-      <section className="w-full border-t border-filler-peach-200/50 bg-white py-14 sm:py-20">
+      <section
+        id="best-sellers"
+        className="w-full scroll-mt-24 border-t border-filler-peach-200/50 bg-white py-14 sm:py-20"
+      >
         <div className="mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-10">
           <h2 className="mb-10 text-center text-2xl font-bold uppercase tracking-wide text-neutral-900 sm:mb-12 sm:text-3xl">
             Best sellers

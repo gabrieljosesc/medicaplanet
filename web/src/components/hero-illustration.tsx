@@ -1,6 +1,6 @@
 /**
- * Vector illustration (no stock photo) — simple friendly “professional with product” motif
- * in the fillersupplies-style color story (peach / pink / mint / mustard on cream).
+ * Vector illustration (no stock photo) — refined flat “professional at desk” motif
+ * in the MedicaPlanet palette (peach / rose / mint / cream).
  */
 export function HeroIllustration({ className }: { className?: string }) {
   return (
@@ -9,78 +9,83 @@ export function HeroIllustration({ className }: { className?: string }) {
       aria-hidden
     >
       <svg
-        viewBox="0 0 480 400"
+        viewBox="0 0 420 360"
         className="h-auto w-full max-w-md"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <ellipse cx="300" cy="310" rx="200" ry="100" fill="#f5b4b4" opacity="0.55" />
-        <ellipse cx="90" cy="90" rx="80" ry="50" fill="#fad4c0" opacity="0.45" />
-        <ellipse cx="400" cy="100" rx="50" ry="32" fill="#e8a598" opacity="0.35" />
+        {/* Ambient shapes */}
+        <ellipse cx="300" cy="300" rx="160" ry="88" fill="#f5b4b4" opacity="0.45" />
+        <ellipse cx="72" cy="96" rx="64" ry="44" fill="#fad4c0" opacity="0.5" />
+        <ellipse cx="360" cy="88" rx="48" ry="30" fill="#e8a598" opacity="0.35" />
 
-        {/* Seat */}
-        <ellipse cx="200" cy="300" rx="100" ry="20" fill="#fff" />
+        {/* Desk surface */}
+        <ellipse cx="210" cy="312" rx="168" ry="22" fill="#fff" opacity="0.95" />
+        <ellipse cx="210" cy="312" rx="168" ry="22" fill="#fce5d6" opacity="0.35" />
+
+        {/* Chair */}
         <path
-          d="M220 200c0-20 20-30 30-20s25 20 20 50-15 50-20 100h-80c-5-40-5-100 10-120s40-10 50-20z"
+          d="M118 268c0-42 28-68 72-68s72 26 72 68v44H118v-44z"
+          fill="#5a9a7a"
+          opacity="0.35"
+        />
+        <rect x="148" y="248" width="132" height="64" rx="10" fill="#4a8570" />
+
+        {/* Torso — blazer */}
+        <path
+          d="M168 248c-4-52 32-96 84-96s88 44 84 96l-8 72H176l-8-72z"
           fill="#5a9a7a"
         />
+        <path d="M186 232h108v12c-36 8-72 8-108 0v-12z" fill="#3d6b58" opacity="0.35" />
+
+        {/* Neck */}
+        <path d="M218 168h36v28h-36z" fill="#ffedd4" />
+
+        {/* Head */}
+        <ellipse cx="236" cy="142" rx="38" ry="44" fill="#ffedd4" />
+        <ellipse cx="220" cy="138" rx="10" ry="11" fill="#f5cdb8" opacity="0.5" />
+        <ellipse cx="252" cy="140" rx="9" ry="10" fill="#f5cdb8" opacity="0.45" />
+
+        {/* Hair — side-swept bob */}
         <path
-          d="M200 200h-30l-18 35h-20c4-20 20-20 32-4l-10-80c20-32 50-20 50 0z"
-          fill="#c9a227"
+          d="M198 118c12-36 52-48 88-32 20 10 28 32 24 56-2 14-8 26-18 34 6-20 4-40-12-52-28-20-62-12-82 14-6 8-8 18-6 28-8-12-6-32 6-48z"
+          fill="#2d1f1c"
         />
         <path
-          d="M185 300h-25l6 50h20zM265 300h-28l-5 50h20z"
-          fill="#2d1f1c"
+          d="M200 132c18-24 48-32 76-20 14 8 22 24 20 42-14-18-40-24-64-14-18 8-28 24-32 44-4-22 0-38 0-52z"
+          fill="#3d2a26"
+          opacity="0.85"
         />
-        <ellipse cx="220" cy="150" rx="32" ry="40" fill="#ffedd4" />
+
+        {/* Face */}
+        <ellipse cx="224" cy="142" rx="2.8" ry="3.2" fill="#2d1f1c" />
+        <ellipse cx="248" cy="142" rx="2.8" ry="3.2" fill="#2d1f1c" />
+        <circle cx="225" cy="140" r="0.9" fill="#fff" opacity="0.7" />
+        <circle cx="249" cy="140" r="0.9" fill="#fff" opacity="0.7" />
         <path
-          d="M188 145c-8-8 2-30 20-16 6-12 20-4 0 0zM225 150h2c2 2 0 0 0-2h-2z"
-          fill="#2d1f1c"
+          d="M228 158c10 8 24 8 34 0"
+          stroke="#c75c5c"
+          strokeWidth="2"
+          strokeLinecap="round"
+          opacity="0.65"
         />
-        <ellipse cx="200" cy="150" rx="2.2" ry="1.4" fill="#2d1f1c" />
-        <ellipse cx="238" cy="152" rx="2.2" ry="1.4" fill="#2d1f1c" />
-        <path d="M215 178c8-2 18 0 18 0" stroke="#e89898" strokeWidth="1.2" />
+
+        {/* Arm + hand toward laptop */}
         <path
-          d="M175 155c-28 12-42 36-28 52s40 0 32-20z"
-          fill="#2d1f1c"
+          d="M176 220c-8 20-4 48 16 64l28-8c-12-12-16-32-12-52"
+          fill="#5a9a7a"
         />
-        <rect
-          x="256"
-          y="188"
-          width="112"
-          height="88"
-          rx="7"
-          fill="white"
-          stroke="#2d1f1c"
-          strokeOpacity="0.12"
-        />
-        <rect
-          x="256"
-          y="188"
-          width="112"
-          height="22"
-          rx="6"
-          fill="#b45353"
-        />
-        <rect
-          x="280"
-          y="248"
-          width="64"
-          height="3"
-          rx="1.5"
-          fill="#2d1f1c"
-          fillOpacity="0.18"
-        />
-        <rect
-          x="280"
-          y="256"
-          width="48"
-          height="3"
-          rx="1.5"
-          fill="#2d1f1c"
-          fillOpacity="0.12"
-        />
-        <circle cx="300" cy="300" r="5" fill="#b45353" />
+        <ellipse cx="198" cy="286" rx="14" ry="10" fill="#ffedd4" />
+
+        {/* Laptop */}
+        <rect x="252" y="208" width="132" height="84" rx="8" fill="#fff" stroke="#2d1f1c" strokeOpacity="0.12" />
+        <rect x="252" y="208" width="132" height="24" rx="7" fill="#b45353" />
+        <rect x="268" y="244" width="72" height="3" rx="1.5" fill="#2d1f1c" fillOpacity="0.12" />
+        <rect x="268" y="252" width="56" height="3" rx="1.5" fill="#2d1f1c" fillOpacity="0.08" />
+        <path d="M252 292h132l-12 14H264l-12-14z" fill="#e8e4df" stroke="#2d1f1c" strokeOpacity="0.08" />
+
+        {/* Legs / base */}
+        <path d="M196 300h32l4 36h-28zM264 300h32l-4 36h-28z" fill="#2d1f1c" opacity="0.88" />
       </svg>
     </div>
   );

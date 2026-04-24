@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { HeroIllustration } from "@/components/hero-illustration";
 
@@ -18,8 +19,21 @@ function ArrowRightIcon({ className }: { className?: string }) {
   );
 }
 
-/** Filler-supplies style: no photo; soft organic shapes, warm palette, illustrated figure. */
-export function HomeHero() {
+export type HomeHeroBestSellerPreview = {
+  slug: string;
+  title: string;
+  heroImageSrc: string;
+  imageUnoptimized: boolean;
+};
+
+/**
+ * Hero: copy + CTAs; right column shows best-seller product imagery when available,
+ * otherwise the vector illustration fallback.
+ */
+export function HomeHero({ bestSellerPreviews = [] }: { bestSellerPreviews?: HomeHeroBestSellerPreview[] }) {
+  const previews = bestSellerPreviews.slice(0, 6);
+  const showProductGrid = previews.length > 0;
+
   return (
     <section className="relative overflow-hidden bg-filler-cream">
       <div className="pointer-events-none absolute inset-0" aria-hidden>
@@ -32,7 +46,7 @@ export function HomeHero() {
       <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-8 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-2 lg:gap-12 lg:py-20">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-filler-rose-700/90 sm:text-sm">
-            Monthly highlights
+            Best sellers
           </p>
           <h1 className="mt-3 text-3xl font-bold leading-tight tracking-tight text-filler-ink sm:text-4xl lg:text-[2.4rem] lg:leading-[1.12]">
             Licensed injectables, toxins &amp; research peptides in one place
@@ -55,10 +69,10 @@ export function HomeHero() {
               Peptides
             </Link>
             <Link
-              href="/shop"
+              href="/#best-sellers"
               className="inline-flex items-center justify-center gap-1.5 text-sm font-semibold text-filler-rose-800 hover:underline"
             >
-              See monthly specials
+              See all best sellers
               <ArrowRightIcon className="h-4 w-4" />
             </Link>
           </div>
@@ -66,7 +80,31 @@ export function HomeHero() {
         <div className="flex justify-center lg:justify-end">
           <div className="relative w-full max-w-[420px]">
             <div className="absolute inset-0 top-4 scale-90 rounded-3xl bg-filler-pink-200/40 blur-xl" />
-            <HeroIllustration className="relative flex justify-center" />
+            {showProductGrid ? (
+              <div
+                className="relative grid grid-cols-3 gap-2 sm:gap-3"
+                aria-label="Best selling products"
+              >
+                {previews.map((p) => (
+                  <Link
+                    key={p.slug}
+                    href={`/product/${p.slug}`}
+                    className="group relative aspect-square overflow-hidden rounded-2xl border border-filler-peach-200/90 bg-white shadow-sm transition hover:border-filler-pink-300 hover:shadow-md"
+                  >
+                    <Image
+                      src={p.heroImageSrc}
+                      alt={p.title}
+                      fill
+                      className="object-contain p-1.5 transition group-hover:scale-[1.03]"
+                      sizes="(max-width: 1024px) 28vw, 140px"
+                      unoptimized={p.imageUnoptimized}
+                    />
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <HeroIllustration className="relative flex justify-center" />
+            )}
           </div>
         </div>
       </div>

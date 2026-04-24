@@ -21,12 +21,12 @@ export async function PromoBanner() {
   const v = data?.value as { text?: string } | string | null | undefined;
   const message =
     v == null
-      ? "Licensed professionals: contact us for wholesale pricing and cold-chain shipping options."
+      ? "Wholesale Pricing for Licensed Professionals"
       : typeof v === "string"
         ? v
         : typeof v === "object" && v && "text" in v && typeof v.text === "string"
           ? v.text
-          : "Licensed professionals: contact us for wholesale pricing and cold-chain shipping options.";
+          : "Wholesale Pricing for Licensed Professionals";
   const safeMessage = sanitizePromoMessage(message);
   if (!safeMessage) return null;
   return (
