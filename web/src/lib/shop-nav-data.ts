@@ -6,8 +6,18 @@ export type NavCategory = { id: string; slug: string; name: string };
 export const HEADER_NAV_CATEGORY_LIMIT = 7;
 
 /**
+ * If `peptides` is not a DB row, we still show a Peptides → /peptides link (no product samples).
+ */
+const PLACEHOLDER_PEPTIDES: NavCategory = {
+  id: "00000000-0000-0000-0000-000000000001",
+  slug: "peptides",
+  name: "Peptides",
+};
+
+/**
  * Top-level categories for the header row + a few product links per category for hover mega-menus
- * (similar to fillersupplies.com category dropdowns). Only the first N by `sort_order` are shown.
+ * (similar to fillersupplies.com category dropdowns). **Peptides** is always first, then up to
+ * six other categories by `sort_order` (so the row stays at 7 items without dropping Peptides).
  */
 export async function getCategoryNavData(): Promise<{
   categories: NavCategory[];
@@ -21,7 +31,11 @@ export async function getCategoryNavData(): Promise<{
     .not("slug", "in", "(orthopedic-injections,orthopaedics)")
     .order("sort_order");
   const rows = (categories ?? []) as NavCategory[];
-  const navRows = rows.slice(0, HEADER_NAV_CATEGORY_LIMIT);
+  const peptides = rows.find((c) => c.slug === "peptides");
+  const others = rows.filter((c) => c.slug !== "peptides");
+  const navPeptides = peptides ?? PLACEHOLDER_PEPTIDES;
+  const maxOthers = Math.max(0, HEADER_NAV_CATEGORY_LIMIT - 1);
+  const navRows = [navPeptides, ...others.slice(0, maxOthers)] as NavCategory[];
   const catIds = navRows.map((c) => c.id);
   if (catIds.length === 0) return { categories: [], productSamples: {} };
 
