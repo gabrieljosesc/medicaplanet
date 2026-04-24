@@ -98,7 +98,7 @@ function OthersNavDropdown({
         <div
           id={menuId}
           role="menu"
-          className="absolute right-0 top-full z-[70] min-w-[min(100vw-2rem,28rem)] max-w-[min(100vw-2rem,32rem)] pt-2"
+          className="absolute right-0 top-full z-[200] min-w-[min(100vw-2rem,28rem)] max-w-[min(100vw-2rem,32rem)] pt-2"
         >
           <div className="relative rounded-2xl border border-filler-pink-500/30 bg-filler-pink-400/98 px-4 py-3 shadow-xl">
             <p className="mb-2 text-xs font-medium uppercase tracking-wide text-white/75">More categories</p>

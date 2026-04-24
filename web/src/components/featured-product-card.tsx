@@ -38,8 +38,10 @@ function InfoIcon({ className }: { className?: string }) {
   );
 }
 
+export type BestSellerTagLink = { label: string; href: string };
+
 /**
- * Open catalog row (FillerSupplies-style): no card chrome, no image blobs—full-bleed grid cell.
+ * Catalog row: default “featured” band, or “bestSeller” (FillerSupplies-style) with optional tag links + compare-at.
  */
 export function FeaturedProductCard({
   slug,
@@ -53,6 +55,9 @@ export function FeaturedProductCard({
   priceTiersRaw,
   categoryName,
   categorySlug,
+  variant = "featured",
+  bestSellerTags,
+  compareAtPrice,
 }: {
   slug: string;
   title: string;
@@ -65,6 +70,9 @@ export function FeaturedProductCard({
   priceTiersRaw: unknown;
   categoryName: string | null;
   categorySlug: string | null;
+  variant?: "featured" | "bestSeller";
+  bestSellerTags?: BestSellerTagLink[];
+  compareAtPrice?: number;
 }) {
   const tiers = useMemo(() => parsePriceTiersJson(priceTiersRaw), [priceTiersRaw]);
   const unit = useMemo(
@@ -91,10 +99,70 @@ export function FeaturedProductCard({
     cat &&
     !cat.name.toLowerCase().includes(firstWord.toLowerCase().slice(0, 3));
 
+  const isBest = variant === "bestSeller";
+  const showStars =
+    isBest || (reviewCount > 0 && rating > 0);
+  const starRating = isBest ? 5 : rating;
+  const compareRounded =
+    compareAtPrice != null && Number.isFinite(compareAtPrice) ? Math.round(compareAtPrice) : null;
+  const savings =
+    isBest && compareRounded != null && amount != null && compareRounded > amount
+      ? compareRounded - amount
+      : null;
+
+  const categoryLinksRow =
+    isBest && bestSellerTags && bestSellerTags.length > 0 ? (
+      <p className="mt-3 text-xs leading-relaxed text-neutral-700 sm:text-sm">
+        {bestSellerTags.map((tag, i) => (
+          <span key={`${tag.href}-${i}`}>
+            {i > 0 ? <span className="text-neutral-400">, </span> : null}
+            <Link
+              href={tag.href}
+              className="font-medium text-neutral-800 underline decoration-neutral-300 underline-offset-2 transition hover:text-filler-rose-800"
+            >
+              {tag.label}
+            </Link>
+          </span>
+        ))}
+      </p>
+    ) : isBest && cat ? (
+      <p className="mt-3 text-xs text-neutral-700 sm:text-sm">
+        <Link
+          href={categoryHref(cat.slug)}
+          className="font-medium text-neutral-800 underline decoration-neutral-300 underline-offset-2 transition hover:text-filler-rose-800"
+        >
+          {cat.name}
+        </Link>
+        {showBrandTag ? (
+          <>
+            <span className="text-neutral-400"> · </span>
+            <Link
+              href={`/search?q=${encodeURIComponent(firstWord)}`}
+              className="font-medium text-neutral-800 underline decoration-neutral-300 underline-offset-2 transition hover:text-filler-rose-800"
+            >
+              {firstWord}
+            </Link>
+          </>
+        ) : null}
+      </p>
+    ) : null;
+
   return (
     <div className="flex h-full min-h-0 flex-col gap-4 sm:flex-row sm:items-start sm:gap-6 lg:gap-8">
       <div className="relative flex w-full shrink-0 items-center justify-center sm:w-[38%] sm:max-w-[200px] lg:max-w-[240px]">
+        {isBest ? (
+          <div
+            className="pointer-events-none absolute inset-2 -z-0 scale-110 rounded-[45%] bg-gradient-to-br from-neutral-200/70 via-filler-peach-100/50 to-neutral-100/40 blur-xl"
+            aria-hidden
+          />
+        ) : null}
         <div className="relative aspect-[4/5] w-full max-w-[200px] sm:max-w-none">
+          {savings != null && savings > 0 ? (
+            <span className="absolute left-1 top-1 z-20 rounded-full bg-gradient-to-r from-filler-pink-400 to-filler-peach-400 px-2 py-0.5 text-[11px] font-bold text-white shadow-md sm:left-2 sm:top-2 sm:px-2.5 sm:py-1 sm:text-xs">
+              -{prefix}
+              {savings}
+            </span>
+          ) : null}
           <Link href={`/product/${slug}`} className="absolute inset-0 z-10" aria-label={title}>
             <Image
               src={heroImageSrc}
@@ -109,49 +177,68 @@ export function FeaturedProductCard({
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col text-neutral-900">
-        {reviewCount > 0 && rating > 0 ? (
+        {showStars ? (
           <div className="flex w-full items-start justify-end">
-            <StarRow rating={rating} />
+            <StarRow rating={starRating} />
           </div>
         ) : null}
 
         {amount != null ? (
-          <p className={`text-sm text-neutral-800 ${reviewCount > 0 && rating > 0 ? "mt-1" : "mt-0"}`}>
+          <p
+            className={`flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm text-neutral-800 ${showStars ? "mt-1" : "mt-0"}`}
+          >
             {showFrom ? "From " : null}
-            <span className="text-2xl font-bold tabular-nums text-neutral-900 sm:text-3xl">
-              {prefix}
-              {amount}
-            </span>
+            {isBest ? (
+              <span className="inline-flex items-center rounded-full bg-filler-peach-200/95 px-2.5 py-1 shadow-sm">
+                <span className="text-2xl font-bold tabular-nums text-neutral-900 sm:text-3xl">
+                  {prefix}
+                  {amount}
+                </span>
+              </span>
+            ) : (
+              <span className="text-2xl font-bold tabular-nums text-neutral-900 sm:text-3xl">
+                {prefix}
+                {amount}
+              </span>
+            )}
+            {isBest && compareRounded != null && amount != null && compareRounded > amount ? (
+              <span className="text-sm tabular-nums text-neutral-500 line-through">
+                {prefix}
+                {compareRounded}
+              </span>
+            ) : null}
           </p>
         ) : (
-          <p
-            className={`text-sm font-medium text-neutral-600 ${reviewCount > 0 && rating > 0 ? "mt-1" : "mt-0"}`}
-          >
+          <p className={`text-sm font-medium text-neutral-600 ${showStars ? "mt-1" : "mt-0"}`}>
             Request pricing
           </p>
         )}
 
-        <div className="mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-zinc-500 sm:text-sm">
-          {cat ? (
-            <Link
-              href={categoryHref(cat.slug)}
-              className="underline decoration-zinc-300 underline-offset-2 transition hover:text-neutral-700"
-            >
-              {cat.name}
-            </Link>
-          ) : null}
-          {showBrandTag ? (
-            <>
-              {cat ? <span className="text-zinc-300">·</span> : null}
+        {isBest ? (
+          categoryLinksRow
+        ) : (
+          <div className="mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-zinc-500 sm:text-sm">
+            {cat ? (
               <Link
-                href={`/search?q=${encodeURIComponent(firstWord)}`}
+                href={categoryHref(cat.slug)}
                 className="underline decoration-zinc-300 underline-offset-2 transition hover:text-neutral-700"
               >
-                {firstWord}
+                {cat.name}
               </Link>
-            </>
-          ) : null}
-        </div>
+            ) : null}
+            {showBrandTag ? (
+              <>
+                {cat ? <span className="text-zinc-300">·</span> : null}
+                <Link
+                  href={`/search?q=${encodeURIComponent(firstWord)}`}
+                  className="underline decoration-zinc-300 underline-offset-2 transition hover:text-neutral-700"
+                >
+                  {firstWord}
+                </Link>
+              </>
+            ) : null}
+          </div>
+        )}
 
         <Link
           href={`/product/${slug}`}

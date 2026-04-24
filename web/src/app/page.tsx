@@ -8,6 +8,7 @@ import { MobileTopSellersStrip } from "@/components/mobile-top-sellers-strip";
 import { buildHomeBrandMarqueeItems } from "@/lib/home-brand-marquee";
 import { getSiteBlogPosts } from "@/lib/site-blog";
 import { createClient } from "@/lib/supabase/server";
+import { mergeBestSellerSlots, resolveBestSellerSlots } from "@/lib/best-sellers-home";
 import { nextImageUnoptimized, resolveProductMainImage } from "@/lib/product-image";
 import { resolveFeaturedHomeProducts } from "@/lib/resolve-featured-home";
 import { withStorageImageTransform } from "@/lib/storage-image";
@@ -64,9 +65,11 @@ export default async function HomePage() {
     .filter((c): c is { slug: string; name: string } => Boolean(c))
     .map((c) => ({ slug: c.slug, name: categoryNavLabel(c.slug, c.name) }));
 
-  const feat = resolveFeaturedHomeProducts(
-    relFiltered as Parameters<typeof resolveFeaturedHomeProducts>[0]
-  );
+  type FeaturedHomeRow = Parameters<typeof resolveFeaturedHomeProducts>[0][number];
+  const featuredRows = relFiltered as FeaturedHomeRow[];
+  const featuredPool = resolveFeaturedHomeProducts(featuredRows);
+  const bestSellerSlots = resolveBestSellerSlots(featuredRows);
+  const bestSellers = mergeBestSellerSlots(bestSellerSlots, featuredPool).slice(0, 6);
   const mobileTopSellers = [...relFiltered]
     .sort((a, b) => {
       const featuredDelta = Number(Boolean(b.is_featured)) - Number(Boolean(a.is_featured));
@@ -130,18 +133,19 @@ export default async function HomePage() {
 
       <section className="w-full border-t border-filler-peach-200/50 bg-white py-14 sm:py-20">
         <div className="mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-10">
-          <h2 className="mb-10 text-2xl font-bold tracking-tight text-neutral-900 sm:mb-12 sm:text-3xl">
-            Featured products
+          <h2 className="mb-10 text-center text-2xl font-bold uppercase tracking-wide text-neutral-900 sm:mb-12 sm:text-3xl">
+            Best sellers
           </h2>
           <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-16 lg:grid-cols-3 lg:gap-x-10 lg:gap-y-20">
-            {feat.length === 0 ? (
+            {bestSellers.length === 0 ? (
               <p className="text-sm text-neutral-500 sm:col-span-2 lg:col-span-3">
                 No active products yet. Apply the Supabase migration and run{" "}
                 <code className="rounded bg-neutral-100 px-1.5 py-0.5 text-xs">npm run import:catalog</code>{" "}
                 from the repo root.
               </p>
             ) : (
-              feat.map((p) => {
+              bestSellers.map((row) => {
+                const p = row.product;
                 const rel = p.categories as
                   | { slug?: string; name?: string }
                   | { slug?: string; name?: string }[]
@@ -150,6 +154,9 @@ export default async function HomePage() {
                 return (
                   <FeaturedProductCard
                     key={p.slug}
+                    variant="bestSeller"
+                    bestSellerTags={row.tags.length > 0 ? row.tags : undefined}
+                    compareAtPrice={row.compareAtPrice}
                     slug={p.slug}
                     title={p.title}
                     basePrice={Number(p.base_price)}

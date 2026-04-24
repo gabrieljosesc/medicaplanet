@@ -13,7 +13,7 @@ export async function SiteHeader() {
   const { categories, othersDropdownCategories, productSamples } = await getCategoryNavData();
 
   return (
-    <header className="sticky top-0 z-50 max-w-full overflow-x-hidden border-b border-filler-peach-300/50 bg-white/95 shadow-sm backdrop-blur-md">
+    <header className="sticky top-0 z-50 max-w-full overflow-visible border-b border-filler-peach-300/50 bg-white/95 shadow-sm backdrop-blur-md">
       <div className="mx-auto max-w-6xl min-w-0 px-4">
         <div className="flex flex-wrap items-center justify-between gap-3 py-3.5 sm:gap-4">
           <Link
