@@ -1,0 +1,83 @@
+{
+  "_readme": "MedicaPlanet product slug → USD list price and card image. Used when the docx line does not auto-match a Purechain Store product. imageUrl: Purechain wp-content (same CDN as the rest of the site). Tweak prices anytime — re-run npm run import:purechain-peptides to push to Supabase.",
+  "foxo4-dri": {
+    "price": 267,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/FOX04DRI-300x300.png"
+  },
+  "ll37": {
+    "price": 91,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/LL-37-300x300.png"
+  },
+  "tirzepatide": {
+    "price": 101,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/Retatrutide-300x300.png"
+  },
+  "b7-33": {
+    "price": 99,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/BPC-157-300x300.png"
+  },
+  "bronchogen": {
+    "price": 89,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/BPC-157-300x300.png"
+  },
+  "cardiogen": {
+    "price": 89,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/BPC-157-300x300.png"
+  },
+  "cartalax": {
+    "price": 89,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/BPC-157-300x300.png"
+  },
+  "chonluten": {
+    "price": 89,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/BPC-157-300x300.png"
+  },
+  "cortagen": {
+    "price": 89,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/BPC-157-300x300.png"
+  },
+  "curcumin": {
+    "price": 45,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/L-Glutathione-300x300.png"
+  },
+  "igf-1-des": {
+    "price": 130.5,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/IGF-1-LR3-300x300.png"
+  },
+  "livagen": {
+    "price": 99,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/Humanin-300x300.png"
+  },
+  "n-acetyl-epitalon-amidate": {
+    "price": 38,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/Epithalon-300x300.png"
+  },
+  "ovagen": {
+    "price": 99,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/BPC-157-300x300.png"
+  },
+  "pancragen": {
+    "price": 99,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/BPC-157-300x300.png"
+  },
+  "pinealon": {
+    "price": 38,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/Epithalon-300x300.png"
+  },
+  "prostamax": {
+    "price": 99,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/BPC-157-300x300.png"
+  },
+  "radiant-xo-serum": {
+    "price": 163,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2026/01/GLOWGHK-CU-BPC-157-TB500-300x300.png"
+  },
+  "testagen": {
+    "price": 99,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/BPC-157-300x300.png"
+  },
+  "thymagen": {
+    "price": 123,
+    "imageUrl": "https://purechainresearch.com/wp-content/uploads/2025/12/Thymalin-300x300.png"
+  }
+}

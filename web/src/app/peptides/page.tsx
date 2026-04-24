@@ -7,6 +7,7 @@ import {
   fetchCategoryProducts,
   parseCategoryListParams,
 } from "@/lib/category-product-list";
+import { sortRowsLikePurechainPeptides } from "@/lib/purechain-peptides-order";
 import { nextImageUnoptimized, resolveProductMainImage } from "@/lib/product-image";
 import { createClient } from "@/lib/supabase/server";
 import { withStorageImageTransform } from "@/lib/storage-image";
@@ -25,6 +26,10 @@ export default async function PeptidesPage({ searchParams }: Props) {
     if (!cat) return [];
     return fetchCategoryProducts(supabase, cat.id, listParams);
   })();
+  const filtered = categoryListParamsActive(listParams);
+  if (!filtered && listParams.sort === "title_asc") {
+    products = sortRowsLikePurechainPeptides(products);
+  }
 
   const rows = products.map((p) => ({
     ...p,
@@ -44,19 +49,14 @@ export default async function PeptidesPage({ searchParams }: Props) {
       return src;
     })(),
   }));
-  const filtered = categoryListParamsActive(listParams);
 
   return (
     <div>
       <h1 className="text-2xl font-semibold text-zinc-900">Peptides</h1>
       <p className="mt-3 max-w-3xl text-sm text-zinc-700">
         {cat?.description ??
-          "Research-use peptide descriptions for professional reference. Verify local regulations and professional account requirements before ordering."}
+          "Research-use peptide listings for professional reference, aligned with our development partner catalog. Verify local regulations and account requirements before ordering."}
       </p>
-      <section className="mt-8 rounded-xl border border-amber-200 bg-amber-50/80 p-5 text-sm text-amber-950">
-        <strong>Imagery:</strong> PDPs use neutral placeholders until you upload assets in Admin
-        (Supabase Storage). We do not copy third-party retailer catalogs.
-      </section>
 
       {cat ? (
         <Suspense fallback={<div className="mt-8 h-28 animate-pulse rounded-xl bg-zinc-100" />}>

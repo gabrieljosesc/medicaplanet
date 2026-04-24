@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 const remotePatterns: NonNullable<NonNullable<NextConfig["images"]>["remotePatterns"]> = [
   { protocol: "https", hostname: "placehold.co", pathname: "/**" },
   { protocol: "https", hostname: "images.unsplash.com", pathname: "/**" },
+  /* Partner store CDN (peptide listing imagery). */
+  { protocol: "https", hostname: "purechainresearch.com", pathname: "/wp-content/uploads/**" },
 ];
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

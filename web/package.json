@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "import:catalog": "node scripts/import-catalog.mjs",
+    "import:purechain-peptides": "node scripts/import-purechain-peptides.mjs",
     "upload:product-images": "tsx scripts/upload-product-images.ts",
     "audit:product-images": "tsx scripts/audit-product-images.ts"
   },
