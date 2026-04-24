@@ -22,11 +22,13 @@ const PLACEHOLDER_OTHER: NavCategory = {
 };
 
 /**
- * Header order: **Others** (`other`), **Peptides**, then the next five categories by `sort_order`
- * (FillerSupplies-style). Orthopedic duplicates are excluded in the query.
+ * Header order: **Peptides** first, then the next five categories by `sort_order`, **Others** last.
+ * Orthopedic duplicates are excluded in the query.
  */
 export async function getCategoryNavData(): Promise<{
   categories: NavCategory[];
+  /** Categories that appear inside the Others dropdown (not on the main row). */
+  othersDropdownCategories: NavCategory[];
   /** slug → up to 6 product shortcuts */
   productSamples: Record<string, { slug: string; title: string }[]>;
 }> {
@@ -41,13 +43,19 @@ export async function getCategoryNavData(): Promise<{
   const peptides = rows.find((c) => c.slug === "peptides");
   const rest = rows.filter((c) => c.slug !== "other" && c.slug !== "peptides");
   const maxRest = Math.max(0, HEADER_NAV_CATEGORY_LIMIT - 2);
-  const navCore = [other ?? PLACEHOLDER_OTHER, peptides ?? PLACEHOLDER_PEPTIDES, ...rest.slice(0, maxRest)] as NavCategory[];
+  const navCore = [
+    peptides ?? PLACEHOLDER_PEPTIDES,
+    ...rest.slice(0, maxRest),
+    other ?? PLACEHOLDER_OTHER,
+  ] as NavCategory[];
   const navRows = navCore.map((c) => ({
     ...c,
     name: categoryNavLabel(c.slug, c.name),
   }));
   const catIds = navRows.map((c) => c.id);
-  if (catIds.length === 0) return { categories: [], productSamples: {} };
+  if (catIds.length === 0) {
+    return { categories: [], othersDropdownCategories: [], productSamples: {} };
+  }
 
   const { data: products } = await supabase
     .from("products")
@@ -73,5 +81,15 @@ export async function getCategoryNavData(): Promise<{
   for (const c of navRows) {
     productSamples[c.slug] = lists.get(c.id) ?? [];
   }
-  return { categories: navRows, productSamples };
+
+  /** Every category not shown as its own top-level pill (reference: Others mega menu). */
+  const navSlugSet = new Set(navRows.map((c) => c.slug));
+  const othersDropdownCategories = rows
+    .filter((c) => !navSlugSet.has(c.slug))
+    .map((c) => ({
+      ...c,
+      name: categoryNavLabel(c.slug, c.name),
+    }));
+
+  return { categories: navRows, othersDropdownCategories, productSamples };
 }

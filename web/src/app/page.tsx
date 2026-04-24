@@ -57,7 +57,7 @@ export default async function HomePage() {
   const otherC = rawCats.find((c) => c.slug === "other");
   const peptC = rawCats.find((c) => c.slug === "peptides");
   const restC = rawCats.filter((c) => c.slug !== "other" && c.slug !== "peptides");
-  const homeCategories = [otherC, peptC, ...restC]
+  const homeCategories = [peptC, ...restC, otherC]
     .filter((c): c is { slug: string; name: string } => Boolean(c))
     .map((c) => ({ slug: c.slug, name: categoryNavLabel(c.slug, c.name) }));
 
