@@ -110,6 +110,21 @@ export function SiteFooter() {
             loading="lazy"
           />
         </div>
+        <div
+          className="mt-5 flex max-w-xl items-start gap-3 rounded-md bg-rose-400/85 px-4 py-3.5 sm:px-5 sm:py-4"
+          role="note"
+        >
+          <span
+            className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-white/90 bg-white text-sm font-bold leading-none text-rose-600"
+            aria-hidden
+          >
+            !
+          </span>
+          <p className="text-sm font-medium leading-snug text-white sm:text-base">
+            <span className="block">Please note that we supply to</span>
+            <span className="block">licensed medical specialists only.</span>
+          </p>
+        </div>
       </div>
       <div className="border-t border-filler-rose-800/40 px-4 py-4 text-center text-xs text-filler-cream/55">
         We supply only to persons licensed to purchase and use these products. © {new Date().getFullYear()}{" "}
