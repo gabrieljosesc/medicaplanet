@@ -2,9 +2,12 @@ import { createClient } from "@/lib/supabase/server";
 
 export type NavCategory = { id: string; slug: string; name: string };
 
+/** How many category pills show in the main header (no horizontal scroll; rest via /shop). */
+export const HEADER_NAV_CATEGORY_LIMIT = 7;
+
 /**
- * Top-level categories + a few product links per category for hover mega-menus
- * (similar to fillersupplies.com category dropdowns).
+ * Top-level categories for the header row + a few product links per category for hover mega-menus
+ * (similar to fillersupplies.com category dropdowns). Only the first N by `sort_order` are shown.
  */
 export async function getCategoryNavData(): Promise<{
   categories: NavCategory[];
@@ -18,7 +21,8 @@ export async function getCategoryNavData(): Promise<{
     .not("slug", "in", "(orthopedic-injections,orthopaedics)")
     .order("sort_order");
   const rows = (categories ?? []) as NavCategory[];
-  const catIds = rows.map((c) => c.id);
+  const navRows = rows.slice(0, HEADER_NAV_CATEGORY_LIMIT);
+  const catIds = navRows.map((c) => c.id);
   if (catIds.length === 0) return { categories: [], productSamples: {} };
 
   const { data: products } = await supabase
@@ -31,7 +35,7 @@ export async function getCategoryNavData(): Promise<{
     .limit(240);
 
   const lists = new Map<string, { slug: string; title: string }[]>();
-  for (const c of rows) lists.set(c.id, []);
+  for (const c of navRows) lists.set(c.id, []);
   for (const p of products ?? []) {
     const cid = p.category_id as string;
     const list = lists.get(cid);
@@ -42,8 +46,8 @@ export async function getCategoryNavData(): Promise<{
   }
 
   const productSamples: Record<string, { slug: string; title: string }[]> = {};
-  for (const c of rows) {
+  for (const c of navRows) {
     productSamples[c.slug] = lists.get(c.id) ?? [];
   }
-  return { categories: rows, productSamples };
+  return { categories: navRows, productSamples };
 }

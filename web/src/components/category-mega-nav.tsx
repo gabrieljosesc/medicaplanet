@@ -29,7 +29,7 @@ export function CategoryMegaNav({
 
   return (
     <nav
-      className="flex flex-wrap items-center gap-x-0.5 gap-y-1.5"
+      className="flex flex-wrap items-center gap-x-1.5 gap-y-1.5 sm:flex-nowrap sm:gap-x-2"
       aria-label="Product categories"
     >
       {categories.map((c) => {
@@ -39,7 +39,7 @@ export function CategoryMegaNav({
           <div key={c.slug} className="group relative inline-block">
             <Link
               href={href}
-              className="inline-block rounded-full px-2.5 py-1.5 text-sm font-medium text-filler-ink/90 transition hover:bg-filler-peach-200/80 hover:text-filler-ink"
+              className="inline-block whitespace-nowrap rounded-full px-2 py-1.5 text-xs font-medium text-filler-ink/90 transition hover:bg-filler-peach-200/80 hover:text-filler-ink sm:px-2.5 sm:text-sm"
             >
               {c.name}
             </Link>

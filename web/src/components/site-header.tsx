@@ -73,12 +73,8 @@ export async function SiteHeader() {
           </div>
         </div>
 
-        <div className="border-t border-filler-peach-200/90 py-2.5">
-          <div className="-mx-1 overflow-x-auto overflow-y-visible pb-1 [scrollbar-width:thin]">
-            <div className="min-w-0 sm:px-0">
-              <CategoryMegaNav categories={categories} productSamples={productSamples} />
-            </div>
-          </div>
+        <div className="border-t border-filler-peach-200/90 py-2">
+          <CategoryMegaNav categories={categories} productSamples={productSamples} />
         </div>
       </div>
     </header>
