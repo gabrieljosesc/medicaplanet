@@ -2,8 +2,10 @@ import Link from "next/link";
 import { CategoriesBand } from "@/components/categories-band";
 import { categoryNavLabel } from "@/lib/catalog-constants";
 import { FeaturedProductCard } from "@/components/featured-product-card";
+import { HomeBrandMarquee } from "@/components/home-brand-marquee";
 import { HomeHero } from "@/components/home-hero";
 import { MobileTopSellersStrip } from "@/components/mobile-top-sellers-strip";
+import { buildHomeBrandMarqueeItems } from "@/lib/home-brand-marquee";
 import { getSiteBlogPosts } from "@/lib/site-blog";
 import { createClient } from "@/lib/supabase/server";
 import { nextImageUnoptimized, resolveProductMainImage } from "@/lib/product-image";
@@ -75,9 +77,12 @@ export default async function HomePage() {
     })
     .slice(0, 12);
 
+  const brandMarqueeItems = buildHomeBrandMarqueeItems(relFiltered.map((p) => p.title));
+
   return (
     <>
       <HomeHero />
+      <HomeBrandMarquee items={brandMarqueeItems} />
       <div className="mx-auto max-w-6xl space-y-16 px-4 py-12 sm:py-14">
         <section>
           <MobileTopSellersStrip

@@ -46,3 +46,39 @@ body {
   background: color-mix(in srgb, #e07a7a 32%, white);
   color: #2d1f1c;
 }
+
+/* Home: auto-scrolling brand strip (infinite marquee, pause on hover). */
+@keyframes home-brand-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.home-brand-marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-brand-marquee-track {
+    animation: home-brand-marquee 48s linear infinite;
+  }
+
+  .home-brand-marquee-wrap:hover .home-brand-marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-brand-marquee-track {
+    animation: none;
+  }
+
+  .home-brand-marquee-ghost {
+    display: none;
+  }
+}

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 44" fill="none" role="img" aria-label="Juvéderm">
+  <defs>
+    <linearGradient id="j" x1="0" y1="0" x2="220" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#c9a227"/>
+      <stop offset="0.5" stop-color="#e8a54a"/>
+      <stop offset="1" stop-color="#b8860b"/>
+    </linearGradient>
+  </defs>
+  <text x="110" y="32" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="600" fill="url(#j)">Juvéderm</text>
+</svg>

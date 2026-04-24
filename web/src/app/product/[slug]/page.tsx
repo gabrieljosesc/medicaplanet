@@ -1,7 +1,8 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { ProductBuyBox } from "@/components/product-buy-box";
+import { ProductImageGallery } from "@/components/product-image-gallery";
+import { createClient } from "@/lib/supabase/server";
 import { nextImageUnoptimized, resolveProductMainImage } from "@/lib/product-image";
 import { withStorageImageTransform } from "@/lib/storage-image";
 
@@ -22,26 +23,47 @@ export default async function ProductPage({ params }: Props) {
   const imgs = Array.isArray(product.product_images)
     ? [...product.product_images].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
     : [];
+  const useTransform =
+    process.env.NEXT_PUBLIC_SUPABASE_IMAGE_TRANSFORM === "1";
+
+  const gallerySlides = imgs.map((row) => {
+    let src = resolveProductMainImage(product.slug, row.url ?? null, product.title);
+    if (useTransform && src.includes("/storage/v1/object/public/")) {
+      src = withStorageImageTransform(src, 960);
+    }
+    return {
+      src,
+      alt: product.title,
+      unoptimized: nextImageUnoptimized(src),
+    };
+  });
+
   let hero = resolveProductMainImage(product.slug, imgs[0]?.url ?? null, product.title);
-  if (
-    process.env.NEXT_PUBLIC_SUPABASE_IMAGE_TRANSFORM === "1" &&
-    hero.includes("/storage/v1/object/public/")
-  ) {
+  if (useTransform && hero.includes("/storage/v1/object/public/")) {
     hero = withStorageImageTransform(hero, 960);
   }
 
+  const slidesForUi =
+    gallerySlides.length > 0
+      ? gallerySlides
+      : [{ src: hero, alt: product.title, unoptimized: nextImageUnoptimized(hero) }];
+
   return (
     <div className="grid gap-10 lg:grid-cols-2">
-      <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100">
-        <Image
-          src={hero}
-          alt={product.title}
-          fill
-          className="object-cover"
-          priority
-          unoptimized={nextImageUnoptimized(hero)}
-        />
-      </div>
+      {slidesForUi.length > 1 ? (
+        <ProductImageGallery images={slidesForUi} title={product.title} />
+      ) : (
+        <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100">
+          <Image
+            src={slidesForUi[0]!.src}
+            alt={product.title}
+            fill
+            className="object-cover"
+            priority
+            unoptimized={slidesForUi[0]!.unoptimized}
+          />
+        </div>
+      )}
       <div>
         <p className="text-xs font-medium uppercase tracking-wide text-teal-800">
           {(product.categories as { name?: string } | null)?.name ?? "Catalog"}

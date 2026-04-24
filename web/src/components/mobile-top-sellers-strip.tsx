@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type TopSeller = {
   slug: string;
@@ -10,19 +13,57 @@ type TopSeller = {
   currency: string;
 };
 
+/** Matches `w-[160px]` + `gap-3` in the flex row */
+const CARD_STEP_PX = 160 + 12;
+
 export function MobileTopSellersStrip({ products }: { products: TopSeller[] }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+
+  const syncActive = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el || products.length === 0) return;
+    const raw = Math.round(el.scrollLeft / CARD_STEP_PX);
+    setActive(Math.min(products.length - 1, Math.max(0, raw)));
+  }, [products.length]);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    syncActive();
+    el.addEventListener("scroll", syncActive, { passive: true });
+    const ro = new ResizeObserver(() => syncActive());
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", syncActive);
+      ro.disconnect();
+    };
+  }, [syncActive]);
+
+  const goTo = (i: number) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTo({ left: i * CARD_STEP_PX, behavior: "smooth" });
+  };
+
   if (products.length === 0) return null;
 
   return (
-    <section className="overflow-x-hidden sm:hidden">
-      <div className="mb-3 flex items-end justify-between">
+    <section className="min-w-0 overflow-x-hidden sm:hidden">
+      <div className="mb-3 flex items-end justify-between gap-2">
         <h2 className="text-base font-semibold text-filler-ink">Catalog picks</h2>
-        <Link href="/shop" className="text-xs font-medium text-filler-rose-800 hover:underline">
+        <Link href="/shop" className="shrink-0 text-xs font-medium text-filler-rose-800 hover:underline">
           View all
         </Link>
       </div>
-      <div className="-mx-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <div className="flex snap-x snap-mandatory gap-3">
+      <div
+        ref={scrollRef}
+        className="-mx-4 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Catalog picks"
+      >
+        <div className="flex w-max snap-x snap-mandatory gap-3">
           {products.map((p) => (
             <Link
               key={p.slug}
@@ -49,6 +90,30 @@ export function MobileTopSellersStrip({ products }: { products: TopSeller[] }) {
           ))}
         </div>
       </div>
+
+      {products.length > 1 && (
+        <div
+          className="mt-2 flex flex-wrap items-center justify-center gap-1.5"
+          role="tablist"
+          aria-label="Catalog picks slides"
+        >
+          {products.map((p, i) => (
+            <button
+              key={p.slug}
+              type="button"
+              role="tab"
+              aria-selected={i === active}
+              aria-label={`Show ${p.title}`}
+              onClick={() => goTo(i)}
+              className={
+                i === active
+                  ? "h-1.5 w-4 rounded-full bg-filler-rose-700"
+                  : "h-1.5 w-1.5 rounded-full bg-filler-peach-300 transition hover:bg-filler-peach-400"
+              }
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 }
