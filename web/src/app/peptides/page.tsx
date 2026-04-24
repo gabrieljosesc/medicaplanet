@@ -1,11 +1,15 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { CategoryProductToolbar } from "@/components/category-product-toolbar";
 import { CatalogHighlightCard } from "@/components/catalog-highlight-card";
+import { CatalogPagination } from "@/components/catalog-pagination";
+import { CategoryProductToolbar } from "@/components/category-product-toolbar";
+import { CATALOG_PER_PAGE, categoryNavLabel } from "@/lib/catalog-constants";
 import {
+  type CategoryProductRow,
   categoryListParamsActive,
   fetchCategoryProducts,
   parseCategoryListParams,
+  parsePageParam,
 } from "@/lib/category-product-list";
 import { sortRowsLikePurechainPeptides } from "@/lib/purechain-peptides-order";
 import { nextImageUnoptimized, resolveProductMainImage } from "@/lib/product-image";
@@ -19,19 +23,50 @@ type Props = {
 export default async function PeptidesPage({ searchParams }: Props) {
   const sp = await searchParams;
   const listParams = parseCategoryListParams(sp);
+  const page = parsePageParam(sp);
   const supabase = await createClient();
-  const { data: cat } = await supabase.from("categories").select("*").eq("slug", "peptides").maybeSingle();
+  const { data: cat } = await supabase
+    .from("categories")
+    .select("*")
+    .eq("slug", "peptides")
+    .maybeSingle();
 
-  let products = await (async () => {
-    if (!cat) return [];
-    return fetchCategoryProducts(supabase, cat.id, listParams);
-  })();
   const filtered = categoryListParamsActive(listParams);
-  if (!filtered && listParams.sort === "title_asc") {
-    products = sortRowsLikePurechainPeptides(products);
-  }
+  const usePurechainList =
+    Boolean(cat) && !filtered && listParams.sort === "master_asc";
 
-  const rows = products.map((p) => ({
+  const { productRows, totalPages } = await (async (): Promise<{
+    productRows: CategoryProductRow[];
+    totalPages: number;
+  }> => {
+    if (!cat) {
+      return { productRows: [], totalPages: 1 };
+    }
+    if (usePurechainList) {
+      const { rows: all } = await fetchCategoryProducts(supabase, cat.id, listParams, null);
+      const sorted = sortRowsLikePurechainPeptides(all);
+      const t = sorted.length;
+      const tp = Math.max(1, Math.ceil(t / CATALOG_PER_PAGE));
+      const from = (page - 1) * CATALOG_PER_PAGE;
+      return {
+        productRows: sorted.slice(from, from + CATALOG_PER_PAGE),
+        totalPages: tp,
+      };
+    }
+    const { rows, count } = await fetchCategoryProducts(
+      supabase,
+      cat.id,
+      listParams,
+      { page, perPage: CATALOG_PER_PAGE }
+    );
+    const t = count ?? 0;
+    return {
+      productRows: rows,
+      totalPages: Math.max(1, Math.ceil(t / CATALOG_PER_PAGE)),
+    };
+  })();
+
+  const rows = productRows.map((p) => ({
     ...p,
     imageUrl: Array.isArray(p.product_images) ? p.product_images[0]?.url : null,
     heroImageSrc: (() => {
@@ -64,7 +99,8 @@ export default async function PeptidesPage({ searchParams }: Props) {
         </Suspense>
       ) : null}
 
-      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-7">
+      <div className="mx-auto mt-8 w-full max-w-[1600px]">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7">
         {!cat || (rows.length === 0 && !filtered) ? (
           <p className="text-sm text-zinc-600">
             No peptide products in the database yet. Run{" "}
@@ -83,7 +119,10 @@ export default async function PeptidesPage({ searchParams }: Props) {
             </p>
           </div>
         ) : (
-          rows.map((p) => (
+          rows.map((p) => {
+            const cs = p.category_slug;
+            const cn = p.category_name;
+            return (
             <CatalogHighlightCard
               key={p.slug}
               slug={p.slug}
@@ -96,9 +135,18 @@ export default async function PeptidesPage({ searchParams }: Props) {
               heroImageSrc={p.heroImageSrc}
               imageUnoptimized={nextImageUnoptimized(p.heroImageSrc)}
               priceTiersRaw={p.price_tiers}
+              categoryName={cs && cn ? categoryNavLabel(cs, cn) : null}
+              categorySlug={cs ?? null}
             />
-          ))
+            );
+          })
         )}
+        </div>
+        {cat ? (
+          <Suspense fallback={null}>
+            <CatalogPagination basePath="/peptides" currentPage={page} totalPages={totalPages} />
+          </Suspense>
+        ) : null}
       </div>
 
       <section className="mt-12 rounded-2xl border border-zinc-200 bg-white p-5 text-sm text-zinc-700 shadow-sm sm:p-6">

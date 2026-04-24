@@ -1,12 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { CategoryProductToolbar } from "@/components/category-product-toolbar";
 import { CatalogHighlightCard } from "@/components/catalog-highlight-card";
+import { CatalogPagination } from "@/components/catalog-pagination";
+import { CategoryProductToolbar } from "@/components/category-product-toolbar";
+import { CATALOG_PER_PAGE, categoryNavLabel } from "@/lib/catalog-constants";
 import {
   categoryListParamsActive,
   fetchCategoryProducts,
   parseCategoryListParams,
+  parsePageParam,
 } from "@/lib/category-product-list";
 import { nextImageUnoptimized, resolveProductMainImage } from "@/lib/product-image";
 import { createClient } from "@/lib/supabase/server";
@@ -28,12 +31,20 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   }
   const sp = await searchParams;
   const listParams = parseCategoryListParams(sp);
+  const page = parsePageParam(sp);
   const supabase = await createClient();
   const { data: cat } = await supabase.from("categories").select("*").eq("slug", slug).single();
   if (!cat) notFound();
 
-  const products = await fetchCategoryProducts(supabase, cat.id, listParams);
-  const rows = products.map((p) => ({
+  const { rows: productRows, count: productCount } = await fetchCategoryProducts(
+    supabase,
+    cat.id,
+    listParams,
+    { page, perPage: CATALOG_PER_PAGE }
+  );
+  const total = productCount ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / CATALOG_PER_PAGE));
+  const rows = productRows.map((p) => ({
     ...p,
     imageUrl: Array.isArray(p.product_images) ? p.product_images[0]?.url : null,
     heroImageSrc: (() => {
@@ -55,7 +66,9 @@ export default async function CategoryPage({ params, searchParams }: Props) {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-zinc-900">{cat.name}</h1>
+      <h1 className="text-2xl font-semibold text-zinc-900">
+        {categoryNavLabel(cat.slug, cat.name)}
+      </h1>
       {cat.description && <p className="mt-3 max-w-3xl text-sm text-zinc-700">{cat.description}</p>}
       <div className="prose prose-sm mt-6 max-w-3xl text-zinc-700">
         <p>
@@ -69,7 +82,8 @@ export default async function CategoryPage({ params, searchParams }: Props) {
         <CategoryProductToolbar basePath={`/category/${slug}`} />
       </Suspense>
 
-      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-7">
+      <div className="mx-auto mt-8 w-full max-w-[1600px]">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7">
         {rows.length === 0 && !filtered ? (
           <div className="col-span-full rounded-xl border border-amber-200 bg-amber-50/80 px-5 py-6 text-sm text-amber-950">
             <p className="font-medium">No products in this category yet.</p>
@@ -92,7 +106,10 @@ export default async function CategoryPage({ params, searchParams }: Props) {
             </p>
           </div>
         ) : (
-          rows.map((p) => (
+          rows.map((p) => {
+            const cs = p.category_slug;
+            const cn = p.category_name;
+            return (
             <CatalogHighlightCard
               key={p.slug}
               slug={p.slug}
@@ -105,9 +122,16 @@ export default async function CategoryPage({ params, searchParams }: Props) {
               heroImageSrc={p.heroImageSrc}
               imageUnoptimized={nextImageUnoptimized(p.heroImageSrc)}
               priceTiersRaw={p.price_tiers}
+              categoryName={cs && cn ? categoryNavLabel(cs, cn) : null}
+              categorySlug={cs ?? null}
             />
-          ))
+            );
+          })
         )}
+      </div>
+      <Suspense fallback={null}>
+        <CatalogPagination basePath={`/category/${slug}`} currentPage={page} totalPages={totalPages} />
+      </Suspense>
       </div>
     </div>
   );

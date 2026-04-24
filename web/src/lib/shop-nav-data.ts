@@ -1,3 +1,4 @@
+import { categoryNavLabel } from "@/lib/catalog-constants";
 import { createClient } from "@/lib/supabase/server";
 
 export type NavCategory = { id: string; slug: string; name: string };
@@ -14,10 +15,15 @@ const PLACEHOLDER_PEPTIDES: NavCategory = {
   name: "Peptides",
 };
 
+const PLACEHOLDER_OTHER: NavCategory = {
+  id: "00000000-0000-0000-0000-000000000002",
+  slug: "other",
+  name: "Others",
+};
+
 /**
- * Top-level categories for the header row + a few product links per category for hover mega-menus
- * (similar to fillersupplies.com category dropdowns). **Peptides** is always first, then up to
- * six other categories by `sort_order` (so the row stays at 7 items without dropping Peptides).
+ * Header order: **Others** (`other`), **Peptides**, then the next five categories by `sort_order`
+ * (FillerSupplies-style). Orthopedic duplicates are excluded in the query.
  */
 export async function getCategoryNavData(): Promise<{
   categories: NavCategory[];
@@ -31,11 +37,15 @@ export async function getCategoryNavData(): Promise<{
     .not("slug", "in", "(orthopedic-injections,orthopaedics)")
     .order("sort_order");
   const rows = (categories ?? []) as NavCategory[];
+  const other = rows.find((c) => c.slug === "other");
   const peptides = rows.find((c) => c.slug === "peptides");
-  const others = rows.filter((c) => c.slug !== "peptides");
-  const navPeptides = peptides ?? PLACEHOLDER_PEPTIDES;
-  const maxOthers = Math.max(0, HEADER_NAV_CATEGORY_LIMIT - 1);
-  const navRows = [navPeptides, ...others.slice(0, maxOthers)] as NavCategory[];
+  const rest = rows.filter((c) => c.slug !== "other" && c.slug !== "peptides");
+  const maxRest = Math.max(0, HEADER_NAV_CATEGORY_LIMIT - 2);
+  const navCore = [other ?? PLACEHOLDER_OTHER, peptides ?? PLACEHOLDER_PEPTIDES, ...rest.slice(0, maxRest)] as NavCategory[];
+  const navRows = navCore.map((c) => ({
+    ...c,
+    name: categoryNavLabel(c.slug, c.name),
+  }));
   const catIds = navRows.map((c) => c.id);
   if (catIds.length === 0) return { categories: [], productSamples: {} };
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CategoriesBand } from "@/components/categories-band";
+import { categoryNavLabel } from "@/lib/catalog-constants";
 import { FeaturedProductCard } from "@/components/featured-product-card";
 import { HomeHero } from "@/components/home-hero";
 import { getSiteBlogPosts } from "@/lib/site-blog";
@@ -52,6 +53,14 @@ export default async function HomePage() {
     return true;
   });
 
+  const rawCats = (categories ?? []) as { slug: string; name: string }[];
+  const otherC = rawCats.find((c) => c.slug === "other");
+  const peptC = rawCats.find((c) => c.slug === "peptides");
+  const restC = rawCats.filter((c) => c.slug !== "other" && c.slug !== "peptides");
+  const homeCategories = [otherC, peptC, ...restC]
+    .filter((c): c is { slug: string; name: string } => Boolean(c))
+    .map((c) => ({ slug: c.slug, name: categoryNavLabel(c.slug, c.name) }));
+
   const feat = resolveFeaturedHomeProducts(
     relFiltered as Parameters<typeof resolveFeaturedHomeProducts>[0]
   );
@@ -61,9 +70,7 @@ export default async function HomePage() {
       <HomeHero />
       <div className="mx-auto max-w-6xl space-y-16 px-4 py-12 sm:py-14">
         <section>
-          <CategoriesBand
-            categories={(categories ?? []).map((c) => ({ slug: c.slug, name: c.name }))}
-          />
+          <CategoriesBand categories={homeCategories} />
         </section>
 
         <section>
@@ -125,7 +132,11 @@ export default async function HomePage() {
                     heroImageSrc={p.heroImageSrc}
                     imageUnoptimized={Boolean(p.imageUnoptimized)}
                     priceTiersRaw={p.price_tiers}
-                    categoryName={c?.name ?? null}
+                    categoryName={
+                      c?.slug && c?.name
+                        ? categoryNavLabel(c.slug, c.name)
+                        : c?.name ?? null
+                    }
                     categorySlug={c?.slug ?? null}
                   />
                 );

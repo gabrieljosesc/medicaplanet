@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IconCartBag, IconHeart } from "@/components/nav-icons";
 import { useCart } from "@/context/cart-context";
+import { categoryHref } from "@/lib/category-href";
 import { parsePriceTiersJson, unitPriceForQuantity } from "@/lib/price-tiers";
 
 const WISHLIST_KEY = "medicaplanet-wishlist-slugs-v1";
@@ -38,11 +39,16 @@ export function CatalogHighlightCard({
   heroImageSrc,
   imageUnoptimized,
   priceTiersRaw,
+  categoryName,
+  categorySlug,
 }: {
   slug: string;
   title: string;
   description?: string | null;
   subtitle?: string | null;
+  /** Small label above title, links to category or Peptides hub. */
+  categoryName?: string | null;
+  categorySlug?: string | null;
   basePrice: number;
   currency: string;
   rating: number;
@@ -156,17 +162,29 @@ export function CatalogHighlightCard({
         ) : null}
       </div>
 
-      <Link href={`/product/${slug}`} className="flex flex-1 flex-col px-2 pb-3 pt-4">
-        <h3 className="line-clamp-2 text-lg font-bold tracking-tight text-filler-ink transition group-hover:text-filler-rose-800">
-          {title}
-        </h3>
-        {subtitle ? (
-          <p className="mt-1 text-xs font-medium text-filler-rose-800/90">{subtitle}</p>
+      <div className="flex flex-1 flex-col px-2 pb-3 pt-4">
+        {categoryName && categorySlug ? (
+          <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-filler-ink/50">
+            <Link
+              href={categoryHref(categorySlug)}
+              className="text-filler-rose-700/90 transition hover:text-filler-rose-800 hover:underline"
+            >
+              {categoryName}
+            </Link>
+          </p>
         ) : null}
-        <p className="mt-1.5 line-clamp-2 text-sm font-normal leading-snug text-filler-ink/55">
-          {blurb}
-        </p>
-      </Link>
+        <Link href={`/product/${slug}`} className="block flex-1 text-left">
+          <h3 className="line-clamp-2 text-lg font-bold tracking-tight text-filler-ink transition group-hover:text-filler-rose-800">
+            {title}
+          </h3>
+          {subtitle ? (
+            <p className="mt-1 text-xs font-medium text-filler-rose-800/90">{subtitle}</p>
+          ) : null}
+          <p className="mt-1.5 line-clamp-2 text-sm font-normal leading-snug text-filler-ink/55">
+            {blurb}
+          </p>
+        </Link>
+      </div>
     </div>
   );
 }

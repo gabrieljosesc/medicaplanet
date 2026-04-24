@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 type Props = { basePath: string };
 
 const SORT_OPTIONS: { value: string; label: string }[] = [
+  { value: "master_asc", label: "Product master list" },
   { value: "title_asc", label: "Name A–Z" },
   { value: "title_desc", label: "Name Z–A" },
   { value: "price_asc", label: "Price: low to high" },
@@ -54,7 +55,7 @@ export function CategoryProductToolbar({ basePath }: Props) {
     [router, basePath, sp]
   );
 
-  const sortValue = sp.get("sort") ?? "title_asc";
+  const sortValue = sp.get("sort") ?? "master_asc";
   const featured = sp.get("featured") === "1" || sp.get("featured") === "true";
 
   const hasFilters = useMemo(() => {
@@ -63,7 +64,7 @@ export function CategoryProductToolbar({ basePath }: Props) {
       (sp.get("min") ?? "") !== "" ||
       (sp.get("max") ?? "") !== "" ||
       featured ||
-      (sp.get("sort") && sp.get("sort") !== "title_asc")
+      (sp.get("sort") != null && sp.get("sort") !== "master_asc")
     );
   }, [sp, featured]);
 
@@ -72,6 +73,7 @@ export function CategoryProductToolbar({ basePath }: Props) {
       q: qDraft.trim() || null,
       min: minDraft.trim() || null,
       max: maxDraft.trim() || null,
+      page: null,
     });
   };
 
@@ -113,8 +115,11 @@ export function CategoryProductToolbar({ basePath }: Props) {
           </label>
           <select
             id="cat-filter-sort"
-            value={SORT_OPTIONS.some((o) => o.value === sortValue) ? sortValue : "title_asc"}
-            onChange={(e) => push({ sort: e.target.value === "title_asc" ? null : e.target.value })}
+            value={SORT_OPTIONS.some((o) => o.value === sortValue) ? sortValue : "master_asc"}
+            onChange={(e) => {
+              const v = e.target.value;
+              push({ sort: v === "master_asc" ? null : v, page: null });
+            }}
             className="mt-1 block w-full min-w-[12rem] rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 lg:w-auto"
           >
             {SORT_OPTIONS.map((o) => (
@@ -171,7 +176,7 @@ export function CategoryProductToolbar({ basePath }: Props) {
           <input
             type="checkbox"
             checked={featured}
-            onChange={(e) => push({ featured: e.target.checked ? "1" : null })}
+            onChange={(e) => push({ featured: e.target.checked ? "1" : null, page: null })}
             className="size-4 rounded border-zinc-400 text-teal-800 focus:ring-teal-600"
           />
           Featured only
