@@ -22,9 +22,14 @@ const pages = [
     desc: "Dispatch windows, carrier handling, and temperature-sensitive goods.",
   },
   {
-    href: "/legal/returns-cancellations",
-    title: "Returns & Cancellations",
-    desc: "When returns are allowed and how cancellations are handled.",
+    href: "/legal/return-policy",
+    title: "Return policy",
+    desc: "5-day return program, future credit, reshipment, and refunds.",
+  },
+  {
+    href: "/legal/referral-program",
+    title: "Referral program",
+    desc: "Rewards for referring qualified professional colleagues who place qualifying orders.",
   },
 ];
 

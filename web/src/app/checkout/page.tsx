@@ -380,8 +380,8 @@ export default function CheckoutPage() {
           Shipping & Cold-Chain Policy
         </Link>
         , and{" "}
-        <Link href="/legal/returns-cancellations" className="underline hover:no-underline">
-          Returns & Cancellations Policy
+        <Link href="/legal/return-policy" className="underline hover:no-underline">
+          Return policy
         </Link>
         .
       </p>

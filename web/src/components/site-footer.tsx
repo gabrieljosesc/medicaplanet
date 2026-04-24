@@ -69,8 +69,13 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
-              <Link href="/legal/returns-cancellations" className="hover:underline">
-                Returns & cancellations
+              <Link href="/legal/return-policy" className="hover:underline">
+                Return policy
+              </Link>
+            </li>
+            <li>
+              <Link href="/legal/referral-program" className="hover:underline">
+                Referral program
               </Link>
             </li>
           </ul>
