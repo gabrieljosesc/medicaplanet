@@ -112,7 +112,7 @@ export default async function PurchasesPage({
               >
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-100 bg-zinc-50/80 px-4 py-3 text-sm">
                   <span className="font-mono text-xs text-zinc-500">{order.id}</span>
-                  <span className="rounded-full bg-white px-2.5 py-0.5 text-xs font-medium capitalize text-emerald-900 ring-1 ring-emerald-200">
+                  <span className="rounded-full bg-white px-2.5 py-0.5 text-xs font-medium capitalize text-teal-900 ring-1 ring-teal-200">
                     {formatStatus(order.status)}
                   </span>
                   <time className="text-xs text-zinc-500" dateTime={order.created_at}>
@@ -159,12 +159,12 @@ export default async function PurchasesPage({
                     })}
                   </ul>
                   <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-zinc-100 pt-3">
-                    <p className="text-sm font-semibold text-emerald-900">
+                    <p className="text-sm font-semibold text-teal-900">
                       Order total: ${Number(order.subtotal).toFixed(2)}
                     </p>
                     <Link
                       href={`/account/orders/${order.id}`}
-                      className="text-sm font-medium text-emerald-800 hover:underline"
+                      className="text-sm font-medium text-teal-800 hover:underline"
                     >
                       View details
                     </Link>

@@ -157,10 +157,10 @@ export function CatalogHighlightCard({
       </div>
 
       <Link href={`/product/${slug}`} className="flex flex-1 flex-col px-2 pb-3 pt-4">
-        <h3 className="line-clamp-2 text-lg font-bold tracking-tight text-zinc-900 transition group-hover:text-emerald-900">
+        <h3 className="line-clamp-2 text-lg font-bold tracking-tight text-zinc-900 transition group-hover:text-teal-900">
           {title}
         </h3>
-        {subtitle ? <p className="mt-1 text-xs font-medium text-emerald-800/90">{subtitle}</p> : null}
+        {subtitle ? <p className="mt-1 text-xs font-medium text-teal-800/90">{subtitle}</p> : null}
         <p className="mt-1.5 line-clamp-2 text-sm font-normal leading-snug text-zinc-500">{blurb}</p>
       </Link>
     </div>

@@ -36,7 +36,7 @@ function AddCardModal({ onClose }: { onClose: () => void }) {
             ✕
           </button>
         </div>
-        <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-900">
+        <div className="mt-3 rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-xs text-teal-900">
           For your protection, the full card number is encrypted on our servers.{" "}
           <strong>We never store your CVV</strong> (security standard). Our team may contact you if a one-time security
           code is needed for processing.
@@ -170,7 +170,7 @@ export function PaymentMethodsClient({ initialMethods }: { initialMethods: Saved
                           else router.refresh();
                         });
                       }}
-                      className="text-xs font-medium text-emerald-800 hover:underline disabled:opacity-50"
+                      className="text-xs font-medium text-teal-800 hover:underline disabled:opacity-50"
                     >
                       Set default
                     </button>

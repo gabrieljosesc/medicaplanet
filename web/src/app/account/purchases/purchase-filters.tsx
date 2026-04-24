@@ -35,8 +35,8 @@ export function PurchaseFilters({
               href={href}
               className={
                 isOn
-                  ? "rounded-full bg-emerald-800 px-3 py-1.5 text-xs font-medium text-white"
-                  : "rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:border-emerald-300"
+                  ? "rounded-full bg-teal-800 px-3 py-1.5 text-xs font-medium text-white"
+                  : "rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:border-teal-300"
               }
             >
               {t.label}
@@ -54,7 +54,7 @@ export function PurchaseFilters({
         />
         <button
           type="submit"
-          className="rounded-lg border border-emerald-800 px-3 py-2 text-sm font-medium text-emerald-900 hover:bg-emerald-50"
+          className="rounded-lg border border-teal-800 px-3 py-2 text-sm font-medium text-teal-900 hover:bg-teal-50"
         >
           Search
         </button>

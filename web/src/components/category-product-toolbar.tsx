@@ -95,12 +95,12 @@ export function CategoryProductToolbar({ basePath }: Props) {
                 }
               }}
               placeholder="Product name…"
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600"
             />
             <button
               type="button"
               onClick={() => applySearchAndPrice()}
-              className="shrink-0 rounded-md bg-emerald-800 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-900"
+              className="shrink-0 rounded-md bg-teal-800 px-3 py-2 text-sm font-medium text-white hover:bg-teal-900"
             >
               Search
             </button>
@@ -115,7 +115,7 @@ export function CategoryProductToolbar({ basePath }: Props) {
             id="cat-filter-sort"
             value={SORT_OPTIONS.some((o) => o.value === sortValue) ? sortValue : "title_asc"}
             onChange={(e) => push({ sort: e.target.value === "title_asc" ? null : e.target.value })}
-            className="mt-1 block w-full min-w-[12rem] rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 lg:w-auto"
+            className="mt-1 block w-full min-w-[12rem] rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 lg:w-auto"
           >
             {SORT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -172,7 +172,7 @@ export function CategoryProductToolbar({ basePath }: Props) {
             type="checkbox"
             checked={featured}
             onChange={(e) => push({ featured: e.target.checked ? "1" : null })}
-            className="size-4 rounded border-zinc-400 text-emerald-800 focus:ring-emerald-600"
+            className="size-4 rounded border-zinc-400 text-teal-800 focus:ring-teal-600"
           />
           Featured only
         </label>
@@ -180,7 +180,7 @@ export function CategoryProductToolbar({ basePath }: Props) {
         {hasFilters ? (
           <Link
             href={basePath}
-            className="text-sm font-medium text-emerald-800 underline-offset-2 hover:underline"
+            className="text-sm font-medium text-teal-800 underline-offset-2 hover:underline"
             scroll={false}
           >
             Clear all filters

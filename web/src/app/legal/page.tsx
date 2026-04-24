@@ -42,9 +42,9 @@ export default function LegalHubPage() {
           <li key={p.href}>
             <Link
               href={p.href}
-              className="block rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-emerald-300"
+              className="block rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-teal-300"
             >
-              <h2 className="text-base font-semibold text-emerald-900">{p.title}</h2>
+              <h2 className="text-base font-semibold text-teal-900">{p.title}</h2>
               <p className="mt-1 text-sm text-zinc-600">{p.desc}</p>
             </Link>
           </li>

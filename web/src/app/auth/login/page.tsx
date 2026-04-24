@@ -40,17 +40,17 @@ export default async function LoginPage({ searchParams }: Props) {
         <p className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>
       )}
       {verify === "sent" && (
-        <p className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
+        <p className="mt-3 rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm text-teal-900">
           Verification email sent. Please check your inbox before signing in.
         </p>
       )}
       {verify === "resent" && (
-        <p className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
+        <p className="mt-3 rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm text-teal-900">
           Verification email resent. Please check your inbox.
         </p>
       )}
       {verify === "confirmed" && (
-        <p className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
+        <p className="mt-3 rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm text-teal-900">
           Email confirmed successfully. You can sign in now.
         </p>
       )}
@@ -87,14 +87,14 @@ export default async function LoginPage({ searchParams }: Props) {
         </div>
         <button
           type="submit"
-          className="w-full rounded-full bg-emerald-800 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-900 hover:shadow-md"
+          className="w-full rounded-full bg-teal-800 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-900 hover:shadow-md"
         >
           Sign in
         </button>
       </form>
       <p className="mt-4 text-center text-sm text-zinc-600">
         No account?{" "}
-        <Link href={registerHref} className="font-medium text-emerald-800 hover:underline">
+        <Link href={registerHref} className="font-medium text-teal-800 hover:underline">
           Register
         </Link>
       </p>

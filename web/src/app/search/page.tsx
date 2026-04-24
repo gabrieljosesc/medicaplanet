@@ -50,9 +50,9 @@ export default async function SearchPage({ searchParams }: Props) {
             <span className="font-medium text-zinc-800">&ldquo;{term}&rdquo;</span>
           </p>
           {ambiguous && (
-            <div className="mt-4 rounded-xl border border-emerald-100 bg-emerald-50/60 px-4 py-3 text-sm text-emerald-950">
-              <p className="font-medium text-emerald-900">Several products matched</p>
-              <p className="mt-1 text-emerald-900/90">
+            <div className="mt-4 rounded-xl border border-teal-100 bg-teal-50/60 px-4 py-3 text-sm text-teal-950">
+              <p className="font-medium text-teal-900">Several products matched</p>
+              <p className="mt-1 text-teal-900/90">
                 The same words often appear on different SKUs. Each card shows its{" "}
                 <span className="font-medium">category</span> under the title so you can pick the right
                 line. Open a product for full details.
@@ -63,7 +63,7 @@ export default async function SearchPage({ searchParams }: Props) {
             {rows.length === 0 ? (
               <p className="col-span-full text-sm text-zinc-600">
                 No matches. Try different keywords or{" "}
-                <Link href="/shop" className="font-medium text-emerald-800 hover:underline">
+                <Link href="/shop" className="font-medium text-teal-800 hover:underline">
                   browse categories
                 </Link>
                 .

@@ -19,7 +19,7 @@ export default async function AdminProductEditPage({ params }: Props) {
 
   return (
     <div>
-      <Link href="/admin/products" className="text-sm text-emerald-800 hover:underline">
+      <Link href="/admin/products" className="text-sm text-teal-800 hover:underline">
         ← Products
       </Link>
       <h1 className="mt-4 text-2xl font-semibold text-zinc-900">Edit product</h1>
@@ -73,7 +73,7 @@ export default async function AdminProductEditPage({ params }: Props) {
           <input type="checkbox" name="is_featured" defaultChecked={product.is_featured} />
           Featured
         </label>
-        <button type="submit" className="rounded-full bg-emerald-800 px-6 py-2.5 text-sm font-semibold text-white">
+        <button type="submit" className="rounded-full bg-teal-800 px-6 py-2.5 text-sm font-semibold text-white">
           Save
         </button>
       </form>

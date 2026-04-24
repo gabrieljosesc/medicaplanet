@@ -15,7 +15,7 @@ export default async function AdminProductsPage() {
         <h1 className="text-2xl font-semibold text-zinc-900">Products</h1>
         <Link
           href="/admin/products/new"
-          className="rounded-full bg-emerald-800 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-900"
+          className="rounded-full bg-teal-800 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-900"
         >
           New product
         </Link>
@@ -34,7 +34,7 @@ export default async function AdminProductsPage() {
           {(products ?? []).map((p) => (
             <tr key={p.id} className="border-b border-zinc-100">
               <td className="py-2 pr-2">
-                <Link href={`/admin/products/${p.id}`} className="font-medium text-emerald-900 hover:underline">
+                <Link href={`/admin/products/${p.id}`} className="font-medium text-teal-900 hover:underline">
                   {p.title}
                 </Link>
               </td>

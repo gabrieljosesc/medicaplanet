@@ -85,7 +85,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
             <p className="font-medium text-zinc-900">No products match these filters.</p>
             <p className="mt-2">
               Try widening the price range, clearing search, or{" "}
-              <Link href={`/category/${slug}`} className="font-medium text-emerald-800 hover:underline">
+              <Link href={`/category/${slug}`} className="font-medium text-teal-800 hover:underline">
                 reset all filters
               </Link>
               .

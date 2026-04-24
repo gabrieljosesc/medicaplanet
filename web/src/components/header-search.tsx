@@ -201,7 +201,7 @@ export function HeaderSearch({ variant = "default" }: { variant?: "default" | "h
           className={
             hero
               ? "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white hover:bg-white/15"
-              : "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-emerald-800 hover:bg-emerald-50 hover:text-emerald-900"
+              : "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-teal-800 hover:bg-teal-50 hover:text-teal-900"
           }
         >
           <IconSearch className="h-[22px] w-[22px] shrink-0" />
@@ -245,12 +245,12 @@ export function HeaderSearch({ variant = "default" }: { variant?: "default" | "h
                         setHighlight(-1);
                       }}
                       className={`block px-3 py-2 no-underline transition ${
-                        highlight === i ? "bg-emerald-50" : "hover:bg-zinc-50"
+                        highlight === i ? "bg-teal-50" : "hover:bg-zinc-50"
                       }`}
                     >
                       <span className="line-clamp-2 text-sm font-medium text-zinc-900">{item.title}</span>
                       {item.category ? (
-                        <span className="mt-0.5 block text-xs text-emerald-800/90">{item.category}</span>
+                        <span className="mt-0.5 block text-xs text-teal-800/90">{item.category}</span>
                       ) : null}
                     </Link>
                   </li>
@@ -260,7 +260,7 @@ export function HeaderSearch({ variant = "default" }: { variant?: "default" | "h
                 <button
                   type="button"
                   onClick={() => runFullSearch()}
-                  className="w-full rounded-lg px-2 py-1.5 text-left text-xs font-medium text-emerald-800 hover:bg-emerald-50"
+                  className="w-full rounded-lg px-2 py-1.5 text-left text-xs font-medium text-teal-800 hover:bg-teal-50"
                 >
                   View all results for &ldquo;{q.trim()}&rdquo; →
                 </button>

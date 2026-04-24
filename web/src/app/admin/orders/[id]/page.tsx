@@ -21,7 +21,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
 
   return (
     <div>
-      <Link href="/admin/orders" className="text-sm text-emerald-800 hover:underline">
+      <Link href="/admin/orders" className="text-sm text-teal-800 hover:underline">
         ← Orders
       </Link>
       <h1 className="mt-4 text-2xl font-semibold text-zinc-900">Order detail</h1>
@@ -35,8 +35,8 @@ export default async function AdminOrderDetailPage({ params }: Props) {
         {order.customer_notes && <p>Customer notes: {order.customer_notes}</p>}
         {order.payment_notes && <p>Payment notes: {order.payment_notes}</p>}
         {paySnap && Object.keys(paySnap).length > 0 ? (
-          <div className="mt-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-950">
-            <p className="font-medium text-emerald-900">Saved card (customer)</p>
+          <div className="mt-2 rounded-md border border-teal-200 bg-teal-50 px-3 py-2 text-xs text-teal-950">
+            <p className="font-medium text-teal-900">Saved card (customer)</p>
             <p className="mt-1">
               {(paySnap.brand as string) ?? "Card"} ···· {String(paySnap.last4 ?? "????")}{" "}
               {paySnap.exp_month != null && paySnap.exp_year != null
@@ -58,7 +58,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
                 })()}
               </p>
             ) : null}
-            <p className="mt-1 text-[11px] text-emerald-800">
+            <p className="mt-1 text-[11px] text-teal-800">
               Treat as highly sensitive. CVV was not stored; use your processor&apos;s rules for card-not-present
               transactions.
             </p>
@@ -91,7 +91,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
           </li>
         ))}
       </ul>
-      <p className="mt-4 font-semibold text-emerald-900">Subtotal ${Number(order.subtotal).toFixed(2)}</p>
+      <p className="mt-4 font-semibold text-teal-900">Subtotal ${Number(order.subtotal).toFixed(2)}</p>
 
       <form action={updateOrderAction} className="mt-8 max-w-md space-y-4 border-t border-zinc-200 pt-6">
         <input type="hidden" name="id" value={order.id} />
@@ -108,7 +108,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
           <label className="text-xs font-medium text-zinc-600">Admin notes</label>
           <textarea name="admin_notes" rows={3} defaultValue={order.admin_notes ?? ""} className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
         </div>
-        <button type="submit" className="rounded-full bg-emerald-800 px-6 py-2.5 text-sm font-semibold text-white">
+        <button type="submit" className="rounded-full bg-teal-800 px-6 py-2.5 text-sm font-semibold text-white">
           Update order
         </button>
       </form>

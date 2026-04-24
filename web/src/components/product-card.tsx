@@ -37,7 +37,7 @@ export function ProductCard({
   return (
     <Link
       href={`/product/${slug}`}
-      className="group flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition hover:border-emerald-300 hover:shadow-md"
+      className="group flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition hover:border-teal-300 hover:shadow-md"
     >
       <div className="relative aspect-[5/4] w-full bg-zinc-100">
         <Image
@@ -50,16 +50,16 @@ export function ProductCard({
         />
       </div>
       <div className="flex flex-1 flex-col gap-1 p-4">
-        <h3 className="line-clamp-2 text-sm font-semibold text-zinc-900 group-hover:text-emerald-900">
+        <h3 className="line-clamp-2 text-sm font-semibold text-zinc-900 group-hover:text-teal-900">
           {title}
         </h3>
         {subtitle ? (
-          <p className="text-xs font-medium text-emerald-800/90">{subtitle}</p>
+          <p className="text-xs font-medium text-teal-800/90">{subtitle}</p>
         ) : null}
         <p className="text-xs text-zinc-500">
           Rated {rating.toFixed(2)} / 5 · {reviewCount} reviews
         </p>
-        <p className="mt-auto text-sm font-semibold text-emerald-800">{priceLabel}</p>
+        <p className="mt-auto text-sm font-semibold text-teal-800">{priceLabel}</p>
       </div>
     </Link>
   );

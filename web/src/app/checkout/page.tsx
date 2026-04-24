@@ -351,7 +351,7 @@ export default function CheckoutPage() {
     return (
       <p className="text-sm text-zinc-600">
         No selected items for checkout. Go back to{" "}
-        <Link href="/cart" className="font-medium text-emerald-800 hover:underline">
+        <Link href="/cart" className="font-medium text-teal-800 hover:underline">
           cart
         </Link>{" "}
         and select product(s).
@@ -386,13 +386,13 @@ export default function CheckoutPage() {
         .
       </p>
       <ol className="mt-4 flex flex-wrap items-center gap-2 text-xs font-medium">
-        <li className={`rounded-full px-3 py-1 ${step >= 1 ? "bg-emerald-100 text-emerald-900" : "bg-zinc-100 text-zinc-700"}`}>
+        <li className={`rounded-full px-3 py-1 ${step >= 1 ? "bg-teal-100 text-teal-900" : "bg-zinc-100 text-zinc-700"}`}>
           1. Contact
         </li>
-        <li className={`rounded-full px-3 py-1 ${step >= 2 ? "bg-emerald-100 text-emerald-900" : "bg-zinc-100 text-zinc-700"}`}>
+        <li className={`rounded-full px-3 py-1 ${step >= 2 ? "bg-teal-100 text-teal-900" : "bg-zinc-100 text-zinc-700"}`}>
           2. Shipping & payment
         </li>
-        <li className={`rounded-full px-3 py-1 ${step >= 3 ? "bg-emerald-100 text-emerald-900" : "bg-zinc-100 text-zinc-700"}`}>
+        <li className={`rounded-full px-3 py-1 ${step >= 3 ? "bg-teal-100 text-teal-900" : "bg-zinc-100 text-zinc-700"}`}>
           3. Review & submit
         </li>
       </ol>
@@ -443,7 +443,7 @@ export default function CheckoutPage() {
                   <h2 className="text-sm font-semibold text-zinc-900">Shipping address</h2>
                   <p className="mt-1 text-xs text-zinc-500">Where we should ship this order. Phone is used for delivery coordination.</p>
                 </div>
-                <Link href="/account/addresses" className="text-xs font-medium text-emerald-800 hover:underline">
+                <Link href="/account/addresses" className="text-xs font-medium text-teal-800 hover:underline">
                   Manage saved addresses
                 </Link>
               </div>
@@ -501,7 +501,7 @@ export default function CheckoutPage() {
               ) : (
                 <p className="mt-3 text-xs text-zinc-600">
                   No saved addresses yet. Enter shipping details below, or{" "}
-                  <Link href="/account/addresses" className="font-medium text-emerald-800 hover:underline">
+                  <Link href="/account/addresses" className="font-medium text-teal-800 hover:underline">
                     add addresses to your profile
                   </Link>{" "}
                   for faster checkout next time.
@@ -639,7 +639,7 @@ export default function CheckoutPage() {
               ) : (
                 <p className="mt-3 text-sm text-zinc-700">
                   <span className="font-medium">Direct bank transfer</span> for this order.{" "}
-                  <Link href="/account/payment-methods" className="font-medium text-emerald-800 hover:underline">
+                  <Link href="/account/payment-methods" className="font-medium text-teal-800 hover:underline">
                     Add a card under Banks &amp; cards
                   </Link>{" "}
                   to use a saved card at checkout.
@@ -713,7 +713,7 @@ export default function CheckoutPage() {
               <button
                 type="button"
                 onClick={goNext}
-                className="rounded-full bg-emerald-800 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-900"
+                className="rounded-full bg-teal-800 px-5 py-2.5 text-sm font-semibold text-white hover:bg-teal-900"
               >
                 Continue to {step === 1 ? "Shipping & payment" : "Review"}
               </button>
@@ -721,7 +721,7 @@ export default function CheckoutPage() {
               <button
                 type="submit"
                 disabled={pending}
-                className="rounded-full bg-emerald-800 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-900 disabled:opacity-60"
+                className="rounded-full bg-teal-800 px-5 py-2.5 text-sm font-semibold text-white hover:bg-teal-900 disabled:opacity-60"
               >
                 {pending ? "Submitting..." : "Place order"}
               </button>

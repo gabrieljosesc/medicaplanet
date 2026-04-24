@@ -111,11 +111,11 @@ export function ProfileForms({
             {profileState.error ? (
               <p className="text-sm text-red-600">{profileState.error}</p>
             ) : null}
-            {profileState.ok ? <p className="text-sm text-emerald-800">{profileState.ok}</p> : null}
+            {profileState.ok ? <p className="text-sm text-teal-800">{profileState.ok}</p> : null}
             <div className="pt-1 text-center">
               <button
                 type="submit"
-                className="rounded-full bg-emerald-800 px-8 py-2 text-sm font-medium text-white hover:bg-emerald-900"
+                className="rounded-full bg-teal-800 px-8 py-2 text-sm font-medium text-white hover:bg-teal-900"
               >
                 Save
               </button>
@@ -146,7 +146,7 @@ export function ProfileForms({
               unoptimized={profile.avatar_url.includes("%")}
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-3xl font-semibold text-emerald-800">
+            <div className="flex h-full w-full items-center justify-center text-3xl font-semibold text-teal-800">
               {(profile.full_name || "?").slice(0, 1).toUpperCase()}
             </div>
           )}
@@ -171,16 +171,16 @@ export function ProfileForms({
             className="w-full text-xs text-zinc-600 file:mr-2 file:rounded-md file:border file:border-zinc-300 file:bg-white file:px-2 file:py-1"
           />
           {avatarState.error ? <p className="text-xs text-red-600">{avatarState.error}</p> : null}
-          {avatarState.ok ? <p className="text-xs text-emerald-800">{avatarState.ok}</p> : null}
+          {avatarState.ok ? <p className="text-xs text-teal-800">{avatarState.ok}</p> : null}
           {removeAvatarState.error ? (
             <p className="text-xs text-red-600">{removeAvatarState.error}</p>
           ) : null}
           {removeAvatarState.ok ? (
-            <p className="text-xs text-emerald-800">{removeAvatarState.ok}</p>
+            <p className="text-xs text-teal-800">{removeAvatarState.ok}</p>
           ) : null}
           <button
             type="submit"
-            className="w-full rounded-full border border-emerald-800 py-2 text-sm font-medium text-emerald-900 hover:bg-emerald-50"
+            className="w-full rounded-full border border-teal-800 py-2 text-sm font-medium text-teal-900 hover:bg-teal-50"
           >
             Upload photo
           </button>
@@ -209,7 +209,7 @@ export function ProfileForms({
               >
                 <button
                   type="submit"
-                  className="rounded-full bg-emerald-800 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-900"
+                  className="rounded-full bg-teal-800 px-4 py-2 text-sm font-medium text-white hover:bg-teal-900"
                 >
                   Yes, remove
                 </button>

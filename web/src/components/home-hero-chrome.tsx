@@ -47,9 +47,9 @@ export function HomeHeroChrome({
   }, [menuOpen]);
 
   const pillLight =
-    "rounded-full border border-zinc-200/90 bg-white/90 py-1.5 shadow-md backdrop-blur-xl ring-1 ring-black/5 sm:shadow-lg md:py-2";
+    "rounded-full border border-slate-200/90 bg-white/95 py-1.5 shadow-md backdrop-blur-xl ring-1 ring-slate-900/5 sm:shadow-lg md:py-2";
   const pillDark =
-    "rounded-full border border-white/25 bg-white/15 py-1.5 shadow-lg backdrop-blur-md md:py-2";
+    "rounded-full border border-white/20 bg-slate-950/35 py-1.5 shadow-lg backdrop-blur-md md:py-2";
 
   return (
     <div className="pointer-events-none fixed inset-x-0 top-0 z-[100] px-4 pt-[max(1rem,env(safe-area-inset-top))] sm:px-6 sm:pt-[max(1.25rem,env(safe-area-inset-top))]">
@@ -59,12 +59,12 @@ export function HomeHeroChrome({
         >
           <Link
             href="/"
-            className={`shrink-0 text-sm font-semibold tracking-tight md:text-base ${solidNav ? "text-emerald-900" : "text-white"}`}
+            className={`shrink-0 font-serif text-sm font-semibold tracking-tight md:text-base ${solidNav ? "text-slate-900" : "text-white"}`}
           >
             MedicaPlanet
           </Link>
           <nav
-            className={`hidden items-center gap-1 pl-3 md:flex md:gap-3 md:pl-4 ${solidNav ? "border-l border-zinc-200/80" : "border-l border-white/25"}`}
+            className={`hidden items-center gap-1 pl-3 md:flex md:gap-3 md:pl-4 ${solidNav ? "border-l border-slate-200/80" : "border-l border-white/25"}`}
           >
             {SITE_NAV.map((n) => (
               <Link
@@ -72,7 +72,7 @@ export function HomeHeroChrome({
                 href={n.href}
                 className={
                   solidNav
-                    ? "text-sm font-medium text-zinc-700 transition hover:text-emerald-900"
+                    ? "text-sm font-medium text-slate-600 transition hover:text-teal-900"
                     : "text-sm font-medium text-white/90 transition hover:text-white"
                 }
               >
@@ -84,8 +84,8 @@ export function HomeHeroChrome({
                 href="/admin"
                 className={
                   solidNav
-                    ? "text-sm font-medium text-emerald-800 transition hover:text-emerald-950"
-                    : "text-sm font-medium text-emerald-200 transition hover:text-white"
+                    ? "text-sm font-medium text-teal-800 transition hover:text-teal-950"
+                    : "text-sm font-medium text-teal-200 transition hover:text-white"
                 }
               >
                 Admin
@@ -124,7 +124,7 @@ export function HomeHeroChrome({
               href="/auth/login"
               className={
                 solidNav
-                  ? "rounded-full px-3 py-1.5 text-sm font-semibold text-emerald-900 transition hover:bg-emerald-50"
+                  ? "rounded-full px-3 py-1.5 text-sm font-semibold text-teal-900 transition hover:bg-teal-50"
                   : "rounded-full px-3 py-1.5 text-sm font-semibold text-white hover:bg-white/10"
               }
             >
@@ -156,7 +156,7 @@ export function HomeHeroChrome({
             {isAdmin ? (
               <Link
                 href="/admin"
-                className="rounded-lg px-3 py-2.5 text-sm font-medium text-emerald-800 hover:bg-emerald-50"
+                className="rounded-lg px-3 py-2.5 text-sm font-medium text-teal-800 hover:bg-teal-50"
                 onClick={() => setMenuOpen(false)}
               >
                 Admin

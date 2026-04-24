@@ -38,10 +38,10 @@ export function NotificationsForm({
         </span>
       </label>
       {state.error ? <p className="text-sm text-red-600">{state.error}</p> : null}
-      {state.ok ? <p className="text-sm text-emerald-800">{state.ok}</p> : null}
+      {state.ok ? <p className="text-sm text-teal-800">{state.ok}</p> : null}
       <button
         type="submit"
-        className="rounded-full bg-emerald-800 px-6 py-2 text-sm font-medium text-white hover:bg-emerald-900"
+        className="rounded-full bg-teal-800 px-6 py-2 text-sm font-medium text-white hover:bg-teal-900"
       >
         Save preferences
       </button>

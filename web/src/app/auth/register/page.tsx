@@ -8,7 +8,7 @@ import { COUNTRY_OPTIONS } from "@/app/auth/register/countries";
 import { safeAuthRedirectTarget } from "@/lib/safe-redirect";
 
 const pill =
-  "w-full rounded-full border border-emerald-300 bg-white px-4 py-2.5 text-sm text-emerald-950 placeholder:text-emerald-500/70 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 disabled:opacity-60";
+  "w-full rounded-full border border-teal-300 bg-white px-4 py-2.5 text-sm text-teal-950 placeholder:text-teal-500/70 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-200 disabled:opacity-60";
 const pillError =
   "border-red-500 ring-2 ring-red-200 bg-red-50/60";
 
@@ -61,12 +61,12 @@ function RegisterFormInner({
 }) {
   return (
     <div className="mx-auto max-w-2xl px-1">
-      <h1 className="text-2xl font-semibold text-emerald-950">Create account</h1>
-      <p className="mt-1 text-sm text-emerald-800/90">
+      <h1 className="text-2xl font-semibold text-teal-950">Create account</h1>
+      <p className="mt-1 text-sm text-teal-800/90">
         Licensed professionals only. All fields marked with <span className="text-red-500">*</span>{" "}
         are required for compliance review before account approval and fulfillment access.
       </p>
-      <p className="mt-2 text-xs text-emerald-800/80">
+      <p className="mt-2 text-xs text-teal-800/80">
         By registering, you agree to our{" "}
         <Link href="/legal/terms" className="underline hover:no-underline">
           Terms of Supply
@@ -91,7 +91,7 @@ function RegisterFormInner({
       <form action={formAction} className="mt-8 space-y-4">
         {nextTarget ? <input type="hidden" name="next" value={nextTarget} /> : null}
         <div>
-          <label className="mb-1 block text-sm font-medium text-emerald-900">
+          <label className="mb-1 block text-sm font-medium text-teal-900">
             Email <span className="text-red-500">*</span>
           </label>
           <input
@@ -109,7 +109,7 @@ function RegisterFormInner({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium text-emerald-900">
+            <label className="mb-1 block text-sm font-medium text-teal-900">
               Password <span className="text-red-500">*</span>
             </label>
             <input
@@ -125,7 +125,7 @@ function RegisterFormInner({
             )}
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-emerald-900">
+            <label className="mb-1 block text-sm font-medium text-teal-900">
               Confirm password <span className="text-red-500">*</span>
             </label>
             <input
@@ -144,7 +144,7 @@ function RegisterFormInner({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium text-emerald-900">
+            <label className="mb-1 block text-sm font-medium text-teal-900">
               First name <span className="text-red-500">*</span>
             </label>
             <input
@@ -159,7 +159,7 @@ function RegisterFormInner({
             )}
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-emerald-900">
+            <label className="mb-1 block text-sm font-medium text-teal-900">
               Last name <span className="text-red-500">*</span>
             </label>
             <input
@@ -177,7 +177,7 @@ function RegisterFormInner({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium text-emerald-900">
+            <label className="mb-1 block text-sm font-medium text-teal-900">
               Delivery address <span className="text-red-500">*</span>
             </label>
             <input
@@ -192,7 +192,7 @@ function RegisterFormInner({
             )}
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-emerald-900">
+            <label className="mb-1 block text-sm font-medium text-teal-900">
               Country <span className="text-red-500">*</span>
             </label>
             <select
@@ -221,7 +221,7 @@ function RegisterFormInner({
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium text-emerald-900">
+            <label className="mb-1 block text-sm font-medium text-teal-900">
               City <span className="text-red-500">*</span>
             </label>
             <input
@@ -237,7 +237,7 @@ function RegisterFormInner({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="min-w-0">
-              <label className="mb-1 block text-sm font-medium text-emerald-900">
+              <label className="mb-1 block text-sm font-medium text-teal-900">
                 State / province <span className="text-red-500">*</span>
               </label>
               <input
@@ -252,7 +252,7 @@ function RegisterFormInner({
               )}
             </div>
             <div className="min-w-0">
-              <label className="mb-1 block text-sm font-medium text-emerald-900">
+              <label className="mb-1 block text-sm font-medium text-teal-900">
                 Zip <span className="text-red-500">*</span>
               </label>
               <input
@@ -270,7 +270,7 @@ function RegisterFormInner({
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-emerald-900">
+          <label className="mb-1 block text-sm font-medium text-teal-900">
             Confirm email <span className="text-red-500">*</span>
           </label>
           <input
@@ -288,7 +288,7 @@ function RegisterFormInner({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium text-emerald-900">
+            <label className="mb-1 block text-sm font-medium text-teal-900">
               Phone <span className="text-red-500">*</span>
             </label>
             <input
@@ -304,7 +304,7 @@ function RegisterFormInner({
             )}
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-emerald-900">
+            <label className="mb-1 block text-sm font-medium text-teal-900">
               Profession <span className="text-red-500">*</span>
             </label>
             <input
@@ -322,7 +322,7 @@ function RegisterFormInner({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium text-emerald-900">
+            <label className="mb-1 block text-sm font-medium text-teal-900">
               License number <span className="text-red-500">*</span>
             </label>
             <input
@@ -337,7 +337,7 @@ function RegisterFormInner({
             )}
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-emerald-900">
+            <label className="mb-1 block text-sm font-medium text-teal-900">
               License expiry <span className="text-red-500">*</span>
             </label>
             <input
@@ -352,8 +352,8 @@ function RegisterFormInner({
           </div>
         </div>
 
-        <label className="mt-6 flex items-start gap-2 text-xs text-emerald-900/90">
-          <input type="checkbox" required className="mt-0.5 size-4 rounded border-emerald-300" />
+        <label className="mt-6 flex items-start gap-2 text-xs text-teal-900/90">
+          <input type="checkbox" required className="mt-0.5 size-4 rounded border-teal-300" />
           <span>
             I confirm I am authorized to purchase regulated medical/aesthetic supplies and that my
             license information is accurate and current.
@@ -364,18 +364,18 @@ function RegisterFormInner({
           <button
             type="submit"
             disabled={pending}
-            className="inline-flex min-w-44 justify-center rounded-full bg-emerald-700 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 disabled:pointer-events-none disabled:opacity-50"
+            className="inline-flex min-w-44 justify-center rounded-full bg-teal-700 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-800 disabled:pointer-events-none disabled:opacity-50"
           >
             {pending ? "Creating account..." : "Register"}
           </button>
         </div>
       </form>
 
-      <p className="mt-6 text-center text-sm text-emerald-900/80">
+      <p className="mt-6 text-center text-sm text-teal-900/80">
         Already have an account?{" "}
         <Link
           href={nextTarget ? `/auth/login?next=${encodeURIComponent(nextTarget)}` : "/auth/login"}
-          className="font-semibold text-emerald-700 underline-offset-2 hover:underline"
+          className="font-semibold text-teal-700 underline-offset-2 hover:underline"
         >
           Sign in
         </Link>
@@ -386,7 +386,7 @@ function RegisterFormInner({
 
 export default function RegisterPage() {
   return (
-    <Suspense fallback={<div className="mx-auto max-w-2xl py-12 text-center text-emerald-900">Loading...</div>}>
+    <Suspense fallback={<div className="mx-auto max-w-2xl py-12 text-center text-teal-900">Loading...</div>}>
       <RegisterFormWithQuery />
     </Suspense>
   );

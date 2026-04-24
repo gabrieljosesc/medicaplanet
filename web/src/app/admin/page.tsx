@@ -7,7 +7,7 @@ export default function AdminHomePage() {
       <p className="mt-2 text-sm text-zinc-600">
         Manage catalog, review incoming orders, and publish blog posts.
       </p>
-      <ul className="mt-6 list-disc space-y-2 pl-5 text-sm text-emerald-900">
+      <ul className="mt-6 list-disc space-y-2 pl-5 text-sm text-teal-900">
         <li>
           <Link href="/admin/products" className="hover:underline">
             Products & prices

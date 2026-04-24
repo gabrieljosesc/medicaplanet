@@ -16,7 +16,7 @@ export default function CartPage() {
       {lines.length === 0 ? (
         <p className="mt-4 text-sm text-zinc-600">
           Your cart is empty.{" "}
-          <Link href="/shop" className="font-medium text-emerald-800 hover:underline">
+          <Link href="/shop" className="font-medium text-teal-800 hover:underline">
             Browse categories
           </Link>
           .
@@ -28,7 +28,7 @@ export default function CartPage() {
               type="checkbox"
               checked={allSelected}
               onChange={(e) => setAllSelected(e.target.checked)}
-              className="size-4 rounded border-emerald-300 text-emerald-700 accent-emerald-700 focus:ring-emerald-300"
+              className="size-4 rounded border-teal-300 text-teal-700 accent-teal-700 focus:ring-teal-300"
             />
             <span>Product</span>
             <span className="text-right">Unit Price</span>
@@ -45,10 +45,10 @@ export default function CartPage() {
                 type="checkbox"
                 checked={l.selected === true}
                 onChange={(e) => setSelected(l.slug, e.target.checked)}
-                className="size-4 rounded border-emerald-300 text-emerald-700 accent-emerald-700 focus:ring-emerald-300"
+                className="size-4 rounded border-teal-300 text-teal-700 accent-teal-700 focus:ring-teal-300"
               />
               <div className="min-w-0">
-                <Link href={`/product/${l.slug}`} className="font-medium text-emerald-900 hover:underline">
+                <Link href={`/product/${l.slug}`} className="font-medium text-teal-900 hover:underline">
                   {l.title}
                 </Link>
                 <p className="text-xs text-zinc-500">{l.slug}</p>
@@ -75,7 +75,7 @@ export default function CartPage() {
           ))}
           <div className="flex items-center justify-between border-t border-zinc-200 pt-4">
             <span className="font-semibold text-zinc-900">Subtotal</span>
-            <span className="text-lg font-semibold text-emerald-900">
+            <span className="text-lg font-semibold text-teal-900">
               {formatMoney(lines[0]?.currency ?? "USD", selectedSubtotal)}
             </span>
           </div>
@@ -84,7 +84,7 @@ export default function CartPage() {
               href={selectedLines.length > 0 ? "/checkout" : "/cart"}
               className={`inline-flex rounded-full px-6 py-3 text-sm font-semibold text-white transition ${
                 selectedLines.length > 0
-                  ? "bg-emerald-800 hover:bg-emerald-900 hover:shadow-md"
+                  ? "bg-teal-800 hover:bg-teal-900 hover:shadow-md"
                   : "cursor-not-allowed bg-zinc-400"
               }`}
               onClick={(e) => {

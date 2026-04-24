@@ -119,7 +119,7 @@ export function AddressEditor({
         <div className="flex flex-wrap gap-3 sm:col-span-2">
           <button
             type="submit"
-            className="rounded-full bg-emerald-800 px-6 py-2 text-sm font-medium text-white hover:bg-emerald-900"
+            className="rounded-full bg-teal-800 px-6 py-2 text-sm font-medium text-white hover:bg-teal-900"
           >
             {mode === "create" ? "Save address" : "Update address"}
           </button>

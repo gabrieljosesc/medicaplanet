@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
+/* Redesign: clinical slate + teal, soft surface, Fraunces for display via --font-fraunces */
 :root {
-  --background: #fafafa;
-  --foreground: #18181b;
+  --background: #f4f6f8;
+  --foreground: #0f172a;
+  --mp-surface: #f1f5f9;
+  --mp-hero-tint: color-mix(in srgb, #0d9488 8%, transparent);
 }
 
 @theme inline {
@@ -10,10 +13,16 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
 }
 
 body {
-  background: var(--background);
+  background: var(--mp-surface);
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+::selection {
+  background: color-mix(in srgb, #0d9488 24%, white);
+  color: #0f172a;
 }

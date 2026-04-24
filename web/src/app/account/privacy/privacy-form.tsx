@@ -23,10 +23,10 @@ export function PrivacyForm({ analyticsOptIn }: { analyticsOptIn: boolean }) {
         </span>
       </label>
       {state.error ? <p className="mt-3 text-sm text-red-600">{state.error}</p> : null}
-      {state.ok ? <p className="mt-3 text-sm text-emerald-800">{state.ok}</p> : null}
+      {state.ok ? <p className="mt-3 text-sm text-teal-800">{state.ok}</p> : null}
       <button
         type="submit"
-        className="mt-4 rounded-full bg-emerald-800 px-6 py-2 text-sm font-medium text-white hover:bg-emerald-900"
+        className="mt-4 rounded-full bg-teal-800 px-6 py-2 text-sm font-medium text-white hover:bg-teal-900"
       >
         Save
       </button>

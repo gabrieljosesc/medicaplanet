@@ -37,7 +37,7 @@ export default function AboutUsPage() {
   return (
     <article className="mx-auto max-w-5xl space-y-10">
       <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal-700">
           About MedicaPlanet
         </p>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
@@ -57,13 +57,13 @@ export default function AboutUsPage() {
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href="/shop"
-            className="rounded-full bg-emerald-800 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-900"
+            className="rounded-full bg-teal-800 px-5 py-2.5 text-sm font-semibold text-white hover:bg-teal-900"
           >
             Browse catalog
           </Link>
           <Link
             href="/auth/register"
-            className="rounded-full border border-emerald-800 px-5 py-2.5 text-sm font-semibold text-emerald-900 hover:bg-emerald-50"
+            className="rounded-full border border-teal-800 px-5 py-2.5 text-sm font-semibold text-teal-900 hover:bg-teal-50"
           >
             Create professional account
           </Link>
@@ -79,9 +79,9 @@ export default function AboutUsPage() {
         ))}
       </section>
 
-      <section className="rounded-2xl border border-emerald-200 bg-emerald-50/60 p-6 sm:p-8">
-        <h2 className="text-xl font-semibold text-emerald-950">Why clinics choose MedicaPlanet</h2>
-        <ul className="mt-4 grid gap-2 text-sm text-emerald-900 sm:grid-cols-2">
+      <section className="rounded-2xl border border-teal-200 bg-teal-50/60 p-6 sm:p-8">
+        <h2 className="text-xl font-semibold text-teal-950">Why clinics choose MedicaPlanet</h2>
+        <ul className="mt-4 grid gap-2 text-sm text-teal-900 sm:grid-cols-2">
           {trustPoints.map((point) => (
             <li key={point} className="rounded-lg bg-white/70 px-3 py-2">
               {point}

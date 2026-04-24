@@ -45,7 +45,7 @@ export default async function AddressesPage({
         {editing ? (
           <Link
             href="/account/addresses"
-            className="text-sm font-medium text-emerald-800 hover:underline"
+            className="text-sm font-medium text-teal-800 hover:underline"
           >
             Cancel edit
           </Link>
@@ -76,7 +76,7 @@ export default async function AddressesPage({
                   </p>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {a.is_default ? (
-                      <span className="rounded bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-900">
+                      <span className="rounded bg-teal-100 px-2 py-0.5 text-xs font-medium text-teal-900">
                         Default
                       </span>
                     ) : null}
@@ -90,7 +90,7 @@ export default async function AddressesPage({
                 <div className="flex flex-wrap gap-3 text-sm">
                   <Link
                     href={`/account/addresses?edit=${a.id}`}
-                    className="font-medium text-emerald-800 hover:underline"
+                    className="font-medium text-teal-800 hover:underline"
                   >
                     Edit
                   </Link>

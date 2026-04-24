@@ -43,7 +43,7 @@ export default async function ProductPage({ params }: Props) {
         />
       </div>
       <div>
-        <p className="text-xs font-medium uppercase tracking-wide text-emerald-800">
+        <p className="text-xs font-medium uppercase tracking-wide text-teal-800">
           {(product.categories as { name?: string } | null)?.name ?? "Catalog"}
         </p>
         <h1 className="mt-2 text-2xl font-semibold text-zinc-900">{product.title}</h1>

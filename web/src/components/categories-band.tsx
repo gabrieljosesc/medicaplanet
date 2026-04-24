@@ -25,7 +25,7 @@ function ViewAllLink() {
   return (
     <Link
       href="/shop"
-      className="inline-flex items-center gap-1 text-sm font-medium text-zinc-900 transition hover:text-emerald-800"
+      className="inline-flex items-center gap-1 text-sm font-medium text-zinc-900 transition hover:text-teal-800"
     >
       View all
       <span aria-hidden className="tracking-tighter">
@@ -40,7 +40,7 @@ function CapsuleGlyph({ emphasized }: { emphasized: boolean }) {
     <span
       className={
         emphasized
-          ? "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-800 ring-1 ring-emerald-200/80"
+          ? "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-800 ring-1 ring-teal-200/80"
           : "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-100/90 text-zinc-400 ring-1 ring-zinc-200/50"
       }
       aria-hidden
@@ -73,7 +73,7 @@ export function CategoriesBand({
   if (categories.length === 0) {
     return (
       <section className="rounded-2xl bg-white px-5 py-10 shadow-sm ring-1 ring-zinc-200/80 sm:px-8">
-        <h2 className="text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl">Categories</h2>
+        <h2 className="font-serif text-2xl font-medium tracking-tight text-slate-900 sm:text-3xl">Categories</h2>
         <p className="mt-6 text-sm text-zinc-500">No categories yet.</p>
         <div className="mt-10 flex justify-end sm:mt-12">
           <ViewAllLink />
@@ -84,7 +84,7 @@ export function CategoriesBand({
 
   return (
     <section className="rounded-2xl bg-white px-5 py-8 shadow-sm ring-1 ring-zinc-200/80 sm:px-8 sm:py-10">
-      <h2 className="text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl">Categories</h2>
+      <h2 className="font-serif text-2xl font-medium tracking-tight text-slate-900 sm:text-3xl">Categories</h2>
 
       <div
         className="mt-6 flex flex-wrap content-start items-center gap-x-4 gap-y-4 sm:gap-x-8 sm:gap-y-5"

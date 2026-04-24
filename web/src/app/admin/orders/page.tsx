@@ -44,7 +44,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
             />
             <button
               type="submit"
-              className="rounded-md bg-emerald-800 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-900"
+              className="rounded-md bg-teal-800 px-3 py-2 text-sm font-medium text-white hover:bg-teal-900"
             >
               Search
             </button>
@@ -82,7 +82,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
                 </Link>
               </td>
               <td className="py-2 pr-2">
-                <Link href={`/admin/orders/${o.id}`} className="font-medium text-emerald-900 hover:underline">
+                <Link href={`/admin/orders/${o.id}`} className="font-medium text-teal-900 hover:underline">
                   {o.full_name}
                 </Link>
                 <div className="text-xs text-zinc-500">{o.email}</div>
@@ -90,7 +90,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
               <td className="py-2 pr-2">{o.status}</td>
               <td className="py-2 pr-2 text-xs">
                 {o.policy_acknowledged_at ? (
-                  <span className="text-emerald-700">
+                  <span className="text-teal-700">
                     Yes · {new Date(o.policy_acknowledged_at).toLocaleDateString()}
                   </span>
                 ) : (

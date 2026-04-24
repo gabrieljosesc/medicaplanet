@@ -73,7 +73,7 @@ export default async function HomePage() {
       </section>
 
       <section>
-        <h2 className="mb-6 text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl">
+        <h2 className="mb-6 font-serif text-2xl font-medium tracking-tight text-slate-900 sm:text-3xl">
           Catalog highlights
         </h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-7">
@@ -105,8 +105,8 @@ export default async function HomePage() {
 
       <section>
         <div className="mb-4 flex items-end justify-between gap-4">
-          <h2 className="text-xl font-semibold text-zinc-900">From the blog</h2>
-          <Link href="/blog" className="text-sm font-medium text-emerald-800 hover:underline">
+          <h2 className="font-serif text-xl font-medium text-slate-900 sm:text-2xl">From the blog</h2>
+          <Link href="/blog" className="text-sm font-medium text-teal-800 hover:underline">
             All posts
           </Link>
         </div>
@@ -115,9 +115,9 @@ export default async function HomePage() {
             <Link
               key={b.slug}
               href={`/blog/${b.slug}`}
-              className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm hover:border-emerald-300"
+              className="group rounded-xl border border-slate-200/90 bg-white p-5 shadow-sm transition hover:border-teal-200 hover:shadow-md"
             >
-              <h3 className="font-semibold text-emerald-900">{b.title}</h3>
+              <h3 className="font-medium text-slate-900 group-hover:text-teal-900">{b.title}</h3>
               {b.excerpt && <p className="mt-2 line-clamp-3 text-sm text-zinc-600">{b.excerpt}</p>}
             </Link>
           ))}

@@ -37,7 +37,7 @@ export default async function BlogPostPage({ params }: Props) {
   return (
     <article className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_17rem]">
       <div className="min-w-0">
-        <Link href="/blog" className="text-sm font-medium text-emerald-800 no-underline hover:underline">
+        <Link href="/blog" className="text-sm font-medium text-teal-800 no-underline hover:underline">
           ← Blog
         </Link>
         <h1 className="mt-3 text-4xl font-semibold leading-tight tracking-tight text-zinc-900">{post.title}</h1>

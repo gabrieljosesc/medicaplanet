@@ -40,7 +40,7 @@ export function AccountSidebar({
               unoptimized={avatarUrl.includes("%")}
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-lg font-semibold text-emerald-800">
+            <div className="flex h-full w-full items-center justify-center text-lg font-semibold text-teal-800">
               {displayName.slice(0, 1).toUpperCase()}
             </div>
           )}
@@ -50,7 +50,7 @@ export function AccountSidebar({
           <p className="truncate text-xs text-zinc-500">{email}</p>
           <Link
             href="/account/profile"
-            className="mt-1 inline-block text-xs font-medium text-emerald-800 hover:underline"
+            className="mt-1 inline-block text-xs font-medium text-teal-800 hover:underline"
           >
             Edit profile
           </Link>
@@ -71,8 +71,8 @@ export function AccountSidebar({
                     href={link.href}
                     className={
                       active
-                        ? "block border-l-2 border-emerald-700 py-2 pl-3 font-medium text-emerald-900 -ml-px"
-                        : "block py-2 pl-3 text-zinc-700 hover:text-emerald-900"
+                        ? "block border-l-2 border-teal-700 py-2 pl-3 font-medium text-teal-900 -ml-px"
+                        : "block py-2 pl-3 text-zinc-700 hover:text-teal-900"
                     }
                   >
                     {link.label}
@@ -90,8 +90,8 @@ export function AccountSidebar({
                 href="/account/purchases"
                 className={
                   purchasesActive
-                    ? "block border-l-2 border-emerald-700 py-2 pl-3 font-medium text-emerald-900 -ml-px"
-                    : "block py-2 pl-3 text-zinc-700 hover:text-emerald-900"
+                    ? "block border-l-2 border-teal-700 py-2 pl-3 font-medium text-teal-900 -ml-px"
+                    : "block py-2 pl-3 text-zinc-700 hover:text-teal-900"
                 }
               >
                 My purchases

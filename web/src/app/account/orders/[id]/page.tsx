@@ -67,7 +67,7 @@ export default async function OrderDetailPage({ params }: Props) {
 
   return (
     <div>
-      <Link href="/account/purchases" className="text-sm font-medium text-emerald-800 hover:underline">
+      <Link href="/account/purchases" className="text-sm font-medium text-teal-800 hover:underline">
         ← My purchases
       </Link>
       <h1 className="mt-4 text-2xl font-semibold text-zinc-900">Order</h1>
@@ -107,7 +107,7 @@ export default async function OrderDetailPage({ params }: Props) {
           );
         })}
       </ul>
-      <p className="mt-6 text-sm font-semibold text-emerald-900">
+      <p className="mt-6 text-sm font-semibold text-teal-900">
         Total ${Number(order.subtotal).toFixed(2)}
       </p>
     </div>

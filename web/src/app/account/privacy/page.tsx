@@ -27,7 +27,7 @@ export default async function PrivacyPage() {
         <h1 className="text-2xl font-semibold text-zinc-900">Privacy</h1>
         <p className="mt-1 text-sm text-zinc-600">
           Control a few account preferences. See our{" "}
-          <Link href="/legal/privacy" className="font-medium text-emerald-800 hover:underline">
+          <Link href="/legal/privacy" className="font-medium text-teal-800 hover:underline">
             Privacy policy
           </Link>{" "}
           for full detail.

@@ -51,7 +51,7 @@ export function ProductBuyBox({
 
   return (
     <div className="mt-6 space-y-4">
-      <p className="text-2xl font-semibold text-emerald-900">{formatMoney(currency, unit)}</p>
+      <p className="text-2xl font-semibold text-teal-900">{formatMoney(currency, unit)}</p>
       {tiers.length > 1 && (
         <p className="text-xs text-zinc-500">Price per unit updates from the quantity you choose.</p>
       )}
@@ -68,7 +68,7 @@ export function ProductBuyBox({
                 className="flex items-center justify-between px-3 py-2 text-sm text-zinc-700"
               >
                 <span>{tierQuantityLabel(t)}</span>
-                <span className="font-medium text-emerald-900 tabular-nums">{formatMoney(currency, t.price)}</span>
+                <span className="font-medium text-teal-900 tabular-nums">{formatMoney(currency, t.price)}</span>
               </li>
             ))}
           </ul>
@@ -96,7 +96,7 @@ export function ProductBuyBox({
             setMsg("Added to cart");
             setTimeout(() => setMsg(null), 2000);
           }}
-          className="rounded-full bg-emerald-800 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-full bg-teal-800 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-teal-900 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Add to cart
         </button>
@@ -115,17 +115,17 @@ export function ProductBuyBox({
             });
             router.push("/cart");
           }}
-          className="rounded-full border border-emerald-800 px-6 py-2.5 text-sm font-semibold text-emerald-900 hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-full border border-teal-800 px-6 py-2.5 text-sm font-semibold text-teal-900 hover:bg-teal-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Buy now
         </button>
-        {msg && <span className="text-sm text-emerald-800">{msg}</span>}
+        {msg && <span className="text-sm text-teal-800">{msg}</span>}
       </div>
 
       {qty > 1 && (
         <p className="text-sm text-zinc-600">
           {qty} × {formatMoney(currency, unit)} ={" "}
-          <span className="font-semibold text-emerald-900">{formatMoney(currency, lineTotal)}</span>
+          <span className="font-semibold text-teal-900">{formatMoney(currency, lineTotal)}</span>
         </p>
       )}
     </div>

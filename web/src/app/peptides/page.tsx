@@ -76,7 +76,7 @@ export default async function PeptidesPage({ searchParams }: Props) {
             <p className="font-medium text-zinc-900">No products match these filters.</p>
             <p className="mt-2">
               Try widening the price range, clearing search, or{" "}
-              <Link href="/peptides" className="font-medium text-emerald-800 hover:underline">
+              <Link href="/peptides" className="font-medium text-teal-800 hover:underline">
                 reset all filters
               </Link>
               .
@@ -117,7 +117,7 @@ export default async function PeptidesPage({ searchParams }: Props) {
         </p>
         <Link
           href="/legal/research-use-only"
-          className="mt-4 inline-block font-medium text-emerald-800 underline hover:no-underline"
+          className="mt-4 inline-block font-medium text-teal-800 underline hover:no-underline"
         >
           Read the full Research Use Only policy
         </Link>
