@@ -69,16 +69,12 @@ export default async function CategoryPage({ params, searchParams }: Props) {
       <h1 className="text-2xl font-semibold text-zinc-900">
         {categoryNavLabel(cat.slug, cat.name)}
       </h1>
-      {cat.description && <p className="mt-3 max-w-3xl text-sm text-zinc-700">{cat.description}</p>}
-      <div className="prose prose-sm mt-6 max-w-3xl text-zinc-700">
-        <p>
-          MedicaPlanet supplies licensed professionals. We may request license verification before
-          fulfillment. Pricing tiers from your internal export are reflected as &quot;From&quot;
-          amounts when volume breaks exist.
-        </p>
-      </div>
 
-      <Suspense fallback={<div className="mt-8 h-28 animate-pulse rounded-xl bg-zinc-100" />}>
+      <Suspense
+        fallback={
+          <div className="mt-6 h-20 animate-pulse bg-zinc-100/60 md:mt-8 md:rounded-xl md:py-2" />
+        }
+      >
         <CategoryProductToolbar basePath={`/category/${slug}`} />
       </Suspense>
 
@@ -98,7 +94,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
           <div className="col-span-full rounded-xl border border-zinc-200 bg-zinc-50 px-5 py-6 text-sm text-zinc-700">
             <p className="font-medium text-zinc-900">No products match these filters.</p>
             <p className="mt-2">
-              Try widening the price range, clearing search, or{" "}
+              Try clearing your search, changing sort, or{" "}
               <Link href={`/category/${slug}`} className="font-medium text-teal-800 hover:underline">
                 reset all filters
               </Link>

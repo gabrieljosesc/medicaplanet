@@ -94,7 +94,11 @@ export default async function PeptidesPage({ searchParams }: Props) {
       </p>
 
       {cat ? (
-        <Suspense fallback={<div className="mt-8 h-28 animate-pulse rounded-xl bg-zinc-100" />}>
+        <Suspense
+          fallback={
+            <div className="mt-6 h-20 animate-pulse bg-zinc-100/60 md:mt-8 md:rounded-xl md:py-2" />
+          }
+        >
           <CategoryProductToolbar basePath="/peptides" />
         </Suspense>
       ) : null}
@@ -111,7 +115,7 @@ export default async function PeptidesPage({ searchParams }: Props) {
           <div className="col-span-full rounded-xl border border-zinc-200 bg-zinc-50 px-5 py-6 text-sm text-zinc-700">
             <p className="font-medium text-zinc-900">No products match these filters.</p>
             <p className="mt-2">
-              Try widening the price range, clearing search, or{" "}
+              Try clearing your search, changing sort, or{" "}
               <Link href="/peptides" className="font-medium text-teal-800 hover:underline">
                 reset all filters
               </Link>

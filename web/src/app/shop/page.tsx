@@ -61,7 +61,11 @@ export default async function ShopPage({ searchParams }: Props) {
         Browse the full MedicaPlanet catalog. Use a category link on a card to filter that range.
       </p>
 
-      <Suspense fallback={<div className="mt-8 h-28 animate-pulse rounded-xl bg-filler-peach-100" />}>
+      <Suspense
+        fallback={
+          <div className="mt-6 h-20 animate-pulse bg-filler-peach-100/60 md:mt-8 md:rounded-xl md:py-2" />
+        }
+      >
         <CategoryProductToolbar basePath="/shop" />
       </Suspense>
 
@@ -79,7 +83,7 @@ export default async function ShopPage({ searchParams }: Props) {
           <div className="rounded-2xl border border-filler-peach-200/90 bg-filler-pink-50/20 px-5 py-6 text-sm text-filler-ink/90">
             <p className="font-medium text-filler-ink">No products match these filters.</p>
             <p className="mt-2">
-              Try clearing search or price, or{" "}
+              Try clearing your search, changing sort, or{" "}
               <Link
                 href="/shop"
                 className="font-medium text-filler-rose-800 underline hover:no-underline"

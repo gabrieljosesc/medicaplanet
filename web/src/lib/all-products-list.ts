@@ -45,15 +45,6 @@ export async function fetchAllProductsPage(
   if (listParams.q) {
     q = q.ilike("title", `%${escapeIlike(listParams.q)}%`);
   }
-  if (listParams.featuredOnly) {
-    q = q.eq("is_featured", true);
-  }
-  if (listParams.minPrice != null) {
-    q = q.gte("base_price", listParams.minPrice);
-  }
-  if (listParams.maxPrice != null) {
-    q = q.lte("base_price", listParams.maxPrice);
-  }
 
   const sort = listParams.sort;
   switch (sort) {

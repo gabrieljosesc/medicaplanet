@@ -13,9 +13,6 @@ export type CategoryListSort =
 export type CategoryListParams = {
   q: string;
   sort: CategoryListSort;
-  minPrice: number | null;
-  maxPrice: number | null;
-  featuredOnly: boolean;
 };
 
 const SORTS: CategoryListSort[] = [
@@ -34,13 +31,6 @@ function first(sp: Record<string, string | string[] | undefined>, key: string): 
   return v ?? undefined;
 }
 
-function parsePrice(raw: string | undefined): number | null {
-  if (raw == null || raw === "") return null;
-  const n = Number(raw);
-  if (!Number.isFinite(n) || n < 0) return null;
-  return n;
-}
-
 export function parsePageParam(sp: Record<string, string | string[] | undefined>, key = "page"): number {
   const raw = first(sp, key);
   const n = parseInt(String(raw ?? "1"), 10);
@@ -56,26 +46,11 @@ export function parseCategoryListParams(
     ? (sortRaw as CategoryListSort)
     : "master_asc";
   const q = (first(sp, "q") ?? "").trim().slice(0, 120);
-  let minPrice = parsePrice(first(sp, "min"));
-  let maxPrice = parsePrice(first(sp, "max"));
-  if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
-    const t = minPrice;
-    minPrice = maxPrice;
-    maxPrice = t;
-  }
-  const fv = first(sp, "featured");
-  const featuredOnly = fv === "1" || fv === "true" || fv === "on";
-  return { q, sort, minPrice, maxPrice, featuredOnly };
+  return { q, sort };
 }
 
 export function categoryListParamsActive(p: CategoryListParams): boolean {
-  return (
-    p.q.length > 0 ||
-    p.minPrice != null ||
-    p.maxPrice != null ||
-    p.featuredOnly ||
-    p.sort !== "master_asc"
-  );
+  return p.q.length > 0 || p.sort !== "master_asc";
 }
 
 const PRODUCT_SELECT =
@@ -132,15 +107,6 @@ export async function fetchCategoryProducts(
 
   if (params.q) {
     q = q.ilike("title", `%${escapeIlike(params.q)}%`);
-  }
-  if (params.featuredOnly) {
-    q = q.eq("is_featured", true);
-  }
-  if (params.minPrice != null) {
-    q = q.gte("base_price", params.minPrice);
-  }
-  if (params.maxPrice != null) {
-    q = q.lte("base_price", params.maxPrice);
   }
 
   switch (params.sort) {
