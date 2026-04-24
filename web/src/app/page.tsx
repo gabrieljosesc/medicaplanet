@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { CatalogHighlightCard } from "@/components/catalog-highlight-card";
 import { CategoriesBand } from "@/components/categories-band";
+import { FeaturedProductCard } from "@/components/featured-product-card";
 import { HomeHero } from "@/components/home-hero";
 import { getSiteBlogPosts } from "@/lib/site-blog";
 import { createClient } from "@/lib/supabase/server";
 import { nextImageUnoptimized, resolveProductMainImage } from "@/lib/product-image";
+import { resolveFeaturedHomeProducts } from "@/lib/resolve-featured-home";
 import { withStorageImageTransform } from "@/lib/storage-image";
 
 export default async function HomePage() {
@@ -18,45 +19,42 @@ export default async function HomePage() {
     supabase
       .from("products")
       .select(
-        "slug,title,description,base_price,currency,rating,review_count,price_tiers,category_id,categories(slug,name), product_images(url)"
+        "slug,title,description,base_price,currency,rating,review_count,price_tiers,category_id,is_featured,categories(slug,name), product_images(url)"
       )
       .eq("is_active", true)
       .order("is_featured", { ascending: false })
       .order("title")
-      .limit(120),
+      .limit(200),
   ]);
   const featuredBlogPosts = getSiteBlogPosts(3);
 
-  const picked = new Set<string>();
-  const feat = (productsRaw ?? [])
-    .filter((p) => {
-      const categoryKey = String(p.category_id ?? "");
-      const rel = p.categories as { slug?: string } | { slug?: string }[] | null;
-      const categorySlug = Array.isArray(rel) ? rel[0]?.slug : rel?.slug;
-      if (!categoryKey || picked.has(categoryKey)) return false;
-      if (categorySlug === "orthopedic-injections" || categorySlug === "orthopaedics") return false;
-      picked.add(categoryKey);
-      return true;
-    })
-    .slice(0, 12)
-    .map((p) => {
-      const imageUrl = Array.isArray(p.product_images) ? p.product_images[0]?.url : null;
-      let heroImageSrc = resolveProductMainImage(p.slug, imageUrl ?? null, p.title);
-      if (
-        process.env.NEXT_PUBLIC_SUPABASE_IMAGE_TRANSFORM === "1" &&
-        heroImageSrc.includes("/storage/v1/object/public/")
-      ) {
-        heroImageSrc = withStorageImageTransform(heroImageSrc, 520);
-      }
-      return {
-        ...p,
-        imageUrl,
-        heroImageSrc,
-        imageUnoptimized: nextImageUnoptimized(heroImageSrc),
-      };
-    })
-    .filter((p) => !p.heroImageSrc.includes("placehold.co"))
-    .slice(0, 8);
+  const enriched = (productsRaw ?? []).map((p) => {
+    const imageUrl = Array.isArray(p.product_images) ? p.product_images[0]?.url : null;
+    let heroImageSrc = resolveProductMainImage(p.slug, imageUrl ?? null, p.title);
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_IMAGE_TRANSFORM === "1" &&
+      heroImageSrc.includes("/storage/v1/object/public/")
+    ) {
+      heroImageSrc = withStorageImageTransform(heroImageSrc, 520);
+    }
+    return {
+      ...p,
+      imageUrl,
+      heroImageSrc,
+      imageUnoptimized: nextImageUnoptimized(heroImageSrc),
+    };
+  });
+
+  const relFiltered = enriched.filter((p) => {
+    const rel = p.categories as { slug?: string } | { slug?: string }[] | null;
+    const categorySlug = Array.isArray(rel) ? rel[0]?.slug : rel?.slug;
+    if (categorySlug === "orthopedic-injections" || categorySlug === "orthopaedics") return false;
+    return true;
+  });
+
+  const feat = resolveFeaturedHomeProducts(
+    relFiltered as Parameters<typeof resolveFeaturedHomeProducts>[0]
+  );
 
   return (
     <>
@@ -98,32 +96,41 @@ export default async function HomePage() {
           <h2 className="mb-2 text-2xl font-bold tracking-tight text-filler-ink sm:text-3xl">
             Featured products
           </h2>
-          <p className="mb-6 max-w-2xl text-sm text-filler-ink/75 sm:text-base">
-            A selection of our catalog. Browse the shop for the full range.
+          <p className="mb-8 max-w-2xl text-sm text-filler-ink/75 sm:text-base">
+            Highlights from the catalog—mark items as featured in admin, or pin specific product slugs
+            in the project config.
           </p>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-7">
+          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {feat.length === 0 ? (
-              <p className="text-sm text-filler-ink/60">
+              <p className="text-sm text-filler-ink/60 sm:col-span-2 lg:col-span-3">
                 No active products yet. Apply the Supabase migration and run{" "}
-                <code className="rounded bg-filler-peach-200/80 px-1">npm run import:catalog</code>{" "}
-                from the repo root.
+                <code className="rounded bg-filler-peach-200/80 px-1">npm run import:catalog</code> from
+                the repo root.
               </p>
             ) : (
-              feat.map((p) => (
-                <CatalogHighlightCard
-                  key={p.slug}
-                  slug={p.slug}
-                  title={p.title}
-                  description={typeof p.description === "string" ? p.description : null}
-                  basePrice={Number(p.base_price)}
-                  currency={p.currency}
-                  rating={Number(p.rating)}
-                  reviewCount={p.review_count}
-                  heroImageSrc={p.heroImageSrc}
-                  imageUnoptimized={p.imageUnoptimized}
-                  priceTiersRaw={p.price_tiers}
-                />
-              ))
+              feat.map((p) => {
+                const rel = p.categories as
+                  | { slug?: string; name?: string }
+                  | { slug?: string; name?: string }[]
+                  | null;
+                const c = Array.isArray(rel) ? rel[0] : rel;
+                return (
+                  <FeaturedProductCard
+                    key={p.slug}
+                    slug={p.slug}
+                    title={p.title}
+                    basePrice={Number(p.base_price)}
+                    currency={String(p.currency ?? "USD")}
+                    rating={Number(p.rating)}
+                    reviewCount={Number(p.review_count ?? 0)}
+                    heroImageSrc={p.heroImageSrc}
+                    imageUnoptimized={Boolean(p.imageUnoptimized)}
+                    priceTiersRaw={p.price_tiers}
+                    categoryName={c?.name ?? null}
+                    categorySlug={c?.slug ?? null}
+                  />
+                );
+              })
             )}
           </div>
         </section>
