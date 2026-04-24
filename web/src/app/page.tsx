@@ -3,6 +3,7 @@ import { CategoriesBand } from "@/components/categories-band";
 import { categoryNavLabel } from "@/lib/catalog-constants";
 import { FeaturedProductCard } from "@/components/featured-product-card";
 import { HomeHero } from "@/components/home-hero";
+import { MobileTopSellersStrip } from "@/components/mobile-top-sellers-strip";
 import { getSiteBlogPosts } from "@/lib/site-blog";
 import { createClient } from "@/lib/supabase/server";
 import { nextImageUnoptimized, resolveProductMainImage } from "@/lib/product-image";
@@ -64,11 +65,32 @@ export default async function HomePage() {
   const feat = resolveFeaturedHomeProducts(
     relFiltered as Parameters<typeof resolveFeaturedHomeProducts>[0]
   );
+  const mobileTopSellers = [...relFiltered]
+    .sort((a, b) => {
+      const featuredDelta = Number(Boolean(b.is_featured)) - Number(Boolean(a.is_featured));
+      if (featuredDelta !== 0) return featuredDelta;
+      const reviewsDelta = Number(b.review_count ?? 0) - Number(a.review_count ?? 0);
+      if (reviewsDelta !== 0) return reviewsDelta;
+      return Number(b.rating ?? 0) - Number(a.rating ?? 0);
+    })
+    .slice(0, 12);
 
   return (
     <>
       <HomeHero />
       <div className="mx-auto max-w-6xl space-y-16 px-4 py-12 sm:py-14">
+        <section>
+          <MobileTopSellersStrip
+            products={mobileTopSellers.map((p) => ({
+              slug: p.slug,
+              title: p.title,
+              heroImageSrc: p.heroImageSrc,
+              imageUnoptimized: Boolean(p.imageUnoptimized),
+              base_price: Number(p.base_price ?? 0),
+              currency: String(p.currency ?? "USD"),
+            }))}
+          />
+        </section>
         <section>
           <CategoriesBand categories={homeCategories} />
         </section>

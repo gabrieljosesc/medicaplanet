@@ -6,25 +6,24 @@ export function SiteTopBar() {
   return (
     <div className="border-b border-filler-peach-400/30 bg-filler-cream/90 text-[13px] text-filler-ink/85">
       <div className="mx-auto flex max-w-6xl flex-col gap-1.5 px-4 py-1.5 sm:flex-row sm:items-center sm:justify-between sm:py-2">
-        <p className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
+        <div className="flex flex-wrap items-center gap-2">
           <a
             href={SITE_PHONE_TEL}
-            className="whitespace-nowrap font-medium text-filler-ink hover:underline"
+            className="inline-flex items-center gap-1 rounded-full border border-filler-peach-300 bg-white px-3 py-1 font-medium text-filler-ink shadow-sm transition hover:border-filler-peach-400 hover:bg-filler-peach-200/40"
           >
-            {SITE_PHONE_DISPLAY}
+            <span aria-hidden>📞</span>
+            <span>{SITE_PHONE_DISPLAY}</span>
           </a>
-          <span className="text-filler-ink/35" aria-hidden>
-            |
-          </span>
           <a
             href={`mailto:${SITE_EMAIL}`}
-            className="min-w-0 break-all text-filler-ink hover:underline sm:max-w-[50%]"
+            className="inline-flex min-w-0 items-center gap-1 rounded-full border border-filler-peach-300 bg-white px-3 py-1 font-medium text-filler-ink shadow-sm transition hover:border-filler-peach-400 hover:bg-filler-peach-200/40 sm:max-w-[50%]"
           >
-            {SITE_EMAIL}
+            <span aria-hidden>✉️</span>
+            <span className="truncate">{SITE_EMAIL}</span>
           </a>
-        </p>
+        </div>
         <nav
-          className="flex flex-wrap items-center justify-end gap-x-1 gap-y-0.5"
+          className="hidden flex-wrap items-center justify-end gap-x-1 gap-y-0.5 sm:flex"
           aria-label="Secondary"
         >
           {TOP_BAR_NAV.map((n, i) => (
