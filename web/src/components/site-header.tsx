@@ -3,6 +3,7 @@ import { CartBadge } from "@/components/cart-badge";
 import { CategoryMegaNav } from "@/components/category-mega-nav";
 import { HeaderSearch } from "@/components/header-search";
 import { LogoMark } from "@/components/logo-mark";
+import { MobileNavDrawer } from "@/components/mobile-nav-drawer";
 import { getCategoryNavData } from "@/lib/shop-nav-data";
 import { getSiteUserContext } from "@/lib/site-user-context";
 import { UserMenu } from "@/components/user-menu";
@@ -17,7 +18,7 @@ export async function SiteHeader() {
         <div className="flex flex-wrap items-center justify-between gap-3 py-3.5 sm:gap-4">
           <Link
             href="/"
-            className="group flex min-w-0 max-w-full flex-1 items-center gap-2.5 sm:flex-none"
+            className="group flex min-w-0 max-w-[55%] flex-1 items-center gap-2.5 sm:max-w-none sm:flex-none"
           >
             <LogoMark />
             <div className="min-w-0">
@@ -30,12 +31,13 @@ export async function SiteHeader() {
             </div>
           </Link>
 
-          <div className="flex w-full min-w-0 flex-col items-stretch gap-2 sm:w-auto sm:max-w-full sm:items-end">
-            <div className="flex flex-1 flex-wrap items-center justify-end gap-1.5 sm:gap-2 sm:flex-initial">
+          {/* Desktop: account row + category mega nav */}
+          <div className="hidden min-w-0 flex-col items-end gap-2 md:flex md:max-w-full">
+            <div className="flex flex-wrap items-center justify-end gap-1.5 sm:gap-2">
               {user ? null : (
                 <Link
                   href="/auth/register"
-                  className="order-first rounded-full bg-filler-peach-300 px-3.5 py-1.5 text-sm font-semibold text-filler-ink shadow-sm transition hover:bg-filler-peach-200 sm:order-none"
+                  className="rounded-full bg-filler-peach-300 px-3.5 py-1.5 text-sm font-semibold text-filler-ink shadow-sm transition hover:bg-filler-peach-200"
                 >
                   Register
                 </Link>
@@ -66,19 +68,34 @@ export async function SiteHeader() {
               {isAdmin ? (
                 <Link
                   href="/admin"
-                  className="hidden rounded-full px-2.5 py-1.5 text-sm font-medium text-filler-rose-800 sm:inline transition hover:bg-filler-peach-200/80"
+                  className="hidden rounded-full px-2.5 py-1.5 text-sm font-medium text-filler-rose-800 md:inline transition hover:bg-filler-peach-200/80"
                 >
                   Admin
                 </Link>
               ) : null}
             </div>
-            <div className="flex w-full justify-end border-t border-filler-peach-200/90 pt-2.5 sm:w-auto sm:border-0 sm:pt-0">
+            <div className="flex w-full justify-end border-t border-filler-peach-200/90 pt-2.5">
               <CategoryMegaNav
                 categories={categories}
                 othersDropdownCategories={othersDropdownCategories}
                 productSamples={productSamples}
               />
             </div>
+          </div>
+
+          {/* Mobile: search, cart, full menu drawer */}
+          <div className="flex shrink-0 items-center gap-1.5 md:hidden">
+            <div className="flex items-center">
+              <HeaderSearch />
+            </div>
+            <CartBadge />
+            <MobileNavDrawer
+              userPresent={Boolean(user)}
+              isAdmin={isAdmin}
+              categories={categories}
+              othersDropdownCategories={othersDropdownCategories}
+              productSamples={productSamples}
+            />
           </div>
         </div>
       </div>
