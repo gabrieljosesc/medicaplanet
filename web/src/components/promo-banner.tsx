@@ -30,8 +30,8 @@ export async function PromoBanner() {
   const safeMessage = sanitizePromoMessage(message);
   if (!safeMessage) return null;
   return (
-    <div className="border-b border-filler-pink-300/40 bg-gradient-to-r from-filler-peach-200/90 via-filler-pink-200/80 to-filler-peach-200/90 px-4 py-2.5 text-center text-sm font-medium text-filler-ink/90">
-      {safeMessage}
+    <div className="max-w-full overflow-x-hidden border-b border-filler-pink-300/40 bg-gradient-to-r from-filler-peach-200/90 via-filler-pink-200/80 to-filler-peach-200/90 px-3 py-2.5 text-center text-sm font-medium text-filler-ink/90 sm:px-4">
+      <p className="mx-auto max-w-6xl text-balance break-words">{safeMessage}</p>
     </div>
   );
 }

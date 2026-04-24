@@ -4,9 +4,9 @@ import { SITE_EMAIL, SITE_PHONE_DISPLAY, SITE_PHONE_TEL } from "@/lib/site-const
 
 export function SiteTopBar() {
   return (
-    <div className="border-b border-filler-peach-400/30 bg-filler-cream/90 text-[13px] text-filler-ink/85">
-      <div className="mx-auto flex max-w-6xl flex-col gap-1.5 px-4 py-1.5 sm:flex-row sm:items-center sm:justify-between sm:py-2">
-        <div className="flex flex-wrap items-center gap-2">
+    <div className="max-w-full overflow-x-hidden border-b border-filler-peach-400/30 bg-filler-cream/90 text-[13px] text-filler-ink/85">
+      <div className="mx-auto flex max-w-6xl min-w-0 flex-col gap-1.5 px-4 py-1.5 sm:flex-row sm:items-center sm:justify-between sm:py-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
           <a
             href={SITE_PHONE_TEL}
             className="inline-flex items-center gap-1 rounded-full border border-filler-peach-300 bg-white px-3 py-1 font-medium text-filler-ink shadow-sm transition hover:border-filler-peach-400 hover:bg-filler-peach-200/40"

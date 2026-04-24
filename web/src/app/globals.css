@@ -36,6 +36,12 @@ body {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
+@media (max-width: 767px) {
+  html {
+    overflow-x: hidden;
+  }
+}
+
 ::selection {
   background: color-mix(in srgb, #e07a7a 32%, white);
   color: #2d1f1c;
