@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { isCuratedHomeHeroImageSrc } from "@/lib/home-hero-curated";
 import type { MonthlyHighlightSlide } from "@/lib/monthly-highlight-slides";
 
 const AUTO_MS = 5500;
@@ -61,12 +62,22 @@ export function HomeHeroSlideshow({ slides }: { slides: MonthlyHighlightSlide[] 
               href={`/product/${s.slug}`}
               className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-filler-rose-600/50 focus-visible:ring-offset-2"
             >
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-filler-cream [isolation:isolate]">
+              <div
+                className={
+                  isCuratedHomeHeroImageSrc(s.heroImageSrc)
+                    ? "relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-transparent [isolation:isolate]"
+                    : "relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-filler-cream [isolation:isolate]"
+                }
+              >
                 <Image
                   src={s.heroImageSrc}
                   alt={s.title}
                   fill
-                  className="object-contain object-center mix-blend-multiply"
+                  className={
+                    isCuratedHomeHeroImageSrc(s.heroImageSrc)
+                      ? "object-contain object-center bg-transparent"
+                      : "object-contain object-center mix-blend-multiply"
+                  }
                   sizes="(max-width: 768px) 90vw, 420px"
                   unoptimized={s.imageUnoptimized}
                   priority={i === 0}

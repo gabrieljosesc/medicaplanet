@@ -1,12 +1,27 @@
+import Image from "next/image";
 import { HomeHeroSlideshow } from "@/components/home-hero-slideshow";
 import { HeroIllustration } from "@/components/hero-illustration";
+import { HOME_HERO_ILLUSTRATION_SRC, HOME_HERO_USE_CURATED } from "@/lib/home-hero-curated";
 import type { MonthlyHighlightSlide } from "@/lib/monthly-highlight-slides";
 
 /**
  * FillerSupplies-style hero: "Monthly highlights" title, rotating product feature on the left,
- * vector illustration on the right.
+ * optional PNG on the right (replaces the inline vector lady when `HOME_HERO_USE_CURATED`).
  */
-export function HomeHero({ slides }: { slides: MonthlyHighlightSlide[] }) {
+export function HomeHero({
+  slides,
+  heroIllustrationSrc,
+}: {
+  slides: MonthlyHighlightSlide[];
+  /** Override; defaults to curated PNG when curated mode is on. */
+  heroIllustrationSrc?: string | null;
+}) {
+  const rightArtSrc =
+    heroIllustrationSrc !== undefined
+      ? heroIllustrationSrc
+      : HOME_HERO_USE_CURATED
+        ? HOME_HERO_ILLUSTRATION_SRC
+        : null;
   return (
     <section className="relative overflow-hidden bg-filler-cream">
       <div className="pointer-events-none absolute inset-0" aria-hidden>
@@ -27,7 +42,19 @@ export function HomeHero({ slides }: { slides: MonthlyHighlightSlide[] }) {
           <div className="flex min-h-[280px] justify-center lg:justify-end lg:pt-4">
             <div className="relative w-full max-w-[420px]">
               <div className="absolute inset-0 top-4 scale-90 rounded-3xl bg-filler-pink-200/40 blur-xl" />
-              <HeroIllustration className="relative flex justify-center" />
+              {rightArtSrc ? (
+                <Image
+                  src={rightArtSrc}
+                  alt=""
+                  width={420}
+                  height={420}
+                  unoptimized
+                  className="relative h-auto w-full max-w-md bg-transparent object-contain"
+                  priority
+                />
+              ) : (
+                <HeroIllustration className="relative flex justify-center" />
+              )}
             </div>
           </div>
         </div>

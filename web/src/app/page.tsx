@@ -6,6 +6,7 @@ import { HomeBrandMarquee } from "@/components/home-brand-marquee";
 import { HomeHero } from "@/components/home-hero";
 import { MobileTopSellersStrip } from "@/components/mobile-top-sellers-strip";
 import { buildHomeBrandMarqueeItems } from "@/lib/home-brand-marquee";
+import { applyCuratedHomeHeroSlides } from "@/lib/home-hero-curated";
 import { buildMonthlyHighlightSlides } from "@/lib/monthly-highlight-slides";
 import { getSiteBlogPosts } from "@/lib/site-blog";
 import { createClient } from "@/lib/supabase/server";
@@ -82,7 +83,9 @@ export default async function HomePage() {
     .slice(0, 12);
 
   const brandMarqueeItems = buildHomeBrandMarqueeItems(relFiltered.map((p) => p.title));
-  const monthlyHighlightSlides = buildMonthlyHighlightSlides(bestSellers);
+  const monthlyHighlightSlides = applyCuratedHomeHeroSlides(
+    buildMonthlyHighlightSlides(bestSellers)
+  );
 
   return (
     <>
