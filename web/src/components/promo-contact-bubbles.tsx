@@ -8,8 +8,9 @@ type OpenKind = "phone" | "email" | null;
 const btnClass =
   "inline-flex h-9 w-9 items-center justify-center rounded-full border border-filler-pink-400/50 bg-white/80 text-filler-ink shadow-sm transition hover:bg-white hover:shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-filler-rose-500/50 focus-visible:ring-offset-1";
 
+/** Below the icon (primary on mobile). Lightly frosted, slightly transparent but still readable. */
 const bubbleClass =
-  "absolute z-50 w-max max-w-[min(18rem,calc(100vw-3rem))] rounded-lg border border-filler-pink-300/80 bg-filler-cream/98 px-3 py-2 text-left text-xs text-filler-ink shadow-lg backdrop-blur-sm ring-1 ring-black/5 bottom-full right-0 mb-2 sm:bottom-auto sm:top-1/2 sm:mb-0 sm:-translate-y-1/2 sm:right-full sm:mr-2 sm:px-3.5 sm:py-2.5 sm:text-sm";
+  "absolute z-50 w-max max-w-[min(18rem,calc(100vw-3rem))] rounded-lg border border-filler-pink-300/70 bg-filler-cream/90 px-3 py-2 text-left text-xs text-filler-ink shadow-lg ring-1 ring-filler-pink-200/35 backdrop-blur-md sm:px-3.5 sm:py-2.5 sm:text-sm top-full right-0 mt-1.5";
 
 /**
  * Tapping an icon shows phone/email in a popover; optional links call or open the mail app.
