@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { SITE_EMAIL, SITE_PHONE_DISPLAY, SITE_PHONE_TEL } from "@/lib/site-constants";
 
 type OpenKind = "phone" | "email" | null;
@@ -8,24 +9,63 @@ type OpenKind = "phone" | "email" | null;
 const btnClass =
   "inline-flex h-9 w-9 items-center justify-center rounded-full border border-filler-pink-400/50 bg-white/80 text-filler-ink shadow-sm transition hover:bg-white hover:shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-filler-rose-500/50 focus-visible:ring-offset-1";
 
-/** Below the icon (primary on mobile). Lightly frosted, slightly transparent but still readable. */
 const bubbleClass =
-  "absolute z-50 w-max max-w-[min(18rem,calc(100vw-3rem))] rounded-lg border border-filler-pink-300/70 bg-filler-cream/90 px-3 py-2 text-left text-xs text-filler-ink shadow-lg ring-1 ring-filler-pink-200/35 backdrop-blur-md sm:px-3.5 sm:py-2.5 sm:text-sm top-full right-0 mt-1.5";
+  "w-max max-w-[min(18rem,calc(100vw-2rem))] rounded-lg border border-filler-pink-300/70 bg-filler-cream/90 px-3 py-2 text-left text-xs text-filler-ink shadow-lg ring-1 ring-filler-pink-200/35 backdrop-blur-md sm:px-3.5 sm:py-2.5 sm:text-sm";
 
 /**
- * Tapping an icon shows phone/email in a popover; optional links call or open the mail app.
- * Avoids the OS "choose an app" sheet on first tap from direct tel:/mailto:.
+ * Tapping an icon shows phone/email in a popover below the control (fixed to viewport
+ * so mobile layout/overflow does not place it above the bar).
+ * Optional "Open app" links use tel:/mailto:.
  */
 export function PromoContactBubbles() {
   const [open, setOpen] = useState<OpenKind>(null);
+  const [pos, setPos] = useState<{ top: number; right: number } | null>(null);
+  const [mounted, setMounted] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const phoneRef = useRef<HTMLButtonElement>(null);
+  const emailRef = useRef<HTMLButtonElement>(null);
   const phoneId = useId();
   const emailId = useId();
+
+  const updatePos = useCallback(() => {
+    if (open == null) {
+      setPos(null);
+      return;
+    }
+    const el = open === "phone" ? phoneRef.current : emailRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    setPos({
+      top: r.bottom + 6,
+      right: Math.max(8, typeof window !== "undefined" ? window.innerWidth - r.right : 8),
+    });
+  }, [open]);
+
+  useLayoutEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useLayoutEffect(() => {
+    updatePos();
+  }, [open, updatePos]);
+
+  useEffect(() => {
+    if (open == null) return;
+    const onScroll = () => updatePos();
+    const onResize = () => updatePos();
+    window.addEventListener("scroll", onScroll, true);
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("scroll", onScroll, true);
+      window.removeEventListener("resize", onResize);
+    };
+  }, [open, updatePos]);
 
   useEffect(() => {
     if (open == null) return;
     const onDown = (e: MouseEvent) => {
       if (rootRef.current?.contains(e.target as Node)) return;
+      if ((e.target as Element).closest?.("[data-promo-bubble='1']")) return;
       setOpen(null);
     };
     const onKey = (e: KeyboardEvent) => {
@@ -39,30 +79,15 @@ export function PromoContactBubbles() {
     };
   }, [open]);
 
-  return (
-    <div ref={rootRef} className="relative flex flex-shrink-0 items-center gap-1 sm:gap-1.5">
-      <div className="relative">
-        <button
-          type="button"
-          className={btnClass}
-          onClick={() => setOpen((o) => (o === "phone" ? null : "phone"))}
-          aria-expanded={open === "phone"}
-          aria-controls={open === "phone" ? phoneId : undefined}
-          aria-label="Show phone number"
-        >
-          <svg
-            className="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-          >
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-          </svg>
-        </button>
+  const bubble = (() => {
+    if (!open || !mounted || pos == null || typeof document === "undefined") return null;
+    return createPortal(
+      <div
+        data-promo-bubble="1"
+        className="fixed z-[500] " // position via style
+        style={{ top: pos.top, right: pos.right, left: "auto" }}
+        role="presentation"
+      >
         {open === "phone" ? (
           <div id={phoneId} role="region" aria-label="Phone" className={bubbleClass}>
             <p className="font-medium tabular-nums text-filler-ink">{SITE_PHONE_DISPLAY}</p>
@@ -73,33 +98,7 @@ export function PromoContactBubbles() {
               Open phone app
             </a>
           </div>
-        ) : null}
-      </div>
-
-      <div className="relative">
-        <button
-          type="button"
-          className={btnClass}
-          onClick={() => setOpen((o) => (o === "email" ? null : "email"))}
-          aria-expanded={open === "email"}
-          aria-controls={open === "email" ? emailId : undefined}
-          aria-label="Show email address"
-        >
-          <svg
-            className="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-          >
-            <rect x="2" y="4" width="20" height="16" rx="2" />
-            <path d="m22 7-10 5L2 7" />
-          </svg>
-        </button>
-        {open === "email" ? (
+        ) : (
           <div id={emailId} role="region" aria-label="Email" className={bubbleClass}>
             <p className="break-all font-medium text-filler-ink">{SITE_EMAIL}</p>
             <a
@@ -109,8 +108,67 @@ export function PromoContactBubbles() {
               Open email app
             </a>
           </div>
-        ) : null}
+        )}
+      </div>,
+      document.body
+    );
+  })();
+
+  return (
+    <>
+      <div ref={rootRef} className="relative flex flex-shrink-0 items-center gap-1 sm:gap-1.5">
+        <div className="relative">
+          <button
+            ref={phoneRef}
+            type="button"
+            className={btnClass}
+            onClick={() => setOpen((o) => (o === "phone" ? null : "phone"))}
+            aria-expanded={open === "phone"}
+            aria-controls={open === "phone" ? phoneId : undefined}
+            aria-label="Show phone number"
+          >
+            <svg
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="relative">
+          <button
+            ref={emailRef}
+            type="button"
+            className={btnClass}
+            onClick={() => setOpen((o) => (o === "email" ? null : "email"))}
+            aria-expanded={open === "email"}
+            aria-controls={open === "email" ? emailId : undefined}
+            aria-label="Show email address"
+          >
+            <svg
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <rect x="2" y="4" width="20" height="16" rx="2" />
+              <path d="m22 7-10 5L2 7" />
+            </svg>
+          </button>
+        </div>
       </div>
-    </div>
+      {bubble}
+    </>
   );
 }
