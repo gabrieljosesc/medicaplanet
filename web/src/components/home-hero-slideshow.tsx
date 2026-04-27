@@ -65,8 +65,8 @@ export function HomeHeroSlideshow({ slides }: { slides: MonthlyHighlightSlide[] 
               <div
                 className={
                   isCuratedHomeHeroImageSrc(s.heroImageSrc)
-                    ? "relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-transparent [isolation:isolate]"
-                    : "relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-filler-cream [isolation:isolate]"
+                    ? "relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-filler-cream"
+                    : "relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-filler-cream"
                 }
               >
                 <Image
@@ -74,9 +74,7 @@ export function HomeHeroSlideshow({ slides }: { slides: MonthlyHighlightSlide[] 
                   alt={s.title}
                   fill
                   className={
-                    isCuratedHomeHeroImageSrc(s.heroImageSrc)
-                      ? "object-contain object-center bg-transparent mix-blend-multiply"
-                      : "object-contain object-center mix-blend-multiply"
+                    "object-contain object-center mix-blend-multiply"
                   }
                   sizes="(max-width: 768px) 90vw, 420px"
                   unoptimized={s.imageUnoptimized}
