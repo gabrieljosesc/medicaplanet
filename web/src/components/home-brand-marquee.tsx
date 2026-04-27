@@ -14,17 +14,19 @@ function BrandCardVisual({
       <div className="flex h-12 items-center justify-center px-1">
         <Image
           src={item.logoSrc}
-          alt=""
+          alt={item.showDisplayName ? "" : item.displayName}
           width={200}
           height={48}
           className="max-h-10 w-auto max-w-[180px] object-contain object-center"
-          aria-hidden
+          aria-hidden={item.showDisplayName}
           unoptimized
         />
       </div>
-      <p className="mt-2 text-center text-xs font-semibold tracking-wide text-filler-ink/80">
-        {item.displayName}
-      </p>
+      {item.showDisplayName ? (
+        <p className="mt-2 text-center text-xs font-semibold tracking-wide text-filler-ink/80">
+          {item.displayName}
+        </p>
+      ) : null}
       <p className="mt-3 text-center text-[11px] leading-snug text-filler-ink/85 sm:text-xs">
         <span className="font-semibold text-filler-rose-800">{item.count}</span>{" "}
         {item.count === 1 ? "product" : "products"} in the brands catalog
