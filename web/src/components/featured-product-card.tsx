@@ -189,14 +189,14 @@ export function FeaturedProductCard({
           >
             {showFrom ? "From " : null}
             {isBest ? (
-              <span className="inline-flex items-center rounded-full bg-filler-peach-200/95 px-2.5 py-1 shadow-sm">
-                <span className="text-2xl font-bold tabular-nums text-neutral-900 sm:text-3xl">
+              <span className="inline-flex items-center rounded-full bg-filler-peach-200/95 px-2 py-0.5 shadow-sm">
+                <span className="text-lg font-bold tabular-nums text-neutral-900 sm:text-xl">
                   {prefix}
                   {amount}
                 </span>
               </span>
             ) : (
-              <span className="text-2xl font-bold tabular-nums text-neutral-900 sm:text-3xl">
+              <span className="text-lg font-bold tabular-nums text-neutral-900 sm:text-xl">
                 {prefix}
                 {amount}
               </span>

@@ -31,16 +31,16 @@ export function HomeHero({
         <div className="absolute bottom-8 left-8 h-32 w-64 rotate-6 rounded-full bg-filler-pink-300/30" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
-        <div className="grid items-start gap-8 lg:grid-cols-[1fr_auto] lg:gap-10">
-          <div>
+      <div className="relative z-10 mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:py-20">
+        <div className="relative grid items-start gap-8 lg:grid-cols-[1fr_auto] lg:gap-10">
+          <div className="relative z-10 pr-[36vw] sm:pr-[32vw] lg:pr-0">
             <h1 className="text-2xl font-bold tracking-wide text-filler-ink sm:text-3xl">
               MONTHLY HIGHLIGHTS
             </h1>
             <HomeHeroSlideshow slides={slides} />
           </div>
-          <div className="flex min-h-[220px] justify-end lg:min-h-0 lg:items-start lg:self-start">
-            <div className="relative w-full max-w-[260px] sm:max-w-[290px] lg:max-w-[310px]">
+          <div className="pointer-events-none absolute right-1 top-2 z-[5] w-[38vw] max-w-[180px] sm:right-4 sm:top-4 sm:w-[30vw] sm:max-w-[220px] lg:pointer-events-auto lg:static lg:z-auto lg:flex lg:min-h-0 lg:w-full lg:max-w-[310px] lg:justify-end lg:items-start lg:self-start">
+            <div className="relative w-full lg:max-w-[310px]">
               <div className="absolute inset-0 top-4 scale-90 rounded-3xl bg-filler-pink-200/40 blur-xl" />
               {rightArtSrc ? (
                 <Image
