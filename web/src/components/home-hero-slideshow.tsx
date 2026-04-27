@@ -8,6 +8,11 @@ import type { MonthlyHighlightSlide } from "@/lib/monthly-highlight-slides";
 
 const AUTO_MS = 5500;
 
+/** Aliaxin FL art (`slide-04*`) can ship with a light matte; multiply blends it into the hero. */
+function isAliaxinFlCuratedSlide(src: string): boolean {
+  return /\/hero-slides\/slide-04/i.test(src);
+}
+
 export function HomeHeroSlideshow({ slides }: { slides: MonthlyHighlightSlide[] }) {
   const [index, setIndex] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -69,7 +74,9 @@ export function HomeHeroSlideshow({ slides }: { slides: MonthlyHighlightSlide[] 
                   fill
                   className={
                     isCuratedHomeHeroImageSrc(s.heroImageSrc)
-                      ? "object-contain object-center"
+                      ? isAliaxinFlCuratedSlide(s.heroImageSrc)
+                        ? "object-contain object-center mix-blend-multiply"
+                        : "object-contain object-center"
                       : "object-contain object-center mix-blend-multiply"
                   }
                   sizes="(max-width: 768px) 90vw, 420px"

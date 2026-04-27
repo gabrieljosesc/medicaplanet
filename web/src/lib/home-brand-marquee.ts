@@ -7,8 +7,6 @@ export type HomeBrandMarqueeDef = {
   displayName: string;
   logoSrc: string;
   titlePattern: RegExp;
-  /** If false, hide the text line under the logo (wordmark is part of the logo asset). */
-  showDisplayName?: boolean;
 };
 
 export const HOME_BRAND_MARQUEE_DEFS: HomeBrandMarqueeDef[] = [
@@ -18,7 +16,6 @@ export const HOME_BRAND_MARQUEE_DEFS: HomeBrandMarqueeDef[] = [
     displayName: "Juvéderm",
     logoSrc: "/brands/juvederm.svg",
     titlePattern: /juvederm|juv[ée]derm/i,
-    showDisplayName: false,
   },
   {
     id: "restylane",
@@ -77,7 +74,6 @@ export type HomeBrandMarqueeItem = {
   displayName: string;
   logoSrc: string;
   count: number;
-  showDisplayName: boolean;
 };
 
 export type HomeBrandCountSource = {
@@ -99,6 +95,5 @@ export function buildHomeBrandMarqueeItems(
     displayName: def.displayName,
     logoSrc: def.logoSrc,
     count: normalized.reduce((n, text) => n + (def.titlePattern.test(text) ? 1 : 0), 0),
-    showDisplayName: def.showDisplayName !== false,
   })).filter((x) => x.count > 0);
 }
