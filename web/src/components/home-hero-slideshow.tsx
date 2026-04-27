@@ -64,9 +64,7 @@ export function HomeHeroSlideshow({ slides }: { slides: MonthlyHighlightSlide[] 
             >
               <div
                 className={
-                  isCuratedHomeHeroImageSrc(s.heroImageSrc)
-                    ? "relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-filler-cream"
-                    : "relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-filler-cream"
+                  "relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-transparent"
                 }
               >
                 <Image
