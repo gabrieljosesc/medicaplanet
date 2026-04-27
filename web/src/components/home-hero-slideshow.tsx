@@ -64,7 +64,7 @@ export function HomeHeroSlideshow({ slides }: { slides: MonthlyHighlightSlide[] 
             >
               <div
                 className={
-                  "relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-transparent"
+                  "relative aspect-[4/3] w-full bg-transparent"
                 }
               >
                 <Image
