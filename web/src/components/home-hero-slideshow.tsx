@@ -75,7 +75,7 @@ export function HomeHeroSlideshow({ slides }: { slides: MonthlyHighlightSlide[] 
                   fill
                   className={
                     isCuratedHomeHeroImageSrc(s.heroImageSrc)
-                      ? "object-contain object-center bg-transparent"
+                      ? "object-contain object-center bg-transparent mix-blend-multiply"
                       : "object-contain object-center mix-blend-multiply"
                   }
                   sizes="(max-width: 768px) 90vw, 420px"
