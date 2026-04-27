@@ -32,15 +32,15 @@ export function HomeHero({
       </div>
 
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
-        <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-14">
+        <div className="grid items-start gap-8 lg:grid-cols-[1fr_auto] lg:gap-10">
           <div>
             <h1 className="text-2xl font-bold tracking-wide text-filler-ink sm:text-3xl">
               MONTHLY HIGHLIGHTS
             </h1>
             <HomeHeroSlideshow slides={slides} />
           </div>
-          <div className="flex min-h-[280px] justify-center lg:justify-end lg:pt-4">
-            <div className="relative w-full max-w-[420px]">
+          <div className="flex min-h-[220px] justify-end lg:min-h-0 lg:items-start lg:self-start">
+            <div className="relative w-full max-w-[260px] sm:max-w-[290px] lg:max-w-[310px]">
               <div className="absolute inset-0 top-4 scale-90 rounded-3xl bg-filler-pink-200/40 blur-xl" />
               {rightArtSrc ? (
                 <Image

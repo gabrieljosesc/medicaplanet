@@ -4,6 +4,7 @@ import { categoryNavLabel } from "@/lib/catalog-constants";
 import { FeaturedProductCard } from "@/components/featured-product-card";
 import { HomeBrandMarquee } from "@/components/home-brand-marquee";
 import { HomeHero } from "@/components/home-hero";
+import { HomeReviews } from "@/components/home-reviews";
 import { MobileTopSellersStrip } from "@/components/mobile-top-sellers-strip";
 import { buildHomeBrandMarqueeItems } from "@/lib/home-brand-marquee";
 import { applyCuratedHomeHeroSlides } from "@/lib/home-hero-curated";
@@ -187,6 +188,7 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+      <HomeReviews />
     </>
   );
 }
