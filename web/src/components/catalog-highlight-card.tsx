@@ -138,7 +138,7 @@ export function CatalogHighlightCard({
             <button
               type="button"
               aria-label={`Buy ${title} now — go to checkout`}
-              className="pointer-events-auto inline-flex items-center gap-2 rounded-2xl border border-white/50 bg-white/30 px-6 py-3 text-sm font-semibold text-white shadow-lg backdrop-blur-md transition hover:bg-white/40 focus:outline-none focus:ring-2 focus:ring-white/80 focus:ring-offset-2 focus:ring-offset-zinc-900/20"
+              className="pointer-events-auto inline-flex items-center gap-2 rounded-2xl border border-filler-rose-300/80 bg-filler-pink-100/80 px-6 py-3 text-sm font-semibold text-filler-ink shadow-xl backdrop-blur-md backdrop-saturate-150 ring-1 ring-black/10 transition hover:bg-filler-pink-100/95 hover:text-filler-rose-800 focus:outline-none focus:ring-2 focus:ring-filler-rose-300/90 focus:ring-offset-2 focus:ring-offset-filler-cream/60"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
