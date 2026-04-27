@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { CatalogHighlightCard } from "@/components/catalog-highlight-card";
 import { CatalogPagination } from "@/components/catalog-pagination";
@@ -26,15 +25,15 @@ export default async function CategoryPage({ params, searchParams }: Props) {
     const { redirect } = await import("next/navigation");
     redirect("/peptides");
   }
-  if (slug === "orthopedic-injections" || slug === "orthopaedics") {
-    notFound();
-  }
   const sp = await searchParams;
   const listParams = parseCategoryListParams(sp);
   const page = parsePageParam(sp);
   const supabase = await createClient();
   const { data: cat } = await supabase.from("categories").select("*").eq("slug", slug).single();
-  if (!cat) notFound();
+  if (!cat) {
+    const { notFound } = await import("next/navigation");
+    notFound();
+  }
 
   const { rows: productRows, count: productCount } = await fetchCategoryProducts(
     supabase,

@@ -23,7 +23,6 @@ const PLACEHOLDER_OTHER: NavCategory = {
 
 /**
  * Header order: **Peptides** first, then the next five categories by `sort_order`, **Others** last.
- * Orthopedic duplicates are excluded in the query.
  */
 export async function getCategoryNavData(): Promise<{
   categories: NavCategory[];
@@ -36,7 +35,6 @@ export async function getCategoryNavData(): Promise<{
   const { data: categories } = await supabase
     .from("categories")
     .select("id,slug,name,sort_order")
-    .not("slug", "in", "(orthopedic-injections,orthopaedics)")
     .order("sort_order");
   const rows = (categories ?? []) as NavCategory[];
   const other = rows.find((c) => c.slug === "other");

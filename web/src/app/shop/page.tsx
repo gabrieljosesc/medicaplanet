@@ -23,8 +23,7 @@ export default async function ShopPage({ searchParams }: Props) {
   const supabase = await createClient();
   const { data: categoryRows } = await supabase
     .from("categories")
-    .select("id")
-    .not("slug", "in", "(orthopedic-injections,orthopaedics)");
+    .select("id");
   const allowedIds = (categoryRows ?? []).map((c) => c.id as string);
 
   const { rows, count } = await fetchAllProductsPage(

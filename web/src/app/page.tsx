@@ -22,7 +22,6 @@ export default async function HomePage() {
     supabase
       .from("categories")
       .select("slug,name,description,sort_order")
-      .not("slug", "in", "(orthopedic-injections,orthopaedics)")
       .order("sort_order"),
     supabase
       .from("products")
@@ -53,12 +52,7 @@ export default async function HomePage() {
     };
   });
 
-  const relFiltered = enriched.filter((p) => {
-    const rel = p.categories as { slug?: string } | { slug?: string }[] | null;
-    const categorySlug = Array.isArray(rel) ? rel[0]?.slug : rel?.slug;
-    if (categorySlug === "orthopedic-injections" || categorySlug === "orthopaedics") return false;
-    return true;
-  });
+  const relFiltered = enriched;
 
   const rawCats = (categories ?? []) as { slug: string; name: string }[];
   const otherC = rawCats.find((c) => c.slug === "other");

@@ -6,8 +6,6 @@ const PROMO_LINE =
 
 function sanitizePromoMessage(input: string): string {
   return input
-    .replace(/\borthopaedics?\b/gi, "")
-    .replace(/\borthopedics?\b/gi, "")
     .replace(/\s+,/g, ",")
     .replace(/,\s*,/g, ",")
     .replace(/\s{2,}/g, " ")
