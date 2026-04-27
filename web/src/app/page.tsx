@@ -18,7 +18,8 @@ import { withStorageImageTransform } from "@/lib/storage-image";
 
 export default async function HomePage() {
   const supabase = await createClient();
-  const [{ data: categories }, { data: productsRaw }] = await Promise.all([
+  const [{ data: categories }, { data: productsRaw }, { data: allActiveForBrandCounts }] =
+    await Promise.all([
     supabase
       .from("categories")
       .select("slug,name,description,sort_order")
@@ -32,6 +33,11 @@ export default async function HomePage() {
       .order("is_featured", { ascending: false })
       .order("title")
       .limit(200),
+    supabase
+      .from("products")
+      .select("title,slug,description")
+      .eq("is_active", true)
+      .order("title"),
   ]);
   const featuredBlogPosts = getSiteBlogPosts(3);
 
@@ -77,7 +83,9 @@ export default async function HomePage() {
     })
     .slice(0, 12);
 
-  const brandMarqueeItems = buildHomeBrandMarqueeItems(relFiltered.map((p) => p.title));
+  const brandMarqueeItems = buildHomeBrandMarqueeItems(
+    ((allActiveForBrandCounts ?? []) as { title?: string; slug?: string; description?: string }[])
+  );
   const monthlyHighlightSlides = applyCuratedHomeHeroSlides(
     buildMonthlyHighlightSlides(bestSellers)
   );

@@ -106,7 +106,8 @@ export async function fetchCategoryProducts(
     .eq("is_active", true);
 
   if (params.q) {
-    q = q.ilike("title", `%${escapeIlike(params.q)}%`);
+    const pattern = `%${escapeIlike(params.q)}%`;
+    q = q.or(`title.ilike.${pattern},slug.ilike.${pattern}`);
   }
 
   switch (params.sort) {

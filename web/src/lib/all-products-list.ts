@@ -43,7 +43,8 @@ export async function fetchAllProductsPage(
     .eq("is_active", true);
 
   if (listParams.q) {
-    q = q.ilike("title", `%${escapeIlike(listParams.q)}%`);
+    const pattern = `%${escapeIlike(listParams.q)}%`;
+    q = q.or(`title.ilike.${pattern},slug.ilike.${pattern}`);
   }
 
   const sort = listParams.sort;

@@ -76,12 +76,24 @@ export type HomeBrandMarqueeItem = {
   count: number;
 };
 
-export function buildHomeBrandMarqueeItems(productTitles: string[]): HomeBrandMarqueeItem[] {
+export type HomeBrandCountSource = {
+  title?: string | null;
+  slug?: string | null;
+  description?: string | null;
+};
+
+export function buildHomeBrandMarqueeItems(
+  products: HomeBrandCountSource[]
+): HomeBrandMarqueeItem[] {
+  const normalized = products.map((p) =>
+    `${p.title ?? ""} ${p.slug ?? ""} ${p.description ?? ""}`.trim()
+  );
+
   return HOME_BRAND_MARQUEE_DEFS.map((def) => ({
     id: def.id,
     href: `/shop?q=${encodeURIComponent(def.shopQuery)}`,
     displayName: def.displayName,
     logoSrc: def.logoSrc,
-    count: productTitles.reduce((n, t) => n + (def.titlePattern.test(t) ? 1 : 0), 0),
-  }));
+    count: normalized.reduce((n, text) => n + (def.titlePattern.test(text) ? 1 : 0), 0),
+  })).filter((x) => x.count > 0);
 }

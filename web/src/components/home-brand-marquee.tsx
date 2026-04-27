@@ -22,6 +22,9 @@ function BrandCardVisual({
           unoptimized
         />
       </div>
+      <p className="mt-2 text-center text-xs font-semibold tracking-wide text-filler-ink/80">
+        {item.displayName}
+      </p>
       <p className="mt-3 text-center text-[11px] leading-snug text-filler-ink/85 sm:text-xs">
         <span className="font-semibold text-filler-rose-800">{item.count}</span>{" "}
         {item.count === 1 ? "product" : "products"} in the brands catalog
