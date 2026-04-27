@@ -4,7 +4,9 @@ import homeHeroCuratedBySlug from "../../data/home-hero-curated-by-slug.json";
 /** Set false to use catalog / Supabase images in “Monthly highlights” only. */
 export const HOME_HERO_USE_CURATED = true as const;
 
-const SLIDE = (n: 1 | 2 | 3 | 4 | 5 | 6) => `/images/hero-slides/slide-0${n}.png`;
+const CURATED_VERSION = "v3";
+const SLIDE = (n: 1 | 2 | 3 | 4 | 5 | 6) =>
+  `/images/hero-slides/slide-0${n}.png?${CURATED_VERSION}`;
 
 export const HOME_HERO_ILLUSTRATION_SRC = "/images/hero-slides/hero-illustration.png";
 

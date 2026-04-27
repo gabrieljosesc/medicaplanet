@@ -62,17 +62,15 @@ export function HomeHeroSlideshow({ slides }: { slides: MonthlyHighlightSlide[] 
               href={`/product/${s.slug}`}
               className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-filler-rose-600/50 focus-visible:ring-offset-2"
             >
-              <div
-                className={
-                  "relative aspect-[4/3] w-full bg-transparent"
-                }
-              >
+              <div className="relative aspect-[4/3] w-full bg-transparent">
                 <Image
                   src={s.heroImageSrc}
                   alt={s.title}
                   fill
                   className={
-                    "object-contain object-center mix-blend-multiply"
+                    isCuratedHomeHeroImageSrc(s.heroImageSrc)
+                      ? "object-contain object-center"
+                      : "object-contain object-center mix-blend-multiply"
                   }
                   sizes="(max-width: 768px) 90vw, 420px"
                   unoptimized={s.imageUnoptimized}
