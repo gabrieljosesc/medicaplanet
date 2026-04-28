@@ -54,20 +54,27 @@ function mapRow(p: DbProductRow): ProductSearchHit {
   };
 }
 
+export type ProductSearchScope = {
+  /** When set, only products in this category (matches `products.category_id`). */
+  categoryId?: string;
+};
+
 /** Title or slug ilike match, active products only, merged and sorted by title. */
 export async function searchActiveProducts(
   supabase: SupabaseClient,
   term: string,
-  limit: number
+  limit: number,
+  scope?: ProductSearchScope
 ): Promise<ProductSearchHit[]> {
   const t = term.trim();
   if (t.length < 2) return [];
   const pattern = `%${escapeIlike(t)}%`;
   const sel = PRODUCT_SEARCH_SELECT;
-  const [{ data: byTitle }, { data: bySlug }] = await Promise.all([
-    supabase.from("products").select(sel).eq("is_active", true).ilike("title", pattern).limit(50),
-    supabase.from("products").select(sel).eq("is_active", true).ilike("slug", pattern).limit(50),
-  ]);
+  const baseTitle = supabase.from("products").select(sel).eq("is_active", true).ilike("title", pattern).limit(50);
+  const baseSlug = supabase.from("products").select(sel).eq("is_active", true).ilike("slug", pattern).limit(50);
+  const qTitle = scope?.categoryId ? baseTitle.eq("category_id", scope.categoryId) : baseTitle;
+  const qSlug = scope?.categoryId ? baseSlug.eq("category_id", scope.categoryId) : baseSlug;
+  const [{ data: byTitle }, { data: bySlug }] = await Promise.all([qTitle, qSlug]);
   const merged = new Map<string, DbProductRow>();
   for (const p of [...(byTitle ?? []), ...(bySlug ?? [])] as DbProductRow[]) {
     if (!merged.has(p.slug)) merged.set(p.slug, p);
@@ -83,8 +90,9 @@ export type SearchSuggestItem = { slug: string; title: string; category: string 
 export async function searchSuggestItems(
   supabase: SupabaseClient,
   term: string,
-  limit: number
+  limit: number,
+  scope?: ProductSearchScope
 ): Promise<SearchSuggestItem[]> {
-  const rows = await searchActiveProducts(supabase, term, limit);
+  const rows = await searchActiveProducts(supabase, term, limit, scope);
   return rows.map((r) => ({ slug: r.slug, title: r.title, category: r.categoryName }));
 }

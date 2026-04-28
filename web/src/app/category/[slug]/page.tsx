@@ -74,7 +74,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
           <div className="mt-6 h-20 animate-pulse bg-zinc-100/60 md:mt-8 md:rounded-xl md:py-2" />
         }
       >
-        <CategoryProductToolbar basePath={`/category/${slug}`} />
+        <CategoryProductToolbar basePath={`/category/${slug}`} categorySlug={slug} />
       </Suspense>
 
       <div className="mx-auto mt-8 w-full max-w-[1600px]">

@@ -12,6 +12,12 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Query too long" }, { status: 400 });
   }
   const supabase = await createClient();
-  const items = await searchSuggestItems(supabase, q, 12);
+  const categorySlug = req.nextUrl.searchParams.get("categorySlug")?.trim();
+  let scope: { categoryId?: string } | undefined;
+  if (categorySlug) {
+    const { data: cat } = await supabase.from("categories").select("id").eq("slug", categorySlug).maybeSingle();
+    if (cat?.id) scope = { categoryId: cat.id as string };
+  }
+  const items = await searchSuggestItems(supabase, q, 12, scope);
   return NextResponse.json({ items });
 }
