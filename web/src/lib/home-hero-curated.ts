@@ -55,7 +55,15 @@ function resolveCuratedPngByTitleAndSlug(
     ) {
       return SLIDE(3);
     }
-    if (/\bfl\s*lips|aliaxin[^\n]*\blips|intense[-\s]lips|aliciaxin-?lips|\bfl[\s,]*\blips|FL\s*LIPS/i.test(t) || /lips-|-lips|intense-lips/.test(s)) {
+    // FL line: "FL LIPS", or plain "Aliaxin® FL" / slug …-fl-… (title alone often omits "LIPS")
+    if (
+      /\bfl\s*lips|aliaxin[^\n]*\blips|intense[-\s]lips|aliciaxin-?lips|\bfl[\s,]*\blips|FL\s*LIPS/i.test(t) ||
+      /lips-|-lips|intense-lips/.test(s) ||
+      (/aliaxin|neauvia/i.test(lower) &&
+        /\bfl\b|®\s*fl\b/i.test(t) &&
+        !/\bGP\b|®\s*GP\b|\bEV\b|®\s*EV\b/i.test(t)) ||
+      (/aliaxin|neauvia/.test(s) && /(^|-)fl($|-)/.test(s) && !/(^|-)gp($|-)|(^|-)ev($|-)/.test(s))
+    ) {
       if (!/flux(?!a)|dysport/i.test(lower)) {
         return SLIDE(4);
       }
@@ -122,6 +130,7 @@ export function applyCuratedHomeHeroSlides(
   });
 }
 
+/** Curated slideshow assets live under hero-slides (PNG); not catalog JPGs. */
 export function isCuratedHomeHeroImageSrc(src: string): boolean {
-  return src.startsWith("/images/hero-slides/slide-");
+  return src.startsWith("/images/hero-slides/slide");
 }
