@@ -2,7 +2,6 @@
 export const TOP_BAR_NAV = [
   { href: "/", label: "Home" },
   { href: "/shop", label: "Products" },
-  { href: "/peptides", label: "Peptides" },
   { href: "/about-us", label: "About us" },
   { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact us" },
