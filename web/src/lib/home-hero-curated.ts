@@ -6,7 +6,7 @@ export const HOME_HERO_USE_CURATED = true as const;
 
 const SLIDE = (n: 1 | 2 | 3 | 4 | 5 | 6) =>
   n === 4
-    ? `/images/hero-slides/slide-04-fl-v2.png`
+    ? `/images/hero-slides/slide-04-fl-v3.png`
     : `/images/hero-slides/slide-0${n}.png`;
 
 export const HOME_HERO_ILLUSTRATION_SRC = "/images/hero-slides/hero-illustration.png";
