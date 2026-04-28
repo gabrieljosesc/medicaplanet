@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { HomeHeroSlideshow } from "@/components/home-hero-slideshow";
 import { HeroIllustration } from "@/components/hero-illustration";
 import { HOME_HERO_ILLUSTRATION_SRC, HOME_HERO_USE_CURATED } from "@/lib/home-hero-curated";
@@ -57,6 +58,14 @@ export function HomeHero({
               )}
             </div>
           </div>
+        </div>
+        <div className="relative z-10 mt-12 flex justify-center sm:mt-16">
+          <Link
+            href="/shop"
+            className="inline-flex items-center justify-center rounded-full bg-filler-rose-700 px-8 py-1.5 text-sm font-semibold tracking-wide text-white shadow-sm transition-colors hover:bg-filler-rose-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-filler-rose-600/60 focus-visible:ring-offset-2"
+          >
+            SHOP
+          </Link>
         </div>
       </div>
     </section>
