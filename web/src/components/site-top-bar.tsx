@@ -31,7 +31,7 @@ export async function SiteTopBar() {
               </span>
             </span>
           </Link>
-          <nav className="flex min-w-0 items-center gap-x-2.5 gap-y-0.5" aria-label="Site">
+          <nav className="flex min-w-0 items-center gap-x-2.5 gap-y-0.5 text-[14px]" aria-label="Site">
             {TOP_BAR_NAV.map((n, i) => {
               const item =
                 n.href === "/shop" ? (
