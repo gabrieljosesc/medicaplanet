@@ -62,9 +62,21 @@ export default async function HomePage() {
 
   const rawCats = (categories ?? []) as { slug: string; name: string }[];
   const otherC = rawCats.find((c) => c.slug === "other");
-  const peptC = rawCats.find((c) => c.slug === "peptides");
-  const restC = rawCats.filter((c) => c.slug !== "other" && c.slug !== "peptides");
-  const homeCategories = [peptC, ...restC, otherC]
+  const HOME_PINNED_FIRST_SLUGS = [
+    "dermal-fillers",
+    "botulinum-toxins",
+    "peptides",
+  ] as const;
+  const pinnedFirstC = HOME_PINNED_FIRST_SLUGS.map((slug) =>
+    rawCats.find((c) => c.slug === slug)
+  );
+  const pinnedSet = new Set(
+    pinnedFirstC.filter(Boolean).map((c) => c!.slug)
+  );
+  const restC = rawCats.filter(
+    (c) => !pinnedSet.has(c.slug) && c.slug !== "other"
+  );
+  const homeCategories = [...pinnedFirstC, ...restC, otherC]
     .filter((c): c is { slug: string; name: string } => Boolean(c))
     .map((c) => ({ slug: c.slug, name: categoryNavLabel(c.slug, c.name) }));
 
@@ -94,7 +106,7 @@ export default async function HomePage() {
     <>
       <HomeHero slides={monthlyHighlightSlides} />
       <HomeBrandMarquee items={brandMarqueeItems} />
-      <div className="mx-auto max-w-6xl space-y-16 px-4 py-12 sm:py-14">
+      <div className="mx-auto max-w-6xl px-4 pt-8 sm:pt-10">
         <section>
           <MobileTopSellersStrip
             products={mobileTopSellers.map((p) => ({
@@ -107,36 +119,14 @@ export default async function HomePage() {
             }))}
           />
         </section>
+      </div>
+
+      <HomeReviews />
+
+      <div className="mx-auto max-w-6xl px-4 pb-12 sm:pb-14">
         <section>
           <CategoriesBand categories={homeCategories} />
         </section>
-
-        <section>
-          <div className="mb-4 flex items-end justify-between gap-4">
-            <h2 className="text-xl font-semibold text-filler-ink sm:text-2xl">From the blog</h2>
-            <Link
-              href="/blog"
-              className="text-sm font-medium text-filler-rose-800 hover:underline"
-            >
-              All posts
-            </Link>
-          </div>
-          <div className="grid gap-4 md:grid-cols-3">
-            {featuredBlogPosts.map((b) => (
-              <Link
-                key={b.slug}
-                href={`/blog/${b.slug}`}
-                className="group rounded-xl border border-filler-peach-200/80 bg-white p-5 shadow-sm transition hover:border-filler-pink-300 hover:shadow-md"
-              >
-                <h3 className="font-medium text-filler-ink group-hover:text-filler-rose-800">
-                  {b.title}
-                </h3>
-                {b.excerpt && <p className="mt-2 line-clamp-3 text-sm text-filler-ink/70">{b.excerpt}</p>}
-              </Link>
-            ))}
-          </div>
-        </section>
-
       </div>
 
       <section
@@ -190,7 +180,32 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-      <HomeReviews />
+
+      <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:py-14">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <h2 className="text-xl font-semibold text-filler-ink sm:text-2xl">From the blog</h2>
+          <Link
+            href="/blog"
+            className="text-sm font-medium text-filler-rose-800 hover:underline"
+          >
+            All posts
+          </Link>
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          {featuredBlogPosts.map((b) => (
+            <Link
+              key={b.slug}
+              href={`/blog/${b.slug}`}
+              className="group rounded-xl border border-filler-peach-200/80 bg-white p-5 shadow-sm transition hover:border-filler-pink-300 hover:shadow-md"
+            >
+              <h3 className="font-medium text-filler-ink group-hover:text-filler-rose-800">
+                {b.title}
+              </h3>
+              {b.excerpt && <p className="mt-2 line-clamp-3 text-sm text-filler-ink/70">{b.excerpt}</p>}
+            </Link>
+          ))}
+        </div>
+      </section>
     </>
   );
 }

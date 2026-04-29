@@ -35,7 +35,7 @@ export function HomeHero({
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:py-20">
         <div className="relative grid items-start gap-8 lg:grid-cols-[1fr_auto] lg:gap-10">
           <div className="relative z-10 pr-[36vw] sm:pr-[32vw] lg:pr-0">
-            <h1 className="text-2xl font-bold tracking-wide text-filler-ink sm:text-3xl">
+            <h1 className="text-xl font-bold tracking-wide text-filler-ink sm:text-2xl">
               MONTHLY HIGHLIGHTS
             </h1>
             <HomeHeroSlideshow slides={slides} />
@@ -62,7 +62,7 @@ export function HomeHero({
         <div className="relative z-10 mt-12 flex justify-center sm:mt-16">
           <Link
             href="/shop"
-            className="inline-flex items-center justify-center rounded-full bg-filler-rose-700 px-8 py-1.5 text-sm font-semibold tracking-wide text-white shadow-sm transition-colors hover:bg-filler-rose-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-filler-rose-600/60 focus-visible:ring-offset-2"
+            className="inline-flex items-center justify-center rounded-full bg-filler-rose-700 px-12 py-2.5 text-base font-semibold tracking-wider text-white shadow-md transition-colors hover:bg-filler-rose-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-filler-rose-600/60 focus-visible:ring-offset-2 sm:px-14 sm:py-3 sm:text-lg"
           >
             SHOP
           </Link>

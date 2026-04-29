@@ -7,7 +7,7 @@ export type NavCategory = { id: string; slug: string; name: string };
 export const HEADER_NAV_CATEGORY_LIMIT = 7;
 
 /**
- * If `peptides` is not a DB row, we still show a Peptides → /peptides link (no product samples).
+ * Placeholders shown when the matching DB row is missing (links still resolve).
  */
 const PLACEHOLDER_PEPTIDES: NavCategory = {
   id: "00000000-0000-0000-0000-000000000001",
@@ -21,8 +21,24 @@ const PLACEHOLDER_OTHER: NavCategory = {
   name: "Others",
 };
 
+const PLACEHOLDER_DERMAL_FILLERS: NavCategory = {
+  id: "00000000-0000-0000-0000-000000000003",
+  slug: "dermal-fillers",
+  name: "Dermal fillers",
+};
+
+const PLACEHOLDER_BOTULINUM: NavCategory = {
+  id: "00000000-0000-0000-0000-000000000004",
+  slug: "botulinum-toxins",
+  name: "Botulinum toxins",
+};
+
+/** Pinned to the front of the header nav (in order), even if `sort_order` differs. */
+const PINNED_FIRST_SLUGS = ["dermal-fillers", "botulinum-toxins", "peptides"] as const;
+
 /**
- * Header order: **Peptides** first, then the next five categories by `sort_order`, **Others** last.
+ * Header order: **Dermal fillers**, **Botulinum toxins**, **Peptides** first,
+ * then the remaining categories by `sort_order`, **Others** last.
  */
 export async function getCategoryNavData(): Promise<{
   categories: NavCategory[];
@@ -38,11 +54,19 @@ export async function getCategoryNavData(): Promise<{
     .order("sort_order");
   const rows = (categories ?? []) as NavCategory[];
   const other = rows.find((c) => c.slug === "other");
-  const peptides = rows.find((c) => c.slug === "peptides");
-  const rest = rows.filter((c) => c.slug !== "other" && c.slug !== "peptides");
-  const maxRest = Math.max(0, HEADER_NAV_CATEGORY_LIMIT - 2);
+  const pinnedPlaceholders: Record<string, NavCategory> = {
+    "dermal-fillers": PLACEHOLDER_DERMAL_FILLERS,
+    "botulinum-toxins": PLACEHOLDER_BOTULINUM,
+    peptides: PLACEHOLDER_PEPTIDES,
+  };
+  const pinnedFirst: NavCategory[] = PINNED_FIRST_SLUGS.map(
+    (slug) => rows.find((c) => c.slug === slug) ?? pinnedPlaceholders[slug]
+  );
+  const pinnedSet = new Set(pinnedFirst.map((c) => c.slug));
+  const rest = rows.filter((c) => !pinnedSet.has(c.slug) && c.slug !== "other");
+  const maxRest = Math.max(0, HEADER_NAV_CATEGORY_LIMIT - pinnedFirst.length - 1);
   const navCore = [
-    peptides ?? PLACEHOLDER_PEPTIDES,
+    ...pinnedFirst,
     ...rest.slice(0, maxRest),
     other ?? PLACEHOLDER_OTHER,
   ] as NavCategory[];

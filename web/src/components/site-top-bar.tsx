@@ -15,7 +15,7 @@ export async function SiteTopBar() {
   const { categories, othersDropdownCategories, productSamples } = await getCategoryNavData();
   return (
     <div className="hidden border-b border-filler-peach-300/50 bg-white/95 text-[13px] text-filler-ink/85 shadow-sm backdrop-blur-md md:sticky md:top-0 md:z-50 md:block">
-      <div className="mx-auto flex min-h-[3.25rem] max-w-6xl min-w-0 flex-nowrap items-center justify-between gap-4 px-4 py-2">
+      <div className="mx-auto flex min-h-[3.25rem] max-w-screen-2xl min-w-0 flex-nowrap items-center justify-between gap-4 px-6 py-2 lg:px-10">
         <div className="flex min-w-0 items-center gap-4">
           <Link
             href="/"

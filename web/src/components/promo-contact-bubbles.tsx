@@ -7,7 +7,7 @@ import { SITE_EMAIL, SITE_PHONE_DISPLAY, SITE_PHONE_TEL } from "@/lib/site-const
 type OpenKind = "phone" | "email" | null;
 
 const btnClass =
-  "inline-flex h-9 w-9 items-center justify-center rounded-full border border-filler-pink-400/50 bg-white/80 text-filler-ink shadow-sm transition hover:bg-white hover:shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-filler-rose-500/50 focus-visible:ring-offset-1";
+  "inline-flex h-7 w-7 items-center justify-center rounded-full border border-filler-pink-400/50 bg-white/80 text-filler-ink shadow-sm transition hover:bg-white hover:shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-filler-rose-500/50 focus-visible:ring-offset-1";
 
 const bubbleClass =
   "w-max max-w-[min(18rem,calc(100vw-2rem))] rounded-lg border border-filler-pink-300/70 bg-filler-cream/90 px-3 py-2 text-left text-xs text-filler-ink shadow-lg ring-1 ring-filler-pink-200/35 backdrop-blur-md sm:px-3.5 sm:py-2.5 sm:text-sm";
@@ -128,7 +128,7 @@ export function PromoContactBubbles() {
             aria-label="Show phone number"
           >
             <svg
-              className="h-4 w-4"
+              className="h-3.5 w-3.5"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -153,7 +153,7 @@ export function PromoContactBubbles() {
             aria-label="Show email address"
           >
             <svg
-              className="h-4 w-4"
+              className="h-3.5 w-3.5"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
