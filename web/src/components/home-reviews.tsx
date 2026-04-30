@@ -2,32 +2,32 @@ const REVIEWS = [
   {
     title: "Highly Recommended!",
     body: "Great prices, great service, and perfect delivery!",
-    author: "Dr. Carla Mendes",
+    author: "Dr. Mendes",
   },
   {
     title: "Easy and Quick",
     body: "Easy and quick ordering, prices are amazing!",
-    author: "Maureen Robidoux",
+    author: "Maureen",
   },
   {
     title: "Great Customer Service!",
     body: "Customer service is above and beyond professional. Pricing is extremely reasonable.",
-    author: "Aesthetic Care Group",
+    author: "Skin Care Group",
   },
   {
     title: "Fast Delivery!",
     body: "Fast delivery and reliable communication — my go-to from now on.",
-    author: "Sean Kirby, RN",
+    author: "Kirby, RN",
   },
   {
     title: "Authentic Stock",
     body: "Genuine product, well packed, and quick to ship internationally.",
-    author: "Dr. Aisha Patel",
+    author: "Dr. Patel",
   },
   {
     title: "Smooth Re-Orders",
     body: "Re-orders are seamless and pricing is consistent. Highly recommend for any clinic.",
-    author: "Marco Russo, MD",
+    author: "Dr. Russo, MD",
   },
 ] as const;
 

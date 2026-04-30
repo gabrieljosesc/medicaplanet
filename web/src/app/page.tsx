@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { CategoriesBand } from "@/components/categories-band";
 import { categoryNavLabel } from "@/lib/catalog-constants";
 import { FeaturedProductCard } from "@/components/featured-product-card";
 import { HomeBrandMarquee } from "@/components/home-brand-marquee";
@@ -7,8 +6,6 @@ import { HomeHero } from "@/components/home-hero";
 import { HomeReviews } from "@/components/home-reviews";
 import { MobileTopSellersStrip } from "@/components/mobile-top-sellers-strip";
 import { buildHomeBrandMarqueeItems } from "@/lib/home-brand-marquee";
-import { applyCuratedHomeHeroSlides } from "@/lib/home-hero-curated";
-import { buildMonthlyHighlightSlides } from "@/lib/monthly-highlight-slides";
 import { getSiteBlogPosts } from "@/lib/site-blog";
 import { createClient } from "@/lib/supabase/server";
 import { mergeBestSellerSlots, resolveBestSellerSlots } from "@/lib/best-sellers-home";
@@ -18,12 +15,8 @@ import { withStorageImageTransform } from "@/lib/storage-image";
 
 export default async function HomePage() {
   const supabase = await createClient();
-  const [{ data: categories }, { data: productsRaw }, { data: allActiveForBrandCounts }] =
+  const [{ data: productsRaw }, { data: allActiveForBrandCounts }] =
     await Promise.all([
-    supabase
-      .from("categories")
-      .select("slug,name,description,sort_order")
-      .order("sort_order"),
     supabase
       .from("products")
       .select(
@@ -60,26 +53,6 @@ export default async function HomePage() {
 
   const relFiltered = enriched;
 
-  const rawCats = (categories ?? []) as { slug: string; name: string }[];
-  const otherC = rawCats.find((c) => c.slug === "other");
-  const HOME_PINNED_FIRST_SLUGS = [
-    "dermal-fillers",
-    "botulinum-toxins",
-    "peptides",
-  ] as const;
-  const pinnedFirstC = HOME_PINNED_FIRST_SLUGS.map((slug) =>
-    rawCats.find((c) => c.slug === slug)
-  );
-  const pinnedSet = new Set(
-    pinnedFirstC.filter(Boolean).map((c) => c!.slug)
-  );
-  const restC = rawCats.filter(
-    (c) => !pinnedSet.has(c.slug) && c.slug !== "other"
-  );
-  const homeCategories = [...pinnedFirstC, ...restC, otherC]
-    .filter((c): c is { slug: string; name: string } => Boolean(c))
-    .map((c) => ({ slug: c.slug, name: categoryNavLabel(c.slug, c.name) }));
-
   type FeaturedHomeRow = Parameters<typeof resolveFeaturedHomeProducts>[0][number];
   const featuredRows = relFiltered as FeaturedHomeRow[];
   const featuredPool = resolveFeaturedHomeProducts(featuredRows);
@@ -98,36 +71,10 @@ export default async function HomePage() {
   const brandMarqueeItems = buildHomeBrandMarqueeItems(
     ((allActiveForBrandCounts ?? []) as { title?: string; slug?: string; description?: string }[])
   );
-  const monthlyHighlightSlides = applyCuratedHomeHeroSlides(
-    buildMonthlyHighlightSlides(bestSellers)
-  );
 
   return (
     <>
-      <HomeHero slides={monthlyHighlightSlides} />
-      <HomeBrandMarquee items={brandMarqueeItems} />
-      <div className="mx-auto max-w-6xl px-4 pt-8 sm:pt-10">
-        <section>
-          <MobileTopSellersStrip
-            products={mobileTopSellers.map((p) => ({
-              slug: p.slug,
-              title: p.title,
-              heroImageSrc: p.heroImageSrc,
-              imageUnoptimized: Boolean(p.imageUnoptimized),
-              base_price: Number(p.base_price ?? 0),
-              currency: String(p.currency ?? "USD"),
-            }))}
-          />
-        </section>
-      </div>
-
-      <HomeReviews />
-
-      <div className="mx-auto max-w-6xl px-4 pb-12 sm:pb-14">
-        <section>
-          <CategoriesBand categories={homeCategories} />
-        </section>
-      </div>
+      <HomeHero />
 
       <section
         id="best-sellers"
@@ -180,6 +127,25 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <HomeReviews />
+
+      <HomeBrandMarquee items={brandMarqueeItems} />
+
+      <div className="mx-auto max-w-6xl px-4 pt-4 pb-4 sm:pt-6 sm:pb-6">
+        <section>
+          <MobileTopSellersStrip
+            products={mobileTopSellers.map((p) => ({
+              slug: p.slug,
+              title: p.title,
+              heroImageSrc: p.heroImageSrc,
+              imageUnoptimized: Boolean(p.imageUnoptimized),
+              base_price: Number(p.base_price ?? 0),
+              currency: String(p.currency ?? "USD"),
+            }))}
+          />
+        </section>
+      </div>
 
       <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:py-14">
         <div className="mb-4 flex items-end justify-between gap-4">
