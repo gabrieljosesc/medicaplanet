@@ -25,7 +25,7 @@ export function HomeHero({
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         <div className="absolute -right-20 -top-10 h-72 w-72 rounded-full bg-filler-pink-200/60 blur-2xl" />
         <div className="absolute -left-10 top-32 h-64 w-64 rounded-full bg-filler-peach-300/50 blur-2xl" />
-        <div className="absolute bottom-0 right-1/4 h-48 w-96 rounded-[100%] bg-filler-coral-400/25" />
+        <div className="absolute right-0 top-44 h-40 w-72 rounded-[100%] bg-filler-coral-400/25 sm:right-2 sm:top-52 sm:h-44 sm:w-80 lg:right-4 lg:top-60 lg:h-48 lg:w-96" />
         <div className="absolute bottom-8 left-8 h-32 w-64 rotate-6 rounded-full bg-filler-pink-300/30" />
       </div>
 
@@ -48,7 +48,7 @@ export function HomeHero({
         </div>
       </div>
 
-      <div className="relative z-10 mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-28 lg:pt-20 lg:pb-32">
         <div className="relative z-10 flex flex-col items-center justify-center text-center">
           <h2 className="text-3xl font-bold tracking-tight text-filler-ink sm:text-4xl lg:text-5xl">
             Your Trusted Supplier
@@ -64,7 +64,7 @@ export function HomeHero({
           </Link>
 
           <ul
-            className="mx-auto mt-12 grid w-full max-w-4xl grid-cols-3 gap-x-3 gap-y-7 sm:mt-16 sm:grid-cols-5 sm:gap-x-4"
+            className="mx-auto mt-12 flex w-full max-w-4xl snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] sm:mt-16 sm:grid sm:grid-cols-5 sm:gap-x-4 sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden"
             aria-label="Why choose MedicaPlanet"
           >
             <FeatureBadge
@@ -122,7 +122,7 @@ export function HomeHero({
               }
             />
             <FeatureBadge
-              label={"License\nRequired"}
+              label={"Priority\nShipping"}
               icon={
                 <svg
                   viewBox="0 0 48 48"
@@ -133,10 +133,11 @@ export function HomeHero({
                   strokeLinejoin="round"
                   aria-hidden
                 >
-                  <rect x="7" y="11" width="34" height="26" rx="3" />
-                  <circle cx="17" cy="22" r="3.5" />
-                  <path d="M11 31c1.5-3 3.5-4.5 6-4.5s4.5 1.5 6 4.5" />
-                  <path d="M27 19h10M27 25h8M27 31h6" />
+                  <path d="M4 14h22v18H4z" />
+                  <path d="M26 20h8l6 7v5H26V20Z" />
+                  <circle cx="13" cy="36" r="3" />
+                  <circle cx="33" cy="36" r="3" />
+                  <path d="M16 36h14" />
                 </svg>
               }
             />
@@ -173,7 +174,7 @@ function FeatureBadge({
   label: string;
 }) {
   return (
-    <li className="flex flex-col items-center gap-2 text-center">
+    <li className="flex shrink-0 basis-[33%] snap-start flex-col items-center gap-2 text-center sm:basis-auto sm:shrink">
       <span
         className="inline-flex h-10 w-10 items-center justify-center text-filler-rose-700 sm:h-12 sm:w-12 [&>svg]:h-full [&>svg]:w-full"
         aria-hidden

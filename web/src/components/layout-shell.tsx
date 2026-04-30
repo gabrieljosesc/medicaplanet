@@ -1,3 +1,4 @@
+import { FloatingCart } from "@/components/floating-cart";
 import { PromoBanner } from "@/components/promo-banner";
 import { RouteLayoutWrapper } from "@/components/route-layout-wrapper";
 import { SiteFooter } from "@/components/site-footer";
@@ -19,6 +20,7 @@ export async function LayoutShell({ children }: { children: React.ReactNode }) {
         {children}
       </RouteLayoutWrapper>
       <SiteFooter />
+      <FloatingCart />
     </>
   );
 }

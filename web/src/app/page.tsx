@@ -84,7 +84,7 @@ export default async function HomePage() {
           <h2 className="mb-10 text-center text-2xl font-bold uppercase tracking-wide text-neutral-900 sm:mb-12 sm:text-3xl">
             Best sellers
           </h2>
-          <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-16 lg:grid-cols-3 lg:gap-x-10 lg:gap-y-20">
+          <div className="-mx-4 flex snap-x snap-mandatory gap-0 overflow-x-auto px-0 pb-4 [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-x-8 sm:gap-y-16 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3 lg:gap-x-10 lg:gap-y-20 [&::-webkit-scrollbar]:hidden">
             {bestSellers.length === 0 ? (
               <p className="text-sm text-neutral-500 sm:col-span-2 lg:col-span-3">
                 No active products yet. Apply the Supabase migration and run{" "}
@@ -100,27 +100,31 @@ export default async function HomePage() {
                   | null;
                 const c = Array.isArray(rel) ? rel[0] : rel;
                 return (
-                  <FeaturedProductCard
+                  <div
                     key={p.slug}
-                    variant="bestSeller"
-                    bestSellerTags={row.tags.length > 0 ? row.tags : undefined}
-                    compareAtPrice={row.compareAtPrice}
-                    slug={p.slug}
-                    title={p.title}
-                    basePrice={Number(p.base_price)}
-                    currency={String(p.currency ?? "USD")}
-                    rating={Number(p.rating)}
-                    reviewCount={Number(p.review_count ?? 0)}
-                    heroImageSrc={p.heroImageSrc}
-                    imageUnoptimized={Boolean(p.imageUnoptimized)}
-                    priceTiersRaw={p.price_tiers}
-                    categoryName={
-                      c?.slug && c?.name
-                        ? categoryNavLabel(c.slug, c.name)
-                        : c?.name ?? null
-                    }
-                    categorySlug={c?.slug ?? null}
-                  />
+                    className="w-screen shrink-0 snap-center px-6 sm:w-auto sm:shrink sm:px-0"
+                  >
+                    <FeaturedProductCard
+                      variant="bestSeller"
+                      bestSellerTags={row.tags.length > 0 ? row.tags : undefined}
+                      compareAtPrice={row.compareAtPrice}
+                      slug={p.slug}
+                      title={p.title}
+                      basePrice={Number(p.base_price)}
+                      currency={String(p.currency ?? "USD")}
+                      rating={Number(p.rating)}
+                      reviewCount={Number(p.review_count ?? 0)}
+                      heroImageSrc={p.heroImageSrc}
+                      imageUnoptimized={Boolean(p.imageUnoptimized)}
+                      priceTiersRaw={p.price_tiers}
+                      categoryName={
+                        c?.slug && c?.name
+                          ? categoryNavLabel(c.slug, c.name)
+                          : c?.name ?? null
+                      }
+                      categorySlug={c?.slug ?? null}
+                    />
+                  </div>
                 );
               })
             )}
