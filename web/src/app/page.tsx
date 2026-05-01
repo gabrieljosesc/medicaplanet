@@ -166,6 +166,17 @@ export default async function HomePage() {
         </section>
       </div>
 
+      <section className="mx-auto w-full max-w-6xl px-4 pb-2 pt-8 sm:pb-4 sm:pt-12">
+        <div className="flex justify-center">
+          <Link
+            href="/shop"
+            className="inline-flex items-center justify-center rounded-full bg-filler-rose-700 px-10 py-2.5 text-sm font-semibold uppercase tracking-wider text-white shadow-md transition-colors hover:bg-filler-rose-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-filler-rose-600/60 focus-visible:ring-offset-2 sm:px-12 sm:py-3 sm:text-base"
+          >
+            Shop All Products
+          </Link>
+        </div>
+      </section>
+
       <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:py-14">
         <div className="mb-4 flex items-end justify-between gap-4">
           <h2 className="text-xl font-semibold text-filler-ink sm:text-2xl">From the blog</h2>

@@ -23,6 +23,10 @@ export function HomeHero({
         : null;
   return (
     <section className="relative overflow-hidden bg-filler-cream">
+      <div
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-filler-pink-200/55 via-filler-peach-200/45 to-filler-pink-200/35 sm:hidden"
+        aria-hidden
+      />
       <div className="pointer-events-none absolute inset-0 hidden sm:block" aria-hidden>
         <div className="absolute -right-20 -top-10 h-72 w-72 rounded-full bg-filler-pink-200/60 blur-2xl" />
         <div className="absolute -left-10 top-32 h-64 w-64 rounded-full bg-filler-peach-300/50 blur-2xl" />
@@ -49,7 +53,7 @@ export function HomeHero({
         </div>
       </div>
 
-      <div className="relative z-10 mx-auto max-w-6xl px-4 pt-36 pb-20 sm:px-6 sm:pt-16 sm:pb-28 lg:pt-20 lg:pb-32">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 pt-36 pb-20 sm:px-6 sm:pt-24 sm:pb-20 lg:pt-36 lg:pb-16">
         <div className="relative z-10 flex flex-col items-center justify-center text-center">
           <h2 className="text-3xl font-bold tracking-tight text-filler-ink sm:text-4xl lg:text-5xl">
             Your Trusted Supplier

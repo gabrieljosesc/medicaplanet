@@ -49,10 +49,13 @@ export function MobileTopSellersStrip({ products }: { products: TopSeller[] }) {
   if (products.length === 0) return null;
 
   return (
-    <section className="min-w-0 overflow-x-hidden sm:hidden">
-      <div className="mb-3 flex items-end justify-between gap-2">
-        <h2 className="text-base font-semibold text-filler-ink">Catalog picks</h2>
-        <Link href="/shop" className="shrink-0 text-xs font-medium text-filler-rose-800 hover:underline">
+    <section className="min-w-0 overflow-x-hidden">
+      <div className="mb-3 flex items-end justify-between gap-2 sm:mb-4">
+        <h2 className="text-base font-semibold text-filler-ink sm:text-xl">Catalog picks</h2>
+        <Link
+          href="/shop"
+          className="shrink-0 text-xs font-medium text-filler-rose-800 hover:underline sm:text-sm"
+        >
           View all
         </Link>
       </div>
