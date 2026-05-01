@@ -53,7 +53,7 @@ export function HomeHero({
         </div>
       </div>
 
-      <div className="relative z-10 mx-auto max-w-6xl px-4 pt-36 pb-20 sm:px-6 sm:pt-24 sm:pb-20 lg:pt-48 lg:pb-4">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 pt-36 pb-20 sm:px-6 sm:pt-24 sm:pb-20 lg:pt-52 lg:pb-0">
         <div className="relative z-10 flex flex-col items-center justify-center text-center">
           <h2 className="text-3xl font-bold tracking-tight text-filler-ink sm:text-4xl lg:text-5xl">
             Your Trusted Supplier
@@ -65,7 +65,7 @@ export function HomeHero({
             href="/shop"
             className="mt-7 inline-flex items-center justify-center rounded-full bg-filler-rose-700 px-12 py-2.5 text-base font-semibold tracking-wider text-white shadow-md transition-colors hover:bg-filler-rose-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-filler-rose-600/60 focus-visible:ring-offset-2 sm:mt-9 sm:px-14 sm:py-3 sm:text-lg"
           >
-            SHOP
+            Shop Now!
           </Link>
 
           <HomeHeroFeatures
