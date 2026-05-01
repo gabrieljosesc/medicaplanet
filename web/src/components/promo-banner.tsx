@@ -48,7 +48,7 @@ export async function PromoBanner() {
     <div className="max-w-full border-b border-filler-pink-300/40 bg-gradient-to-r from-filler-peach-200/90 via-filler-pink-200/80 to-filler-peach-200/90 px-2 py-1 text-xs font-medium text-filler-ink/90 sm:px-4 sm:py-1.5">
       <div className="mx-auto flex max-w-6xl min-w-0 items-center gap-2">
         <span className="w-[60px] shrink-0 sm:w-[62px]" aria-hidden />
-        <p className="min-w-0 flex-1 overflow-x-hidden text-balance break-words text-center text-[11px] leading-snug sm:text-xs">
+        <p className="min-w-0 flex-1 overflow-x-hidden text-balance break-words text-center text-[11px] leading-snug sm:text-[13px]">
           {safeMessage}
         </p>
         <PromoContactBubbles />

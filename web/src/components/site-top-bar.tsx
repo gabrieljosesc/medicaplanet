@@ -14,24 +14,24 @@ export async function SiteTopBar() {
   const { user, profile, isAdmin } = await getSiteUserContext();
   const { categories, othersDropdownCategories, productSamples } = await getCategoryNavData();
   return (
-    <div className="hidden border-b border-filler-peach-300/50 bg-white/95 text-[13px] text-filler-ink/85 shadow-sm backdrop-blur-md md:sticky md:top-0 md:z-50 md:block">
+    <div className="hidden border-b border-filler-peach-300/50 bg-white/95 text-[14px] text-filler-ink/85 shadow-sm backdrop-blur-md md:sticky md:top-0 md:z-50 md:block">
       <div className="mx-auto flex min-h-[3.25rem] max-w-screen-2xl min-w-0 flex-nowrap items-center justify-between gap-4 px-6 py-2 lg:px-10">
         <div className="flex min-w-0 items-center gap-4">
           <Link
             href="/"
             className="group flex shrink-0 items-center gap-2 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-filler-rose-600/60"
           >
-            <LogoMark />
+            <LogoMark sizeClassName="h-9 w-9" />
             <span className="flex flex-col leading-none">
-              <span className="text-[15px] font-bold tracking-tight text-filler-ink">
+              <span className="text-[16px] font-bold tracking-tight text-filler-ink">
                 MedicaPlanet
               </span>
-              <span className="mt-0.5 text-[9px] font-medium uppercase tracking-[0.18em] text-filler-ink/50">
+              <span className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-filler-ink/50">
                 Trusted Supplier
               </span>
             </span>
           </Link>
-          <nav className="flex min-w-0 items-center gap-x-2.5 gap-y-0.5 text-[14px]" aria-label="Site">
+          <nav className="flex min-w-0 items-center gap-x-2.5 gap-y-0.5 text-[15px]" aria-label="Site">
             {TOP_BAR_NAV.map((n, i) => {
               const item =
                 n.href === "/shop" ? (

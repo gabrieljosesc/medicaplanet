@@ -112,7 +112,7 @@ export function HomeHeroFeatures({ features }: { features: Feature[] }) {
             >
               {f.icon}
             </span>
-            <p className="whitespace-pre-line text-[11px] font-semibold leading-tight text-filler-ink/85 sm:text-xs">
+            <p className="whitespace-pre-line text-[11px] font-semibold leading-tight text-filler-ink/85 sm:text-[13px]">
               {f.label}
             </p>
           </li>
