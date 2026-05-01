@@ -20,11 +20,11 @@ export async function SiteHeader() {
         <div className="flex flex-wrap items-center justify-between gap-3 py-3.5">
           <Link
             href="/"
-            className="group flex min-w-0 max-w-[55%] flex-1 items-center gap-2.5"
+            className="group flex min-w-0 max-w-[55%] flex-1 items-center gap-2"
           >
-            <LogoMark />
+            <LogoMark sizeClassName="h-7 w-7" />
             <div className="min-w-0">
-              <span className="block text-lg font-bold leading-tight tracking-tight text-filler-ink">
+              <span className="block text-base font-bold leading-tight tracking-tight text-filler-ink">
                 MedicaPlanet
               </span>
             </div>

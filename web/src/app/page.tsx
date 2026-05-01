@@ -4,6 +4,7 @@ import { FeaturedProductCard } from "@/components/featured-product-card";
 import { HomeBrandMarquee } from "@/components/home-brand-marquee";
 import { HomeHero } from "@/components/home-hero";
 import { HomeReviews } from "@/components/home-reviews";
+import { MobileBestSellersStrip } from "@/components/mobile-best-sellers-strip";
 import { MobileTopSellersStrip } from "@/components/mobile-top-sellers-strip";
 import { buildHomeBrandMarqueeItems } from "@/lib/home-brand-marquee";
 import { getSiteBlogPosts } from "@/lib/site-blog";
@@ -84,51 +85,65 @@ export default async function HomePage() {
           <h2 className="mb-10 text-center text-2xl font-bold uppercase tracking-wide text-neutral-900 sm:mb-12 sm:text-3xl">
             Best sellers
           </h2>
-          <div className="-mx-4 flex snap-x snap-mandatory gap-0 overflow-x-auto px-0 pb-4 [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-x-8 sm:gap-y-16 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3 lg:gap-x-10 lg:gap-y-20 [&::-webkit-scrollbar]:hidden">
-            {bestSellers.length === 0 ? (
-              <p className="text-sm text-neutral-500 sm:col-span-2 lg:col-span-3">
-                No active products yet. Apply the Supabase migration and run{" "}
-                <code className="rounded bg-neutral-100 px-1.5 py-0.5 text-xs">npm run import:catalog</code>{" "}
-                from the repo root.
-              </p>
-            ) : (
-              bestSellers.map((row) => {
-                const p = row.product;
-                const rel = p.categories as
-                  | { slug?: string; name?: string }
-                  | { slug?: string; name?: string }[]
-                  | null;
-                const c = Array.isArray(rel) ? rel[0] : rel;
-                return (
-                  <div
-                    key={p.slug}
-                    className="w-screen shrink-0 snap-center px-6 sm:w-auto sm:shrink sm:px-0"
-                  >
-                    <FeaturedProductCard
-                      variant="bestSeller"
-                      bestSellerTags={row.tags.length > 0 ? row.tags : undefined}
-                      compareAtPrice={row.compareAtPrice}
-                      slug={p.slug}
-                      title={p.title}
-                      basePrice={Number(p.base_price)}
-                      currency={String(p.currency ?? "USD")}
-                      rating={Number(p.rating)}
-                      reviewCount={Number(p.review_count ?? 0)}
-                      heroImageSrc={p.heroImageSrc}
-                      imageUnoptimized={Boolean(p.imageUnoptimized)}
-                      priceTiersRaw={p.price_tiers}
-                      categoryName={
-                        c?.slug && c?.name
-                          ? categoryNavLabel(c.slug, c.name)
-                          : c?.name ?? null
-                      }
-                      categorySlug={c?.slug ?? null}
-                    />
-                  </div>
-                );
-              })
-            )}
-          </div>
+
+          {bestSellers.length === 0 ? (
+            <p className="text-sm text-neutral-500">
+              No active products yet. Apply the Supabase migration and run{" "}
+              <code className="rounded bg-neutral-100 px-1.5 py-0.5 text-xs">npm run import:catalog</code>{" "}
+              from the repo root.
+            </p>
+          ) : (
+            <>
+              <div className="sm:hidden">
+                <MobileBestSellersStrip
+                  products={bestSellers.map((row) => ({
+                    slug: row.product.slug,
+                    title: row.product.title,
+                    heroImageSrc: row.product.heroImageSrc,
+                    imageUnoptimized: Boolean(row.product.imageUnoptimized),
+                    basePrice: Number(row.product.base_price ?? 0),
+                    currency: String(row.product.currency ?? "USD"),
+                    compareAtPrice: row.compareAtPrice ?? null,
+                  }))}
+                />
+              </div>
+
+              <div className="hidden sm:grid sm:grid-cols-2 sm:gap-x-8 sm:gap-y-16 lg:grid-cols-3 lg:gap-x-10 lg:gap-y-20">
+                {bestSellers.map((row) => {
+                  const p = row.product;
+                  const rel = p.categories as
+                    | { slug?: string; name?: string }
+                    | { slug?: string; name?: string }[]
+                    | null;
+                  const c = Array.isArray(rel) ? rel[0] : rel;
+                  return (
+                    <div key={p.slug}>
+                      <FeaturedProductCard
+                        variant="bestSeller"
+                        bestSellerTags={row.tags.length > 0 ? row.tags : undefined}
+                        compareAtPrice={row.compareAtPrice}
+                        slug={p.slug}
+                        title={p.title}
+                        basePrice={Number(p.base_price)}
+                        currency={String(p.currency ?? "USD")}
+                        rating={Number(p.rating)}
+                        reviewCount={Number(p.review_count ?? 0)}
+                        heroImageSrc={p.heroImageSrc}
+                        imageUnoptimized={Boolean(p.imageUnoptimized)}
+                        priceTiersRaw={p.price_tiers}
+                        categoryName={
+                          c?.slug && c?.name
+                            ? categoryNavLabel(c.slug, c.name)
+                            : c?.name ?? null
+                        }
+                        categorySlug={c?.slug ?? null}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </div>
       </section>
 
