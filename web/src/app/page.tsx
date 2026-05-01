@@ -79,7 +79,7 @@ export default async function HomePage() {
 
       <section
         id="best-sellers"
-        className="w-full scroll-mt-24 border-t border-filler-peach-200/50 bg-white py-14 sm:py-20"
+        className="w-full scroll-mt-24 border-t border-filler-peach-200/50 bg-white py-14 sm:py-20 lg:pt-8"
       >
         <div className="mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-10">
           <h2 className="mb-10 text-center text-2xl font-bold uppercase tracking-wide text-neutral-900 sm:mb-12 sm:text-3xl">
