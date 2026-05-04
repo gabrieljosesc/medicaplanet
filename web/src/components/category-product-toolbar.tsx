@@ -169,7 +169,7 @@ export function CategoryProductToolbar({ basePath, categorySlug }: Props) {
     <div
       className={
         "mt-6 gap-4 md:mt-8 md:rounded-xl md:border md:border-zinc-200 md:bg-white md:p-4 md:shadow-sm " +
-        "flex flex-col sm:flex-row sm:flex-wrap sm:items-end"
+        "flex flex-col sm:flex-row sm:flex-wrap sm:items-start"
       }
     >
       <div className="min-w-0 flex-1 sm:max-w-md">
@@ -291,7 +291,7 @@ export function CategoryProductToolbar({ basePath, categorySlug }: Props) {
       </div>
 
       {hasFilters ? (
-        <div className="w-full sm:w-auto sm:pt-5">
+        <div className="w-full sm:w-auto sm:self-center">
           <Link
             href={basePath}
             className="text-sm font-medium text-teal-800 underline-offset-2 hover:underline"
