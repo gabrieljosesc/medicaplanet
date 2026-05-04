@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useActionState } from "react";
+import { Suspense, useActionState, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { registerWithProfile, type RegisterFormState } from "@/app/actions/auth";
 import { COUNTRY_OPTIONS } from "@/app/auth/register/countries";
+import { CA_PROVINCE_OPTIONS, US_STATE_OPTIONS } from "@/app/auth/register/region-options";
 import { safeAuthRedirectTarget } from "@/lib/safe-redirect";
 
 const pill =
@@ -59,6 +60,18 @@ function RegisterFormInner({
   globalError: string | null;
   nextTarget: string | null;
 }) {
+  const [countryCode, setCountryCode] = useState(() => fieldValue(state, "country") || "");
+
+  useEffect(() => {
+    setCountryCode(fieldValue(state, "country") || "");
+  }, [state]);
+
+  const stateFieldError = hasFieldError(state, "state");
+  const stateSelectClass = `${pill} cursor-pointer appearance-none bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat ${stateFieldError ? pillError : ""}`;
+  const stateSelectStyle = {
+    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23059669'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+  } as const;
+
   return (
     <div className="mx-auto max-w-2xl px-1">
       <h1 className="text-2xl font-semibold text-teal-950">Create account</h1>
@@ -182,11 +195,15 @@ function RegisterFormInner({
             </label>
             <input
               name="delivery_address"
-              autoComplete="street-address"
+              autoComplete="shipping address-line1"
               defaultValue={fieldValue(state, "delivery_address")}
               className={`${pill} ${hasFieldError(state, "delivery_address") ? pillError : ""}`}
-              placeholder="Delivery Address *"
+              placeholder="Street address, suite, unit *"
             />
+            <p className="mt-1 text-xs text-teal-800/75">
+              Your full street address for delivery. Browsers can suggest saved addresses as you type;
+              you can always edit the line before submitting.
+            </p>
             {fieldErr(state, "delivery_address") && (
               <p className="mt-1 text-xs text-red-600">{fieldErr(state, "delivery_address")}</p>
             )}
@@ -197,8 +214,10 @@ function RegisterFormInner({
             </label>
             <select
               name="country"
-              defaultValue={fieldValue(state, "country") || ""}
+              value={countryCode}
+              onChange={(e) => setCountryCode(e.target.value)}
               required
+              autoComplete="shipping country"
               className={`${pill} cursor-pointer appearance-none bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat ${hasFieldError(state, "country") ? pillError : ""}`}
               style={{
                 backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23059669'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
@@ -226,7 +245,7 @@ function RegisterFormInner({
             </label>
             <input
               name="city"
-              autoComplete="address-level2"
+              autoComplete="shipping address-level2"
               defaultValue={fieldValue(state, "city")}
               className={`${pill} ${hasFieldError(state, "city") ? pillError : ""}`}
               placeholder="City *"
@@ -240,13 +259,54 @@ function RegisterFormInner({
               <label className="mb-1 block text-sm font-medium text-teal-900">
                 State / province <span className="text-red-500">*</span>
               </label>
-              <input
-                name="state"
-                autoComplete="address-level1"
-                defaultValue={fieldValue(state, "state")}
-                className={`${pill} ${hasFieldError(state, "state") ? pillError : ""}`}
-                placeholder="State *"
-              />
+              {countryCode === "USA" ? (
+                <select
+                  key="state-usa"
+                  name="state"
+                  required
+                  defaultValue={fieldValue(state, "state")}
+                  autoComplete="shipping address-level1"
+                  className={stateSelectClass}
+                  style={stateSelectStyle}
+                >
+                  <option value="" disabled>
+                    State *
+                  </option>
+                  {US_STATE_OPTIONS.map((s) => (
+                    <option key={s.value} value={s.value}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
+              ) : countryCode === "CAN" ? (
+                <select
+                  key="state-can"
+                  name="state"
+                  required
+                  defaultValue={fieldValue(state, "state")}
+                  autoComplete="shipping address-level1"
+                  className={stateSelectClass}
+                  style={stateSelectStyle}
+                >
+                  <option value="" disabled>
+                    Province *
+                  </option>
+                  {CA_PROVINCE_OPTIONS.map((s) => (
+                    <option key={s.value} value={s.value}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  key="state-text"
+                  name="state"
+                  autoComplete="shipping address-level1"
+                  defaultValue={fieldValue(state, "state")}
+                  className={`${pill} ${stateFieldError ? pillError : ""}`}
+                  placeholder="State / province *"
+                />
+              )}
               {fieldErr(state, "state") && (
                 <p className="mt-1 text-xs text-red-600">{fieldErr(state, "state")}</p>
               )}
@@ -257,7 +317,7 @@ function RegisterFormInner({
               </label>
               <input
                 name="postal_code"
-                autoComplete="postal-code"
+                autoComplete="shipping postal-code"
                 defaultValue={fieldValue(state, "postal_code")}
                 className={`${pill} ${hasFieldError(state, "postal_code") ? pillError : ""}`}
                 placeholder="Zip *"
