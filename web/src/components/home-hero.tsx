@@ -22,7 +22,7 @@ export function HomeHero({
         ? HOME_HERO_ILLUSTRATION_SRC
         : null;
   return (
-    <section className="relative overflow-hidden bg-filler-cream">
+    <section className="relative overflow-hidden bg-filler-cream sm:flex sm:min-h-screen sm:flex-col sm:justify-center">
       <div
         className="pointer-events-none absolute inset-0 bg-gradient-to-b from-filler-pink-200/55 via-filler-peach-200/45 to-filler-pink-200/35 sm:hidden"
         aria-hidden
