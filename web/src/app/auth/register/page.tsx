@@ -101,13 +101,14 @@ function RegisterFormInner({
         </p>
       )}
 
-      <form action={formAction} className="mt-8 space-y-4">
+      <form action={formAction} className="mt-8 space-y-4" autoComplete="on">
         {nextTarget ? <input type="hidden" name="next" value={nextTarget} /> : null}
         <div>
-          <label className="mb-1 block text-sm font-medium text-teal-900">
+          <label htmlFor="reg-email" className="mb-1 block text-sm font-medium text-teal-900">
             Email <span className="text-red-500">*</span>
           </label>
           <input
+            id="reg-email"
             name="email"
             type="email"
             autoComplete="email"
@@ -190,29 +191,28 @@ function RegisterFormInner({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium text-teal-900">
+            <label htmlFor="reg-delivery-address" className="mb-1 block text-sm font-medium text-teal-900">
               Delivery address <span className="text-red-500">*</span>
             </label>
             <input
+              id="reg-delivery-address"
               name="delivery_address"
-              autoComplete="shipping address-line1"
+              autoComplete="shipping street-address"
+              enterKeyHint="next"
               defaultValue={fieldValue(state, "delivery_address")}
               className={`${pill} ${hasFieldError(state, "delivery_address") ? pillError : ""}`}
               placeholder="Street address, suite, unit *"
             />
-            <p className="mt-1 text-xs text-teal-800/75">
-              Your full street address for delivery. Browsers can suggest saved addresses as you type;
-              you can always edit the line before submitting.
-            </p>
             {fieldErr(state, "delivery_address") && (
               <p className="mt-1 text-xs text-red-600">{fieldErr(state, "delivery_address")}</p>
             )}
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-teal-900">
+            <label htmlFor="reg-country" className="mb-1 block text-sm font-medium text-teal-900">
               Country <span className="text-red-500">*</span>
             </label>
             <select
+              id="reg-country"
               name="country"
               value={countryCode}
               onChange={(e) => setCountryCode(e.target.value)}
@@ -239,13 +239,75 @@ function RegisterFormInner({
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-teal-900">
+          <div className="sm:col-start-1 sm:row-start-1">
+            <label htmlFor="reg-state" className="mb-1 block text-sm font-medium text-teal-900">
+              State / province <span className="text-red-500">*</span>
+            </label>
+            {countryCode === "USA" ? (
+              <select
+                key="state-usa"
+                id="reg-state"
+                name="state"
+                required
+                defaultValue={fieldValue(state, "state")}
+                autoComplete="shipping address-level1"
+                className={stateSelectClass}
+                style={stateSelectStyle}
+              >
+                <option value="" disabled>
+                  State *
+                </option>
+                {US_STATE_OPTIONS.map((s) => (
+                  <option key={s.value} value={s.value}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
+            ) : countryCode === "CAN" ? (
+              <select
+                key="state-can"
+                id="reg-state"
+                name="state"
+                required
+                defaultValue={fieldValue(state, "state")}
+                autoComplete="shipping address-level1"
+                className={stateSelectClass}
+                style={stateSelectStyle}
+              >
+                <option value="" disabled>
+                  Province *
+                </option>
+                {CA_PROVINCE_OPTIONS.map((s) => (
+                  <option key={s.value} value={s.value}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                key="state-text"
+                id="reg-state"
+                name="state"
+                autoComplete="shipping address-level1"
+                enterKeyHint="next"
+                defaultValue={fieldValue(state, "state")}
+                className={`${pill} ${stateFieldError ? pillError : ""}`}
+                placeholder="State / province *"
+              />
+            )}
+            {fieldErr(state, "state") && (
+              <p className="mt-1 text-xs text-red-600">{fieldErr(state, "state")}</p>
+            )}
+          </div>
+          <div className="sm:col-start-2 sm:row-start-1">
+            <label htmlFor="reg-city" className="mb-1 block text-sm font-medium text-teal-900">
               City <span className="text-red-500">*</span>
             </label>
             <input
+              id="reg-city"
               name="city"
               autoComplete="shipping address-level2"
+              enterKeyHint="next"
               defaultValue={fieldValue(state, "city")}
               className={`${pill} ${hasFieldError(state, "city") ? pillError : ""}`}
               placeholder="City *"
@@ -254,78 +316,22 @@ function RegisterFormInner({
               <p className="mt-1 text-xs text-red-600">{fieldErr(state, "city")}</p>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="min-w-0">
-              <label className="mb-1 block text-sm font-medium text-teal-900">
-                State / province <span className="text-red-500">*</span>
-              </label>
-              {countryCode === "USA" ? (
-                <select
-                  key="state-usa"
-                  name="state"
-                  required
-                  defaultValue={fieldValue(state, "state")}
-                  autoComplete="shipping address-level1"
-                  className={stateSelectClass}
-                  style={stateSelectStyle}
-                >
-                  <option value="" disabled>
-                    State *
-                  </option>
-                  {US_STATE_OPTIONS.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
-              ) : countryCode === "CAN" ? (
-                <select
-                  key="state-can"
-                  name="state"
-                  required
-                  defaultValue={fieldValue(state, "state")}
-                  autoComplete="shipping address-level1"
-                  className={stateSelectClass}
-                  style={stateSelectStyle}
-                >
-                  <option value="" disabled>
-                    Province *
-                  </option>
-                  {CA_PROVINCE_OPTIONS.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  key="state-text"
-                  name="state"
-                  autoComplete="shipping address-level1"
-                  defaultValue={fieldValue(state, "state")}
-                  className={`${pill} ${stateFieldError ? pillError : ""}`}
-                  placeholder="State / province *"
-                />
-              )}
-              {fieldErr(state, "state") && (
-                <p className="mt-1 text-xs text-red-600">{fieldErr(state, "state")}</p>
-              )}
-            </div>
-            <div className="min-w-0">
-              <label className="mb-1 block text-sm font-medium text-teal-900">
-                Zip <span className="text-red-500">*</span>
-              </label>
-              <input
-                name="postal_code"
-                autoComplete="shipping postal-code"
-                defaultValue={fieldValue(state, "postal_code")}
-                className={`${pill} ${hasFieldError(state, "postal_code") ? pillError : ""}`}
-                placeholder="Zip *"
-              />
-              {fieldErr(state, "postal_code") && (
-                <p className="mt-1 text-xs text-red-600">{fieldErr(state, "postal_code")}</p>
-              )}
-            </div>
+          <div className="sm:col-start-1 sm:row-start-2">
+            <label htmlFor="reg-postal-code" className="mb-1 block text-sm font-medium text-teal-900">
+              Zip <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="reg-postal-code"
+              name="postal_code"
+              autoComplete="shipping postal-code"
+              enterKeyHint="done"
+              defaultValue={fieldValue(state, "postal_code")}
+              className={`${pill} ${hasFieldError(state, "postal_code") ? pillError : ""}`}
+              placeholder="Zip *"
+            />
+            {fieldErr(state, "postal_code") && (
+              <p className="mt-1 text-xs text-red-600">{fieldErr(state, "postal_code")}</p>
+            )}
           </div>
         </div>
 
