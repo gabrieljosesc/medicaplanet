@@ -94,10 +94,10 @@ export function HomeHeroFeatures({ features }: { features: Feature[] }) {
   }, [features.length, stepWidthFor]);
 
   return (
-    <div className="mx-auto mt-14 w-full max-w-5xl sm:mt-24">
+    <div className="mx-auto mt-12 w-full max-w-5xl sm:mt-16 sm:translate-y-2">
       <ul
         ref={scrollRef}
-        className="flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] sm:grid sm:grid-cols-5 sm:gap-x-10 sm:overflow-visible sm:px-2 sm:pb-0 [&::-webkit-scrollbar]:hidden"
+        className="flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] sm:grid sm:grid-cols-5 sm:gap-x-12 sm:overflow-visible sm:px-4 sm:pb-0 [&::-webkit-scrollbar]:hidden"
         aria-label="Why choose MedicaPlanet"
       >
         {features.map((f, i) => (
@@ -112,7 +112,7 @@ export function HomeHeroFeatures({ features }: { features: Feature[] }) {
             >
               {f.icon}
             </span>
-            <p className="whitespace-pre-line text-[11px] font-semibold leading-tight text-filler-ink/85 sm:text-[14px]">
+            <p className="whitespace-pre-line text-[11px] font-semibold leading-tight text-filler-ink/85 sm:text-[14px] sm:leading-snug">
               {f.label}
             </p>
           </li>
