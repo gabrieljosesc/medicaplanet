@@ -92,7 +92,7 @@ export function ProductImageGallery({ images, title }: { images: Slide[]; title:
                 src={img.src}
                 alt={i === 0 ? img.alt : `${img.alt} — photo ${i + 1}`}
                 fill
-                className="object-cover"
+                className="object-contain p-4"
                 priority={i === 0}
                 sizes="(max-width:1024px) 100vw, 50vw"
                 unoptimized={img.unoptimized}

@@ -58,7 +58,7 @@ export default async function ProductPage({ params }: Props) {
             src={slidesForUi[0]!.src}
             alt={product.title}
             fill
-            className="object-cover"
+            className="object-contain p-4"
             priority
             unoptimized={slidesForUi[0]!.unoptimized}
           />
