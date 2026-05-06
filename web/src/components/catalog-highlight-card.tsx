@@ -106,7 +106,7 @@ export function CatalogHighlightCard({
             src={heroImageSrc}
             alt={title}
             fill
-            className="object-cover transition duration-300 [@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-[1.02]"
+            className="object-contain p-3 transition duration-300 [@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-[1.02]"
             sizes="(max-width:768px) 100vw, 33vw"
             unoptimized={imageUnoptimized}
           />
