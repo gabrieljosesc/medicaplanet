@@ -49,13 +49,13 @@ export default function CartPage() {
                 className="size-4 rounded border-teal-300 text-teal-700 accent-teal-700 focus:ring-teal-300"
               />
               <div className="flex min-w-0 items-center gap-3">
-                <CartLineThumbnail slug={l.slug} title={l.title} imageSrc={l.imageSrc} />
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <Link href={`/product/${l.slug}`} className="font-medium text-teal-900 hover:underline">
                     {l.title}
                   </Link>
                   <p className="text-xs text-zinc-500">{l.slug}</p>
                 </div>
+                <CartLineThumbnail slug={l.slug} title={l.title} imageSrc={l.imageSrc} />
               </div>
               <span className="text-right text-sm text-zinc-700">
                 {formatMoney(l.currency ?? "USD", l.unitPrice)}
