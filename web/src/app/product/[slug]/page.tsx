@@ -79,6 +79,7 @@ export default async function ProductPage({ params }: Props) {
           basePrice={Number(product.base_price)}
           priceTiersRaw={product.price_tiers}
           disabled={!product.is_active}
+          heroImageSrc={slidesForUi[0]!.src}
         />
         <div className="prose prose-sm mt-8 max-w-none text-zinc-700 whitespace-pre-wrap">
           {product.description || "Description coming soon."}

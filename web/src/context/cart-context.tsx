@@ -122,6 +122,7 @@ export function CartProvider({
             priceTiers: mergedTiers,
             selected: line.selected ?? existing.selected ?? false,
             currency: line.currency ?? existing.currency,
+            imageSrc: line.imageSrc ?? existing.imageSrc,
           };
         } else {
           next = [

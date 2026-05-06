@@ -31,6 +31,8 @@ export type CartLine = {
   quantity: number;
   selected?: boolean;
   currency?: string;
+  /** Resolved product image when added (optional; cart falls back to slug + overrides). */
+  imageSrc?: string;
   /** When set, cart qty changes recompute unitPrice from tiers. */
   priceTiers?: PriceTierRow[];
 };

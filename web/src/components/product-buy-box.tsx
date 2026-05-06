@@ -19,6 +19,7 @@ export function ProductBuyBox({
   basePrice,
   priceTiersRaw,
   disabled,
+  heroImageSrc,
 }: {
   slug: string;
   title: string;
@@ -26,6 +27,8 @@ export function ProductBuyBox({
   basePrice: number;
   priceTiersRaw: unknown;
   disabled?: boolean;
+  /** Main product image URL for cart thumbnails */
+  heroImageSrc?: string | null;
 }) {
   const tiers = useMemo(() => parsePriceTiersJson(priceTiersRaw), [priceTiersRaw]);
   const { addLine } = useCart();
@@ -92,6 +95,7 @@ export function ProductBuyBox({
               currency,
               priceTiers: tiers.length ? tiers : undefined,
               selected: false,
+              imageSrc: heroImageSrc ?? undefined,
             });
             setMsg("Added to cart");
             setTimeout(() => setMsg(null), 2000);
@@ -112,6 +116,7 @@ export function ProductBuyBox({
               currency,
               priceTiers: tiers.length ? tiers : undefined,
               selected: true,
+              imageSrc: heroImageSrc ?? undefined,
             });
             router.push("/cart");
           }}

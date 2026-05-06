@@ -269,6 +269,7 @@ export function FeaturedProductCard({
                   priceTiers: tiers.length ? tiers : undefined,
                   selected: true,
                   deselectOthers: true,
+                  imageSrc: heroImageSrc,
                 });
                 router.push("/cart");
               }}
