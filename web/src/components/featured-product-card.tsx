@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { IconCartBag } from "@/components/nav-icons";
 import { useCart } from "@/context/cart-context";
 import { categoryHref } from "@/lib/category-href";
@@ -91,8 +90,15 @@ export function FeaturedProductCard({
   const amount = hasPrice && Number.isFinite(display) && display > 0 ? Math.round(display) : null;
 
   const { addLine } = useCart();
-  const router = useRouter();
+  const [addedToCart, setAddedToCart] = useState(false);
+  const addedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cat = categorySlug && categoryName ? { slug: categorySlug, name: categoryName } : null;
+
+  useEffect(() => {
+    return () => {
+      if (addedTimerRef.current) clearTimeout(addedTimerRef.current);
+    };
+  }, []);
   const firstWord = title.trim().split(/\s+/)[0] ?? "";
   const showBrandTag =
     firstWord.length > 1 &&
@@ -267,11 +273,12 @@ export function FeaturedProductCard({
                   quantity: 1,
                   currency,
                   priceTiers: tiers.length ? tiers : undefined,
-                  selected: true,
-                  deselectOthers: true,
+                  selected: false,
                   imageSrc: heroImageSrc,
                 });
-                router.push("/cart");
+                setAddedToCart(true);
+                if (addedTimerRef.current) clearTimeout(addedTimerRef.current);
+                addedTimerRef.current = setTimeout(() => setAddedToCart(false), 2800);
               }}
             >
               Add to
@@ -279,6 +286,15 @@ export function FeaturedProductCard({
             </button>
           ) : null}
         </div>
+        {addedToCart ? (
+          <div
+            className="mt-3 rounded-xl border border-filler-peach-300/80 bg-filler-pink-100/95 px-4 py-2.5 text-center text-sm font-semibold text-filler-rose-900 shadow-md"
+            role="status"
+            aria-live="polite"
+          >
+            Added to cart
+          </div>
+        ) : null}
       </div>
     </div>
   );
