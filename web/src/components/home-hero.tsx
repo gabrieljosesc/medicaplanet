@@ -54,7 +54,7 @@ export function HomeHero({
       </div>
 
       <div className="relative z-10 mx-auto max-w-6xl px-4 pt-36 pb-10 sm:px-6 sm:py-16">
-        <div className="relative z-10 flex flex-col items-center justify-center text-center">
+        <div className="relative z-10 mt-4 flex flex-col items-center justify-center text-center sm:mt-8">
           <h2 className="text-3xl font-bold tracking-tight text-filler-ink sm:text-4xl lg:text-5xl">
             Your Trusted Supplier
           </h2>
