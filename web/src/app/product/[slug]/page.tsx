@@ -53,12 +53,12 @@ export default async function ProductPage({ params }: Props) {
       {slidesForUi.length > 1 ? (
         <ProductImageGallery images={slidesForUi} title={product.title} />
       ) : (
-        <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100">
+        <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-zinc-200 bg-transparent">
           <Image
             src={slidesForUi[0]!.src}
             alt={product.title}
             fill
-            className="object-contain p-4"
+            className="object-contain"
             priority
             unoptimized={slidesForUi[0]!.unoptimized}
           />

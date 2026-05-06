@@ -78,7 +78,7 @@ export function ProductImageGallery({ images, title }: { images: Slide[]; title:
       <div className="relative">
         <div
           ref={scrollerRef}
-          className="flex w-full snap-x snap-mandatory overflow-x-auto scroll-smooth rounded-2xl border border-zinc-200 bg-zinc-100 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex w-full snap-x snap-mandatory overflow-x-auto scroll-smooth rounded-2xl border border-zinc-200 bg-transparent [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           role="region"
           aria-roledescription="carousel"
           aria-label={`${title} photos`}
@@ -92,7 +92,7 @@ export function ProductImageGallery({ images, title }: { images: Slide[]; title:
                 src={img.src}
                 alt={i === 0 ? img.alt : `${img.alt} — photo ${i + 1}`}
                 fill
-                className="object-contain p-4"
+                className="object-contain"
                 priority={i === 0}
                 sizes="(max-width:1024px) 100vw, 50vw"
                 unoptimized={img.unoptimized}
