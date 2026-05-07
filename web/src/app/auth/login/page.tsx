@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { resendVerificationEmail, signInWithPassword } from "@/app/actions/auth";
+import { PasswordField } from "@/components/password-field";
 import { safeAuthRedirectTarget } from "@/lib/safe-redirect";
 
 type Props = {
@@ -10,6 +11,7 @@ type Props = {
     verify?: string;
     email?: string;
     unverified?: string;
+    reset?: string;
   }>;
 };
 
@@ -21,6 +23,7 @@ export default async function LoginPage({ searchParams }: Props) {
   const email = q.email ?? "";
   const unverified = q.unverified === "1";
   const verify = q.verify;
+  const reset = q.reset;
 
   const registerHref = next ? `/auth/register?next=${encodeURIComponent(next)}` : "/auth/register";
 
@@ -54,6 +57,11 @@ export default async function LoginPage({ searchParams }: Props) {
           Email confirmed successfully. You can sign in now.
         </p>
       )}
+      {reset === "updated" && (
+        <p className="mt-3 rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm text-teal-900">
+          Password updated successfully. Please sign in with your new password.
+        </p>
+      )}
       {unverified && (
         <form action={resendVerificationEmail} className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
           {next ? <input type="hidden" name="next" value={next} /> : null}
@@ -81,9 +89,11 @@ export default async function LoginPage({ searchParams }: Props) {
             className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
           />
         </div>
-        <div>
-          <label className="text-xs font-medium text-zinc-600">Password</label>
-          <input name="password" type="password" required className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" />
+        <PasswordField name="password" label="Password" autoComplete="current-password" required />
+        <div className="text-right">
+          <Link href="/auth/forgot-password" className="text-xs font-medium text-teal-800 hover:underline">
+            Forgot your password?
+          </Link>
         </div>
         <button
           type="submit"

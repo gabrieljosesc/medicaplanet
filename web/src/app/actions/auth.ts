@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { safeAuthRedirectTarget } from "@/lib/safe-redirect";
@@ -9,14 +10,31 @@ import {
   registrationSchema,
 } from "@/app/auth/register/registration-schema";
 
-function getAuthEmailRedirectTo(): string {
+async function getRequestOrigin(): Promise<string> {
+  const h = await headers();
+  const host = h.get("x-forwarded-host") ?? h.get("host");
+  const proto = h.get("x-forwarded-proto") ?? (host?.includes("localhost") ? "http" : "https");
+  if (host) return `${proto}://${host}`;
+
   const rawBase =
     process.env.NEXT_PUBLIC_SITE_URL ??
     process.env.NEXT_PUBLIC_APP_URL ??
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
-  const base = rawBase.replace(/\/+$/, "");
-  return `${base}/auth/login?verify=confirmed`;
+  return rawBase.replace(/\/+$/, "");
+}
+
+async function getAuthEmailRedirectTo(
+  next: string,
+  extraParams?: Record<string, string>
+): Promise<string> {
+  const origin = await getRequestOrigin();
+  const url = new URL("/auth/callback", origin);
+  url.searchParams.set("next", next);
+  for (const [key, value] of Object.entries(extraParams ?? {})) {
+    url.searchParams.set(key, value);
+  }
+  return url.toString();
 }
 
 export async function signOut() {
@@ -86,7 +104,7 @@ export async function registerWithProfile(
     email: v.email,
     password: v.password,
     options: {
-      emailRedirectTo: getAuthEmailRedirectTo(),
+      emailRedirectTo: await getAuthEmailRedirectTo("/auth/login", { verify: "confirmed" }),
       data: {
         full_name,
         first_name: v.first_name,
@@ -147,7 +165,10 @@ export async function signUpWithPassword(formData: FormData): Promise<void> {
   const { error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { full_name } },
+    options: {
+      emailRedirectTo: await getAuthEmailRedirectTo("/auth/login", { verify: "confirmed" }),
+      data: { full_name },
+    },
   });
   if (error) {
     redirect("/auth/register?error=" + encodeURIComponent(error.message));
@@ -175,7 +196,9 @@ export async function resendVerificationEmail(formData: FormData): Promise<void>
   const { error } = await supabase.auth.resend({
     type: "signup",
     email,
-    options: { emailRedirectTo: getAuthEmailRedirectTo() },
+    options: {
+      emailRedirectTo: await getAuthEmailRedirectTo("/auth/login", { verify: "confirmed" }),
+    },
   });
   if (error) {
     q.set("error", error.message);
@@ -185,4 +208,43 @@ export async function resendVerificationEmail(formData: FormData): Promise<void>
 
   q.set("verify", "resent");
   redirect(`/auth/login?${q.toString()}`);
+}
+
+export async function requestPasswordReset(formData: FormData): Promise<void> {
+  const email = String(formData.get("email") ?? "").trim();
+  if (!email) {
+    redirect("/auth/forgot-password?error=" + encodeURIComponent("Please enter your email address."));
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: await getAuthEmailRedirectTo("/auth/update-password"),
+  });
+
+  if (error) {
+    redirect("/auth/forgot-password?error=" + encodeURIComponent(error.message));
+  }
+
+  redirect("/auth/forgot-password?sent=1&email=" + encodeURIComponent(email));
+}
+
+export async function updateRecoveredPassword(formData: FormData): Promise<void> {
+  const password = String(formData.get("password") ?? "");
+  const confirm = String(formData.get("confirm_password") ?? "");
+
+  if (password.length < 8) {
+    redirect("/auth/update-password?error=" + encodeURIComponent("Password must be at least 8 characters."));
+  }
+  if (password !== confirm) {
+    redirect("/auth/update-password?error=" + encodeURIComponent("Passwords do not match."));
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) {
+    redirect("/auth/update-password?error=" + encodeURIComponent(error.message));
+  }
+
+  await supabase.auth.signOut();
+  redirect("/auth/login?reset=updated");
 }
