@@ -273,7 +273,6 @@ export function FeaturedProductCard({
                   quantity: 1,
                   currency,
                   priceTiers: tiers.length ? tiers : undefined,
-                  selected: false,
                   imageSrc: heroImageSrc,
                 });
                 setAddedToCart(true);

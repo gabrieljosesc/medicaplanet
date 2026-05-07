@@ -46,7 +46,7 @@ function readStorage(storageKey: string): CartLine[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw) as CartLine[];
     if (!Array.isArray(parsed)) return [];
-    return parsed.map((l) => ({ ...l, selected: l.selected === true }));
+    return parsed.map((l) => ({ ...l, selected: l.selected !== false }));
   } catch {
     return [];
   }
@@ -85,11 +85,6 @@ export function CartProvider({
     };
   }, [storageKey]);
 
-  const persist = useCallback((next: CartLine[]) => {
-    setLines(next);
-    localStorage.setItem(storageKey, JSON.stringify(next));
-  }, [storageKey]);
-
   const addLine = useCallback(
     (
       line: Omit<CartLine, "quantity"> & {
@@ -100,7 +95,7 @@ export function CartProvider({
     ) => {
       const qty = line.quantity ?? 1;
       setLines((prev) => {
-        const normalizedPrev = prev.map((l) => ({ ...l, selected: l.selected === true }));
+        const normalizedPrev = prev.map((l) => ({ ...l, selected: l.selected !== false }));
         const idx = prev.findIndex((l) => l.slug === line.slug);
         let next: CartLine[];
         if (idx >= 0) {
@@ -120,14 +115,14 @@ export function CartProvider({
             quantity: newQty,
             unitPrice,
             priceTiers: mergedTiers,
-            selected: line.selected ?? existing.selected ?? false,
+            selected: line.selected ?? true,
             currency: line.currency ?? existing.currency,
             imageSrc: line.imageSrc ?? existing.imageSrc,
           };
         } else {
           next = [
             ...normalizedPrev,
-            { ...line, quantity: qty, selected: line.selected ?? false },
+            { ...line, quantity: qty, selected: line.selected ?? true },
           ];
         }
         if (line.deselectOthers) {

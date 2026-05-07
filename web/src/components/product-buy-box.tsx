@@ -94,7 +94,6 @@ export function ProductBuyBox({
               quantity: qty,
               currency,
               priceTiers: tiers.length ? tiers : undefined,
-              selected: false,
               imageSrc: heroImageSrc ?? undefined,
             });
             setMsg("Added to cart");

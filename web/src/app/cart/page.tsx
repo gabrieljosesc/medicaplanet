@@ -24,23 +24,24 @@ export default function CartPage() {
         </p>
       ) : (
         <div className="mt-6 space-y-4">
-          <div className="grid grid-cols-[28px_minmax(0,1fr)_120px_150px_120px_90px] items-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium text-zinc-700 shadow-sm">
+          <div className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium text-zinc-700 shadow-sm md:grid md:grid-cols-[28px_minmax(0,1fr)_120px_150px_120px_90px]">
             <input
               type="checkbox"
               checked={allSelected}
               onChange={(e) => setAllSelected(e.target.checked)}
               className="size-4 rounded border-teal-300 text-teal-700 accent-teal-700 focus:ring-teal-300"
             />
-            <span>Product</span>
-            <span className="text-right">Unit Price</span>
-            <span className="text-center">Quantity</span>
-            <span className="text-right">Total Price</span>
-            <span className="text-right">Action</span>
+            <span className="md:hidden">Select all products</span>
+            <span className="hidden md:inline">Product</span>
+            <span className="hidden text-right md:inline">Unit Price</span>
+            <span className="hidden text-center md:inline">Quantity</span>
+            <span className="hidden text-right md:inline">Total Price</span>
+            <span className="hidden text-right md:inline">Action</span>
           </div>
           {lines.map((l) => (
             <div
               key={l.slug}
-              className="grid grid-cols-[28px_minmax(0,1fr)_120px_150px_120px_90px] items-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-4 shadow-sm"
+              className="grid grid-cols-[28px_72px_minmax(0,1fr)] items-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-4 shadow-sm md:grid-cols-[28px_minmax(0,1fr)_120px_150px_120px_90px]"
             >
               <input
                 type="checkbox"
@@ -48,25 +49,52 @@ export default function CartPage() {
                 onChange={(e) => setSelected(l.slug, e.target.checked)}
                 className="size-4 rounded border-teal-300 text-teal-700 accent-teal-700 focus:ring-teal-300"
               />
-              <div className="flex min-w-0 items-center gap-3">
+              <div className="md:hidden">
+                <CartLineThumbnail slug={l.slug} title={l.title} imageSrc={l.imageSrc} />
+              </div>
+              <div className="min-w-0 md:flex md:items-center md:gap-3">
                 <div className="min-w-0 flex-1">
                   <Link href={`/product/${l.slug}`} className="font-medium text-teal-900 hover:underline">
                     {l.title}
                   </Link>
-                  <p className="text-xs text-zinc-500">{l.slug}</p>
+                  <p className="mt-1 line-clamp-2 text-xs leading-snug text-zinc-500">
+                    SKU: {l.slug}
+                  </p>
+                  <div className="mt-3 flex items-center justify-between gap-3 md:hidden">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-zinc-900">
+                        {formatMoney(l.currency ?? "USD", l.unitPrice)}
+                      </p>
+                      {l.quantity > 1 ? (
+                        <p className="text-xs text-zinc-500">
+                          Total {formatMoney(l.currency ?? "USD", l.unitPrice * l.quantity)}
+                        </p>
+                      ) : null}
+                    </div>
+                    <QtyStepper value={l.quantity} onChange={(n) => setQty(l.slug, n)} size="sm" />
+                  </div>
+                  <button
+                    type="button"
+                    className="mt-2 text-xs text-red-700 hover:underline md:hidden"
+                    onClick={() => removeLine(l.slug)}
+                  >
+                    Remove
+                  </button>
                 </div>
-                <CartLineThumbnail slug={l.slug} title={l.title} imageSrc={l.imageSrc} />
+                <div className="hidden md:block">
+                  <CartLineThumbnail slug={l.slug} title={l.title} imageSrc={l.imageSrc} />
+                </div>
               </div>
-              <span className="text-right text-sm text-zinc-700">
+              <span className="hidden text-right text-sm text-zinc-700 md:block">
                 {formatMoney(l.currency ?? "USD", l.unitPrice)}
               </span>
-              <div className="flex justify-center">
-                <QtyStepper value={l.quantity} onChange={(n) => setQty(l.slug, n)} />
+              <div className="hidden justify-center md:flex">
+                <QtyStepper value={l.quantity} onChange={(n) => setQty(l.slug, n)} size="sm" />
               </div>
-              <span className="text-right text-sm text-zinc-700">
+              <span className="hidden text-right text-sm text-zinc-700 md:block">
                 {formatMoney(l.currency ?? "USD", l.unitPrice * l.quantity)}
               </span>
-              <div className="text-right">
+              <div className="hidden text-right md:block">
                 <button
                   type="button"
                   className="text-sm text-red-700 hover:underline"
