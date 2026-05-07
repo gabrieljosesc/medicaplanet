@@ -31,14 +31,17 @@ export default async function UpdatePasswordPage({ searchParams }: Props) {
           label="New password"
           autoComplete="new-password"
           required
-          minLength={8}
+          minLength={6}
         />
+        <p className="-mt-2 text-[11px] leading-snug text-zinc-500">
+          Use at least 6 characters with 1 uppercase letter, 1 number, and 1 special character.
+        </p>
         <PasswordField
           name="confirm_password"
           label="Confirm new password"
           autoComplete="new-password"
           required
-          minLength={8}
+          minLength={6}
         />
         <button
           type="submit"

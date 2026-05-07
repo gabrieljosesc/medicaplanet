@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useActionState, useEffect, useState } from "react";
+import { Suspense, useActionState, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { registerWithProfile, type RegisterFormState } from "@/app/actions/auth";
 import { COUNTRY_OPTIONS } from "@/app/auth/register/countries";
 import { CA_PROVINCE_OPTIONS, US_STATE_OPTIONS } from "@/app/auth/register/region-options";
+import { PasswordField } from "@/components/password-field";
 import { safeAuthRedirectTarget } from "@/lib/safe-redirect";
 
 const pill =
@@ -61,10 +62,6 @@ function RegisterFormInner({
   nextTarget: string | null;
 }) {
   const [countryCode, setCountryCode] = useState(() => fieldValue(state, "country") || "");
-
-  useEffect(() => {
-    setCountryCode(fieldValue(state, "country") || "");
-  }, [state]);
 
   const stateFieldError = hasFieldError(state, "state");
   const stateSelectClass = `${pill} cursor-pointer appearance-none bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat ${stateFieldError ? pillError : ""}`;
@@ -123,31 +120,34 @@ function RegisterFormInner({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium text-teal-900">
-              Password <span className="text-red-500">*</span>
-            </label>
-            <input
+            <PasswordField
               name="password"
-              type="password"
+              label="Password *"
               autoComplete="new-password"
+              minLength={6}
+              required
               defaultValue={fieldValue(state, "password")}
-              className={`${pill} ${hasFieldError(state, "password") || hasFieldError(state, "confirm_password") ? pillError : ""}`}
+              labelClassName="mb-1 block text-sm font-medium text-teal-900"
+              className={`${pill} pr-11 ${hasFieldError(state, "password") || hasFieldError(state, "confirm_password") ? pillError : ""}`}
               placeholder="Password *"
             />
+            <p className="mt-1 text-[11px] leading-snug text-teal-800/75">
+              Use at least 6 characters with 1 uppercase letter, 1 number, and 1 special character.
+            </p>
             {fieldErr(state, "password") && (
               <p className="mt-1 text-xs text-red-600">{fieldErr(state, "password")}</p>
             )}
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-teal-900">
-              Confirm password <span className="text-red-500">*</span>
-            </label>
-            <input
+            <PasswordField
               name="confirm_password"
-              type="password"
+              label="Confirm password *"
               autoComplete="new-password"
+              minLength={6}
+              required
               defaultValue={fieldValue(state, "confirm_password")}
-              className={`${pill} ${hasFieldError(state, "confirm_password") ? pillError : ""}`}
+              labelClassName="mb-1 block text-sm font-medium text-teal-900"
+              className={`${pill} pr-11 ${hasFieldError(state, "confirm_password") ? pillError : ""}`}
               placeholder="Confirm password *"
             />
             {fieldErr(state, "confirm_password") && (

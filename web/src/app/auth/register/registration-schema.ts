@@ -6,7 +6,10 @@ export const registrationSchema = z
     confirm_email: z.string().trim().min(1, "Confirm your email"),
     password: z
       .string()
-      .min(8, "Password must be at least 8 characters")
+      .min(6, "Password must be at least 6 characters")
+      .regex(/[A-Z]/, "Password must include at least one uppercase letter")
+      .regex(/[0-9]/, "Password must include at least one number")
+      .regex(/[^A-Za-z0-9]/, "Password must include at least one special character")
       .max(128, "Password is too long"),
     confirm_password: z.string().min(1, "Confirm your password"),
     first_name: z.string().trim().min(1, "First name is required").max(100),

@@ -69,6 +69,16 @@ export type RegisterFormState =
   | { fieldErrors: Record<string, string>; values?: Record<string, string> }
   | { error: string };
 
+function passwordRequirementError(password: string): string | null {
+  if (password.length < 6) return "Password must be at least 6 characters.";
+  if (!/[A-Z]/.test(password)) return "Password must include at least one uppercase letter.";
+  if (!/[0-9]/.test(password)) return "Password must include at least one number.";
+  if (!/[^A-Za-z0-9]/.test(password)) {
+    return "Password must include at least one special character.";
+  }
+  return null;
+}
+
 export async function registerWithProfile(
   _prev: RegisterFormState,
   formData: FormData
@@ -93,7 +103,10 @@ export async function registerWithProfile(
 
   const parsed = registrationSchema.safeParse(raw);
   if (!parsed.success) {
-    return { fieldErrors: flattenZodErrors(parsed.error), values: raw };
+    return {
+      fieldErrors: flattenZodErrors(parsed.error),
+      values: { ...raw, password: "", confirm_password: "" },
+    };
   }
 
   const v = parsed.data;
@@ -232,8 +245,9 @@ export async function updateRecoveredPassword(formData: FormData): Promise<void>
   const password = String(formData.get("password") ?? "");
   const confirm = String(formData.get("confirm_password") ?? "");
 
-  if (password.length < 8) {
-    redirect("/auth/update-password?error=" + encodeURIComponent("Password must be at least 8 characters."));
+  const passwordError = passwordRequirementError(password);
+  if (passwordError) {
+    redirect("/auth/update-password?error=" + encodeURIComponent(passwordError));
   }
   if (password !== confirm) {
     redirect("/auth/update-password?error=" + encodeURIComponent("Passwords do not match."));
