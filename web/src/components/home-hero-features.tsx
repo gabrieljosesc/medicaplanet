@@ -9,16 +9,19 @@ type Feature = {
 
 const AUTO_MS = 2800;
 
+function prefersReducedMotion() {
+  return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 export function HomeHeroFeatures({ features }: { features: Feature[] }) {
   const scrollRef = useRef<HTMLUListElement>(null);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(prefersReducedMotion);
   const [activeIndex, setActiveIndex] = useState(0);
   const interactionResetRef = useRef<number | null>(null);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mq.matches);
     const onChange = () => setReducedMotion(mq.matches);
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
@@ -94,10 +97,10 @@ export function HomeHeroFeatures({ features }: { features: Feature[] }) {
   }, [features.length, stepWidthFor]);
 
   return (
-    <div className="mx-auto mt-12 w-full max-w-5xl sm:mt-16 sm:translate-y-2">
+    <div className="mx-auto mt-12 w-full max-w-6xl sm:mt-20 sm:translate-y-6">
       <ul
         ref={scrollRef}
-        className="flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] sm:grid sm:grid-cols-5 sm:gap-x-12 sm:overflow-visible sm:px-4 sm:pb-0 [&::-webkit-scrollbar]:hidden"
+        className="flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] sm:grid sm:grid-cols-5 sm:gap-x-16 sm:overflow-visible sm:px-4 sm:pb-0 md:gap-x-24 [&::-webkit-scrollbar]:hidden"
         aria-label="Why choose MedicaPlanet"
       >
         {features.map((f, i) => (

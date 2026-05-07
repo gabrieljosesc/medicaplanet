@@ -16,7 +16,7 @@ export async function SiteTopBar() {
   return (
     <div className="hidden border-b border-filler-peach-300/50 bg-white/95 text-[14px] text-filler-ink/85 shadow-sm backdrop-blur-md md:sticky md:top-0 md:z-50 md:block">
       <div className="flex min-h-[3.25rem] w-full min-w-0 flex-nowrap items-center justify-between gap-4 px-4 py-2 md:px-6 lg:px-8">
-        <div className="flex min-w-0 items-center gap-4">
+        <div className="flex min-w-0 items-center gap-10">
           <Link
             href="/"
             className="group flex shrink-0 items-center gap-2 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-filler-rose-600/60"
@@ -31,7 +31,7 @@ export async function SiteTopBar() {
               </span>
             </span>
           </Link>
-          <nav className="flex min-w-0 items-center gap-x-2.5 gap-y-0.5 text-[15px]" aria-label="Site">
+          <nav className="flex min-w-0 items-center gap-x-3.5 gap-y-0.5 text-[15px]" aria-label="Site">
             {TOP_BAR_NAV.map((n, i) => {
               const item =
                 n.href === "/shop" ? (
