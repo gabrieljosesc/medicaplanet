@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cart-context";
 import {
   formatMoney,
@@ -32,7 +31,6 @@ export function ProductBuyBox({
 }) {
   const tiers = useMemo(() => parsePriceTiersJson(priceTiersRaw), [priceTiersRaw]);
   const { addLine } = useCart();
-  const router = useRouter();
   const [qty, setQty] = useState(1);
   const [msg, setMsg] = useState<string | null>(null);
 
@@ -102,26 +100,6 @@ export function ProductBuyBox({
           className="rounded-full bg-teal-800 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-teal-900 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Add to cart
-        </button>
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={() => {
-            addLine({
-              slug,
-              title,
-              unitPrice: unit,
-              quantity: qty,
-              currency,
-              priceTiers: tiers.length ? tiers : undefined,
-              selected: true,
-              imageSrc: heroImageSrc ?? undefined,
-            });
-            router.push("/cart");
-          }}
-          className="rounded-full border border-teal-800 px-6 py-2.5 text-sm font-semibold text-teal-900 hover:bg-teal-50 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          Buy now
         </button>
         {msg && <span className="text-sm text-teal-800">{msg}</span>}
       </div>

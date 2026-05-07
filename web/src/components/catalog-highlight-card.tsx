@@ -2,12 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-import { IconCartBag, IconHeart } from "@/components/nav-icons";
-import { useCart } from "@/context/cart-context";
+import { useCallback, useMemo, useState } from "react";
+import { IconHeart } from "@/components/nav-icons";
 import { categoryHref } from "@/lib/category-href";
-import { parsePriceTiersJson, unitPriceForQuantity } from "@/lib/price-tiers";
+import { parsePriceTiersJson } from "@/lib/price-tiers";
 
 const WISHLIST_KEY = "medicaplanet-wishlist-slugs-v1";
 
@@ -58,7 +56,6 @@ export function CatalogHighlightCard({
   priceTiersRaw: unknown;
 }) {
   const tiers = useMemo(() => parsePriceTiersJson(priceTiersRaw), [priceTiersRaw]);
-  const unit = useMemo(() => unitPriceForQuantity(tiers, 1, basePrice), [tiers, basePrice]);
   const hasPrice = basePrice > 0 || tiers.length > 0;
 
   const displayFrom =
@@ -72,14 +69,7 @@ export function CatalogHighlightCard({
       ? description.trim()
       : `Rated ${rating.toFixed(2)} / 5 · ${reviewCount} reviews`;
 
-  const { addLine } = useCart();
-  const router = useRouter();
-
-  const [wishlisted, setWishlisted] = useState(false);
-
-  useEffect(() => {
-    setWishlisted(readWishlistSlugs().has(slug));
-  }, [slug]);
+  const [wishlisted, setWishlisted] = useState(() => readWishlistSlugs().has(slug));
 
   const toggleWishlist = useCallback(
     (e: React.MouseEvent) => {
@@ -131,36 +121,6 @@ export function CatalogHighlightCard({
           </div>
         ) : null}
 
-        {hasPrice ? (
-          <div
-            className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center p-4 opacity-100 transition-opacity duration-200 [@media(hover:hover)_and_(pointer:fine)]:opacity-0 [@media(hover:hover)_and_(pointer:fine)]:group-hover:opacity-100 [@media(hover:hover)_and_(pointer:fine)]:group-focus-within:opacity-100"
-          >
-            <button
-              type="button"
-              aria-label={`Buy ${title} now — go to checkout`}
-              className="pointer-events-auto inline-flex items-center gap-2 rounded-2xl border border-filler-rose-300/80 bg-filler-pink-100/80 px-6 py-3 text-sm font-semibold text-filler-ink shadow-xl backdrop-blur-md backdrop-saturate-150 ring-1 ring-black/10 transition hover:bg-filler-pink-100/95 hover:text-filler-rose-800 focus:outline-none focus:ring-2 focus:ring-filler-rose-300/90 focus:ring-offset-2 focus:ring-offset-filler-cream/60"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                addLine({
-                  slug,
-                  title,
-                  unitPrice: unit,
-                  quantity: 1,
-                  currency,
-                  priceTiers: tiers.length ? tiers : undefined,
-                  selected: true,
-                  deselectOthers: true,
-                  imageSrc: heroImageSrc,
-                });
-                router.push("/checkout");
-              }}
-            >
-              Buy now
-              <IconCartBag className="h-5 w-5 shrink-0" aria-hidden />
-            </button>
-          </div>
-        ) : null}
       </div>
 
       <div className="flex flex-1 flex-col px-2 pb-3 pt-4">
