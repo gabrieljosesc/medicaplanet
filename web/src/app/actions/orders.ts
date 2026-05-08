@@ -38,8 +38,13 @@ const checkoutSchema = z.object({
   userSavedCardId: z.string().uuid().optional(),
 }).refine(
   (d) => d.checkoutType !== "saved_manual_card" || Boolean(d.userSavedCardId),
-  { message: "Select a saved card or choose bank transfer.", path: ["userSavedCardId"] }
+  { message: "Select a saved card.", path: ["userSavedCardId"] }
 );
+
+function isCardExpired(expMonth: number, expYear: number): boolean {
+  const expiryEnd = new Date(expYear, expMonth, 0, 23, 59, 59, 999);
+  return expiryEnd < new Date();
+}
 
 export type CheckoutResult =
   | { ok: true; orderId: string }
@@ -61,6 +66,10 @@ export async function submitOrder(
 
   if (!user) {
     return { ok: false, message: "You must be signed in to place an order. Register or sign in first." };
+  }
+
+  if (input.checkoutType !== "saved_manual_card" || !input.userSavedCardId) {
+    return { ok: false, message: "Add a non-expired card on file before placing this order." };
   }
 
   const slugs = input.items.map((i) => i.slug);
@@ -145,8 +154,11 @@ export async function submitOrder(
     if (cardErr || !card) {
       return {
         ok: false,
-        message: "Invalid or missing saved card. Add a card under Banks & cards or choose bank transfer.",
+        message: "Invalid or missing saved card. Add a valid card under Banks & cards.",
       };
+    }
+    if (isCardExpired(card.exp_month, card.exp_year)) {
+      return { ok: false, message: "Your saved card has expired. Please add or select a non-expired card." };
     }
     paymentCardSnapshot = {
       source: "manual_encrypted",
