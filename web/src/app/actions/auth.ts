@@ -122,6 +122,15 @@ export async function registerWithProfile(
         full_name,
         first_name: v.first_name,
         last_name: v.last_name,
+        phone: v.phone,
+        delivery_address: v.delivery_address,
+        country: v.country,
+        city: v.city,
+        state: v.state,
+        postal_code: v.postal_code,
+        profession: v.profession,
+        license_number: v.license_number,
+        license_expiry: v.license_expiry,
       },
     },
   });
@@ -138,28 +147,36 @@ export async function registerWithProfile(
     };
   }
 
-  const { error: profileError } = await supabase
-    .from("profiles")
-    .update({
-      full_name,
-      first_name: v.first_name,
-      last_name: v.last_name,
-      delivery_address: v.delivery_address,
-      country: v.country,
-      city: v.city,
-      state: v.state,
-      postal_code: v.postal_code,
-      phone: v.phone,
-      profession: v.profession,
-      license_number: v.license_number,
-      license_expiry: v.license_expiry,
-    })
-    .eq("id", user.id);
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (profileError) {
-    return {
-      error: `Account was created but profile details could not be saved: ${profileError.message}. Run the latest Supabase migration (profile columns) or contact support.`,
-    };
+  // With email confirmation, there is often no session yet; RLS blocks profile UPDATE
+  // without auth.uid(). A DB trigger copies options.data into public.profiles instead.
+  if (session) {
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .update({
+        full_name,
+        first_name: v.first_name,
+        last_name: v.last_name,
+        delivery_address: v.delivery_address,
+        country: v.country,
+        city: v.city,
+        state: v.state,
+        postal_code: v.postal_code,
+        phone: v.phone,
+        profession: v.profession,
+        license_number: v.license_number,
+        license_expiry: v.license_expiry,
+      })
+      .eq("id", user.id);
+
+    if (profileError) {
+      return {
+        error: `Account was created but profile details could not be saved: ${profileError.message}. Run the latest Supabase migration (profile columns) or contact support.`,
+      };
+    }
   }
 
   revalidatePath("/", "layout");

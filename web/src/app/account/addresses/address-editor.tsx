@@ -18,12 +18,26 @@ type Addr = {
   is_default: boolean;
 };
 
+type RegistrationAddrDefaults = {
+  recipient_name: string;
+  phone: string;
+  line1: string;
+  line2: string;
+  city: string;
+  state: string;
+  postal_code: string;
+  country: string;
+};
+
 export function AddressEditor({
   mode,
   initial,
+  registrationDefaults,
 }: {
   mode: "create" | "edit";
   initial?: Addr;
+  /** Pre-fill "Add address" from profile / signup metadata when not editing a row. */
+  registrationDefaults?: RegistrationAddrDefaults;
 }) {
   const [state, action] = useActionState(
     mode === "create" ? createAddress : updateAddress,
@@ -31,6 +45,7 @@ export function AddressEditor({
   );
 
   const i = initial;
+  const d = mode === "create" ? registrationDefaults : undefined;
 
   return (
     <section className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
@@ -53,7 +68,7 @@ export function AddressEditor({
           <input
             name="recipient_name"
             required
-            defaultValue={i?.recipient_name ?? ""}
+            defaultValue={i?.recipient_name ?? d?.recipient_name ?? ""}
             className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
           />
         </label>
@@ -61,7 +76,7 @@ export function AddressEditor({
           <span className="font-medium text-zinc-700">Phone</span>
           <input
             name="phone"
-            defaultValue={i?.phone ?? ""}
+            defaultValue={i?.phone ?? d?.phone ?? ""}
             className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
           />
         </label>
@@ -70,7 +85,7 @@ export function AddressEditor({
           <input
             name="line1"
             required
-            defaultValue={i?.line1 ?? ""}
+            defaultValue={i?.line1 ?? d?.line1 ?? ""}
             className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
           />
         </label>
@@ -78,23 +93,31 @@ export function AddressEditor({
           <span className="font-medium text-zinc-700">Address line 2</span>
           <input
             name="line2"
-            defaultValue={i?.line2 ?? ""}
+            defaultValue={i?.line2 ?? d?.line2 ?? ""}
             className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
           />
         </label>
         <label className="block text-sm">
           <span className="font-medium text-zinc-700">City</span>
-          <input name="city" defaultValue={i?.city ?? ""} className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm" />
+          <input
+            name="city"
+            defaultValue={i?.city ?? d?.city ?? ""}
+            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+          />
         </label>
         <label className="block text-sm">
           <span className="font-medium text-zinc-700">State / region</span>
-          <input name="state" defaultValue={i?.state ?? ""} className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm" />
+          <input
+            name="state"
+            defaultValue={i?.state ?? d?.state ?? ""}
+            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+          />
         </label>
         <label className="block text-sm">
           <span className="font-medium text-zinc-700">Postal code</span>
           <input
             name="postal_code"
-            defaultValue={i?.postal_code ?? ""}
+            defaultValue={i?.postal_code ?? d?.postal_code ?? ""}
             className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
           />
         </label>
@@ -102,7 +125,7 @@ export function AddressEditor({
           <span className="font-medium text-zinc-700">Country</span>
           <input
             name="country"
-            defaultValue={i?.country ?? ""}
+            defaultValue={i?.country ?? d?.country ?? ""}
             className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
           />
         </label>

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
 import { deleteAddress, setDefaultAddress } from "@/app/actions/account";
+import { mergeProfileWithUserMetadata } from "@/lib/profile-prefill";
+import { createClient } from "@/lib/supabase/server";
 import { AddressEditor } from "./address-editor";
 
 export const metadata: Metadata = {
@@ -22,15 +23,25 @@ export default async function AddressesPage({
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const { data: rows } = await supabase
-    .from("user_addresses")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("is_default", { ascending: false })
-    .order("created_at", { ascending: false });
+  const [{ data: rows }, { data: profile }] = await Promise.all([
+    supabase
+      .from("user_addresses")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("is_default", { ascending: false })
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("profiles")
+      .select(
+        "full_name,first_name,last_name,phone,delivery_address,country,city,state,postal_code"
+      )
+      .eq("id", user.id)
+      .single(),
+  ]);
 
   const addresses = rows ?? [];
   const editing = sp.edit ? addresses.find((a) => a.id === sp.edit) : undefined;
+  const merged = mergeProfileWithUserMetadata(profile, user);
 
   return (
     <div className="space-y-8">
@@ -136,6 +147,20 @@ export default async function AddressesPage({
                 is_default: editing.is_default,
               }
             : undefined
+        }
+        registrationDefaults={
+          editing
+            ? undefined
+            : {
+                recipient_name: merged.full_name,
+                phone: merged.phone,
+                line1: merged.delivery_address,
+                line2: "",
+                city: merged.city,
+                state: merged.state,
+                postal_code: merged.postal_code,
+                country: merged.country,
+              }
         }
       />
     </div>

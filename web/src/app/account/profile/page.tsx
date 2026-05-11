@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { mergeProfileWithUserMetadata } from "@/lib/profile-prefill";
 import { createClient } from "@/lib/supabase/server";
 import { ProfileForms } from "./profile-forms";
 
@@ -15,6 +16,8 @@ export default async function ProfilePage() {
 
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
 
+  const merged = mergeProfileWithUserMetadata(profile, user);
+
   const email = profile?.email ?? user.email ?? "";
   const maskedEmail = maskEmail(email);
 
@@ -29,13 +32,13 @@ export default async function ProfilePage() {
 
       <ProfileForms
           profile={{
-            full_name: profile?.full_name ?? "",
-            first_name: profile?.first_name ?? "",
-            last_name: profile?.last_name ?? "",
-            phone: profile?.phone ?? "",
-            gender: profile?.gender ?? "",
-            date_of_birth: profile?.date_of_birth ?? "",
-            avatar_url: profile?.avatar_url ?? null,
+            full_name: merged.full_name,
+            first_name: merged.first_name,
+            last_name: merged.last_name,
+            phone: merged.phone,
+            gender: merged.gender,
+            date_of_birth: merged.date_of_birth,
+            avatar_url: merged.avatar_url || null,
           }}
           emailMasked={maskedEmail}
           emailNote="Email is tied to your sign-in. Contact support to change it."
