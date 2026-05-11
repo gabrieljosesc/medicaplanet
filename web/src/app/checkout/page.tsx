@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { submitOrder } from "@/app/actions/orders";
+import { CartMinimumBar } from "@/components/cart-minimum-bar";
 import { useCart } from "@/context/cart-context";
+import { MIN_CHECKOUT_SUBTOTAL_USD, meetsCheckoutMinimumUsd } from "@/lib/cart-minimum";
 import { createClient } from "@/lib/supabase/client";
 
 type ContactFields = {
@@ -141,8 +143,13 @@ export default function CheckoutPage() {
     .filter(([, value]) => !String(value).trim())
     .map(([label]) => label);
 
+  const minOrderMet = meetsCheckoutMinimumUsd(subtotal);
   const canSubmit =
-    hasUsableCard && missingProfileFields.length === 0 && missingShippingFields.length === 0 && !pending;
+    minOrderMet &&
+    hasUsableCard &&
+    missingProfileFields.length === 0 &&
+    missingShippingFields.length === 0 &&
+    !pending;
 
   function applySavedRow(row: SavedAddressRow) {
     setShipping({
@@ -261,6 +268,12 @@ export default function CheckoutPage() {
       setError("Complete the shipping address before placing this order.");
       return;
     }
+    if (!meetsCheckoutMinimumUsd(subtotal)) {
+      setError(
+        `Minimum order is $${MIN_CHECKOUT_SUBTOTAL_USD.toFixed(2)} (selected items). Add more to your cart before checking out.`
+      );
+      return;
+    }
 
     const form = e.currentTarget;
     if (!form.reportValidity()) return;
@@ -370,6 +383,10 @@ export default function CheckoutPage() {
         </Link>
         .
       </p>
+
+      <div className="mt-6">
+        <CartMinimumBar amountUsd={subtotal} currency={selectedLines[0]?.currency ?? "USD"} />
+      </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <form onSubmit={onSubmit} className="space-y-5">

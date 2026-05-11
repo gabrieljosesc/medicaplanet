@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/admin";
+import { meetsCheckoutMinimumUsd, MIN_CHECKOUT_SUBTOTAL_USD } from "@/lib/cart-minimum";
 import { parsePriceTiersJson, unitPriceForQuantity } from "@/lib/price-tiers";
 
 const checkoutSchema = z.object({
@@ -105,6 +106,13 @@ export async function submitOrder(
       quantity: qty,
       unit_price: unit,
     });
+  }
+
+  if (!meetsCheckoutMinimumUsd(subtotal)) {
+    return {
+      ok: false,
+      message: `Minimum order is $${MIN_CHECKOUT_SUBTOTAL_USD.toFixed(2)}. Add more items before checking out.`,
+    };
   }
 
   const shipping_address = {

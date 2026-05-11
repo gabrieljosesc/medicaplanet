@@ -1,15 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { CartMinimumBar } from "@/components/cart-minimum-bar";
 import { CartLineThumbnail } from "@/components/cart-line-thumbnail";
 import { useCart } from "@/context/cart-context";
 import { QtyStepper } from "@/components/qty-stepper";
+import { meetsCheckoutMinimumUsd, MIN_CHECKOUT_SUBTOTAL_USD } from "@/lib/cart-minimum";
 import { formatMoney } from "@/lib/price-tiers";
 
 export default function CartPage() {
   const { lines, setQty, removeLine, setSelected, setAllSelected, selectedLines, selectedSubtotal } =
     useCart();
   const allSelected = lines.length > 0 && selectedLines.length === lines.length;
+  const canCheckout = selectedLines.length > 0 && meetsCheckoutMinimumUsd(selectedSubtotal);
 
   return (
     <div>
@@ -24,6 +27,7 @@ export default function CartPage() {
         </p>
       ) : (
         <div className="mt-6 space-y-4">
+          <CartMinimumBar amountUsd={selectedSubtotal} currency={lines[0]?.currency ?? "USD"} />
           <div className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium text-zinc-700 shadow-sm md:grid md:grid-cols-[28px_minmax(0,1fr)_120px_150px_120px_90px]">
             <input
               type="checkbox"
@@ -113,20 +117,27 @@ export default function CartPage() {
           </div>
           <div className="space-y-2">
             <Link
-              href={selectedLines.length > 0 ? "/checkout" : "/cart"}
+              href={canCheckout ? "/checkout" : "/cart"}
               className={`inline-flex rounded-full px-6 py-3 text-sm font-semibold text-white transition ${
-                selectedLines.length > 0
-                  ? "bg-teal-800 hover:bg-teal-900 hover:shadow-md"
-                  : "cursor-not-allowed bg-zinc-400"
+                canCheckout ? "bg-teal-800 hover:bg-teal-900 hover:shadow-md" : "cursor-not-allowed bg-zinc-400"
               }`}
               onClick={(e) => {
-                if (selectedLines.length === 0) e.preventDefault();
+                if (!canCheckout) e.preventDefault();
               }}
+              aria-disabled={!canCheckout}
             >
               Proceed to checkout
             </Link>
             <p className="text-xs text-zinc-500">
-              Select at least one item to continue. You must be signed in to check out.
+              {selectedLines.length === 0 ? (
+                <>Select at least one item to continue. </>
+              ) : !meetsCheckoutMinimumUsd(selectedSubtotal) ? (
+                <>
+                  Minimum order {formatMoney(lines[0]?.currency ?? "USD", MIN_CHECKOUT_SUBTOTAL_USD)} (selected
+                  items) required to check out.{" "}
+                </>
+              ) : null}
+              You must be signed in to check out.
             </p>
           </div>
         </div>
