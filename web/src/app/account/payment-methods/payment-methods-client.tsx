@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { addSavedCard, deleteSavedCard, setDefaultSavedCard, type SavedCardRow } from "@/app/actions/saved-cards";
+import { formatExpiryMmYyInput } from "@/lib/card-validation";
 
 function formatCard(c: SavedCardRow) {
   const brand = c.brand ? c.brand.charAt(0).toUpperCase() + c.brand.slice(1) : "Card";
@@ -12,6 +13,7 @@ function formatCard(c: SavedCardRow) {
 function AddCardModal({ onClose }: { onClose: () => void }) {
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
+  const [expiryDisplay, setExpiryDisplay] = useState("");
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -60,6 +62,13 @@ function AddCardModal({ onClose }: { onClose: () => void }) {
                 required
                 autoComplete="cc-exp"
                 placeholder="08/27"
+                inputMode="numeric"
+                maxLength={5}
+                value={expiryDisplay}
+                onChange={(e) => {
+                  setExpiryDisplay(formatExpiryMmYyInput(e.target.value));
+                  setError(null);
+                }}
                 className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
               />
             </div>

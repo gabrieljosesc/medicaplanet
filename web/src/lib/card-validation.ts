@@ -28,13 +28,32 @@ export function inferBrand(pan: string): string | null {
   return null;
 }
 
+/** Formats user input as MM/YY with an automatic slash after the month (digits only, max 4). */
+export function formatExpiryMmYyInput(raw: string): string {
+  const d = digitsOnly(raw).slice(0, 4);
+  if (d.length <= 2) return d;
+  return `${d.slice(0, 2)}/${d.slice(2)}`;
+}
+
 export function parseExpiryMmYy(value: string): { month: number; year: number } | null {
-  const m = value.trim().match(/^(\d{1,2})\s*[/\-]\s*(\d{2}|\d{4})$/);
-  if (!m) return null;
-  const month = Number(m[1]);
-  let year = Number(m[2]);
-  if (month < 1 || month > 12) return null;
-  if (year < 100) year += 2000;
-  if (year < 2020 || year > 2100) return null;
-  return { month, year };
+  const t = value.trim();
+  const m = t.match(/^(\d{1,2})\s*[/\-]\s*(\d{2}|\d{4})$/);
+  if (m) {
+    const month = Number(m[1]);
+    let year = Number(m[2]);
+    if (month < 1 || month > 12) return null;
+    if (year < 100) year += 2000;
+    if (year < 2020 || year > 2100) return null;
+    return { month, year };
+  }
+  const d = digitsOnly(t);
+  if (d.length === 4) {
+    const month = Number(d.slice(0, 2));
+    let year = Number(d.slice(2));
+    if (month < 1 || month > 12) return null;
+    if (year < 100) year += 2000;
+    if (year < 2020 || year > 2100) return null;
+    return { month, year };
+  }
+  return null;
 }
