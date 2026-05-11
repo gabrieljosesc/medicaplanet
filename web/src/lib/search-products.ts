@@ -4,6 +4,15 @@ export function escapeIlike(s: string): string {
   return s.replace(/\\/g, "\\\\").replace(/%/g, "\\%").replace(/_/g, "\\_");
 }
 
+/**
+ * Wrap a value used inside Supabase/PostgREST `.or("…")` filter strings so
+ * parentheses, commas, etc. in user text (e.g. "RADIESSE® (+) 1.5ml…") are not
+ * parsed as filter syntax. Prefer with `title.ilike.${quotePostgRestFilterValue(p)}`.
+ */
+export function quotePostgRestFilterValue(s: string): string {
+  return `"${s.replace(/"/g, '""')}"`;
+}
+
 const PRODUCT_SEARCH_SELECT =
   "slug,title,description,base_price,currency,rating,review_count,price_tiers,product_images(url),categories(name)" as const;
 

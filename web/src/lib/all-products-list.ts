@@ -4,7 +4,7 @@ import {
   type CategoryProductRow,
   type FetchCategoryProductsResult,
 } from "@/lib/category-product-list";
-import { escapeIlike } from "@/lib/search-products";
+import { escapeIlike, quotePostgRestFilterValue } from "@/lib/search-products";
 
 const SELECT_WITH_CAT =
   "slug,title,description,base_price,currency,rating,review_count,price_tiers,product_images(url),is_featured,created_at,variant_product_id,categories(slug,name)" as const;
@@ -44,7 +44,8 @@ export async function fetchAllProductsPage(
 
   if (listParams.q) {
     const pattern = `%${escapeIlike(listParams.q)}%`;
-    q = q.or(`title.ilike.${pattern},slug.ilike.${pattern}`);
+    const operand = quotePostgRestFilterValue(pattern);
+    q = q.or(`title.ilike.${operand},slug.ilike.${operand}`);
   }
 
   const sort = listParams.sort;

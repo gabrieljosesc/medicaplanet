@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { escapeIlike } from "@/lib/search-products";
+import { escapeIlike, quotePostgRestFilterValue } from "@/lib/search-products";
 
 export type CategoryListSort =
   | "master_asc"
@@ -107,7 +107,8 @@ export async function fetchCategoryProducts(
 
   if (params.q) {
     const pattern = `%${escapeIlike(params.q)}%`;
-    q = q.or(`title.ilike.${pattern},slug.ilike.${pattern}`);
+    const operand = quotePostgRestFilterValue(pattern);
+    q = q.or(`title.ilike.${operand},slug.ilike.${operand}`);
   }
 
   switch (params.sort) {
