@@ -17,40 +17,44 @@ export function CartMinimumBar({ amountUsd, currency = "USD", className = "" }: 
   const met = meetsCheckoutMinimumUsd(amountUsd);
 
   return (
-    <div className={`mx-auto w-full max-w-xs px-1 ${className}`}>
-      <div
-        className="h-2 w-full overflow-hidden rounded-full bg-zinc-200"
-        role="progressbar"
-        aria-valuenow={Math.round(pct)}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuetext={
-          met
-            ? `Minimum order reached (${formatMoney(currency, amountUsd)} of ${formatMoney(currency, min)})`
-            : `${formatMoney(currency, amountUsd)} of ${formatMoney(currency, min)} toward minimum order`
-        }
-      >
+    <div className={`mx-auto w-full ${className}`}>
+      <div className="mx-auto max-w-xs px-1">
         <div
-          className="h-full rounded-full bg-teal-700 transition-[width] duration-300 ease-out"
-          style={{ width: `${pct}%` }}
-        />
+          className="h-2 w-full overflow-hidden rounded-full bg-zinc-200"
+          role="progressbar"
+          aria-valuenow={Math.round(pct)}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuetext={
+            met
+              ? `Minimum order reached (${formatMoney(currency, amountUsd)} of ${formatMoney(currency, min)})`
+              : `${formatMoney(currency, amountUsd)} of ${formatMoney(currency, min)} toward minimum order`
+          }
+        >
+          <div
+            className="h-full rounded-full bg-teal-700 transition-[width] duration-300 ease-out"
+            style={{ width: `${pct}%` }}
+          />
+        </div>
       </div>
-      <p className="mt-2 text-center text-xs leading-snug text-zinc-600">
-        {met ? (
-          <>
-            Minimum order of{" "}
-            <span className="font-semibold text-teal-900">{formatMoney(currency, min)}</span> reached. You can
-            proceed to checkout.
-          </>
-        ) : (
-          <>
-            Add{" "}
-            <span className="font-semibold text-teal-900">{formatMoney(currency, remaining)}</span> more to place
-            your order{" "}
-            <span className="text-zinc-500">(minimum {formatMoney(currency, min)})</span>
-          </>
-        )}
-      </p>
+      <div className="mt-2 flex justify-center overflow-x-auto overscroll-x-contain px-1 [-webkit-overflow-scrolling:touch]">
+        <p className="whitespace-nowrap text-center text-xs leading-snug text-zinc-600">
+          {met ? (
+            <>
+              Minimum order of{" "}
+              <span className="font-semibold text-teal-900">{formatMoney(currency, min)}</span> reached. You can
+              proceed to checkout.
+            </>
+          ) : (
+            <>
+              Add{" "}
+              <span className="font-semibold text-teal-900">{formatMoney(currency, remaining)}</span> more to place
+              your order{" "}
+              <span className="text-zinc-500">(minimum {formatMoney(currency, min)})</span>
+            </>
+          )}
+        </p>
+      </div>
     </div>
   );
 }
