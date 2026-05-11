@@ -57,12 +57,18 @@ export function mergeProfileWithUserMetadata(
   const full_name =
     trimStr(profile?.full_name) || fromParts || metaString(user, "full_name");
 
+  const delivery_address =
+    trimStr(profile?.delivery_address) ||
+    metaString(user, "delivery_address") ||
+    metaString(user, "address_line1") ||
+    metaString(user, "street_address");
+
   return {
     full_name,
     first_name,
     last_name,
     phone: trimStr(profile?.phone) || metaString(user, "phone"),
-    delivery_address: trimStr(profile?.delivery_address) || metaString(user, "delivery_address"),
+    delivery_address,
     country: trimStr(profile?.country) || metaString(user, "country"),
     city: trimStr(profile?.city) || metaString(user, "city"),
     state: trimStr(profile?.state) || metaString(user, "state"),
@@ -73,5 +79,31 @@ export function mergeProfileWithUserMetadata(
         ? String(profile.date_of_birth).slice(0, 10)
         : "",
     avatar_url: trimStr(profile?.avatar_url),
+  };
+}
+
+/**
+ * Defaults for "Add address" from merged profile / registration:
+ * registration "Delivery address" → line1; city, state, postal_code, country match signup.
+ */
+export function registrationDefaultsForAddressForm(m: MergedProfileForUi): {
+  recipient_name: string;
+  phone: string;
+  line1: string;
+  line2: string;
+  city: string;
+  state: string;
+  postal_code: string;
+  country: string;
+} {
+  return {
+    recipient_name: m.full_name,
+    phone: m.phone,
+    line1: m.delivery_address,
+    line2: "",
+    city: m.city,
+    state: m.state,
+    postal_code: m.postal_code,
+    country: m.country,
   };
 }

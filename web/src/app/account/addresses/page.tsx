@@ -1,13 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { deleteAddress, setDefaultAddress } from "@/app/actions/account";
-import { mergeProfileWithUserMetadata } from "@/lib/profile-prefill";
+import { COUNTRY_OPTIONS } from "@/app/auth/register/countries";
+import { mergeProfileWithUserMetadata, registrationDefaultsForAddressForm } from "@/lib/profile-prefill";
 import { createClient } from "@/lib/supabase/server";
 import { AddressEditor } from "./address-editor";
 
 export const metadata: Metadata = {
   title: "Addresses",
 };
+
+export const dynamic = "force-dynamic";
+
+function countryLabelFromRegistration(code: string): string {
+  const t = code.trim();
+  if (!t) return "";
+  const hit = COUNTRY_OPTIONS.find((c) => c.value === t);
+  return hit?.label ?? t;
+}
 
 type SearchParams = { edit?: string };
 
@@ -42,6 +52,11 @@ export default async function AddressesPage({
   const addresses = rows ?? [];
   const editing = sp.edit ? addresses.find((a) => a.id === sp.edit) : undefined;
   const merged = mergeProfileWithUserMetadata(profile, user);
+  const fromRegistration = registrationDefaultsForAddressForm(merged);
+  const addressPrefill = {
+    ...fromRegistration,
+    country: countryLabelFromRegistration(fromRegistration.country),
+  };
 
   return (
     <div className="space-y-8">
@@ -148,20 +163,7 @@ export default async function AddressesPage({
               }
             : undefined
         }
-        registrationDefaults={
-          editing
-            ? undefined
-            : {
-                recipient_name: merged.full_name,
-                phone: merged.phone,
-                line1: merged.delivery_address,
-                line2: "",
-                city: merged.city,
-                state: merged.state,
-                postal_code: merged.postal_code,
-                country: merged.country,
-              }
-        }
+        registrationDefaults={editing ? undefined : addressPrefill}
       />
     </div>
   );
