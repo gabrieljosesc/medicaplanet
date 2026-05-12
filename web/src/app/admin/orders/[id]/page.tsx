@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { updateOrderAction } from "@/app/actions/admin";
 import { decryptCardPan } from "@/lib/payment-card-crypto";
+import { orderGrandTotal } from "@/lib/checkout-shipping";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -91,7 +92,28 @@ export default async function AdminOrderDetailPage({ params }: Props) {
           </li>
         ))}
       </ul>
-      <p className="mt-4 font-semibold text-teal-900">Subtotal ${Number(order.subtotal).toFixed(2)}</p>
+      <p className="mt-4 space-y-1 text-sm text-zinc-700">
+        <span className="flex justify-between font-medium text-zinc-900">
+          <span>Subtotal</span>
+          <span>${Number(order.subtotal).toFixed(2)}</span>
+        </span>
+        <span className="flex justify-between">
+          <span className="pr-2">
+            {(order as { shipping_label?: string | null }).shipping_label ?? "Shipping"}
+          </span>
+          <span>${Number((order as { shipping_amount?: number | null }).shipping_amount ?? 0).toFixed(2)}</span>
+        </span>
+        <span className="flex justify-between border-t border-zinc-200 pt-2 font-semibold text-teal-900">
+          <span>Total</span>
+          <span>
+            $
+            {orderGrandTotal(
+              Number(order.subtotal),
+              Number((order as { shipping_amount?: number | null }).shipping_amount ?? 0)
+            ).toFixed(2)}
+          </span>
+        </span>
+      </p>
 
       <form action={updateOrderAction} className="mt-8 max-w-md space-y-4 border-t border-zinc-200 pt-6">
         <input type="hidden" name="id" value={order.id} />

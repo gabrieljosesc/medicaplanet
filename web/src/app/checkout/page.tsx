@@ -7,6 +7,7 @@ import { submitOrder } from "@/app/actions/orders";
 import { CartMinimumBar } from "@/components/cart-minimum-bar";
 import { useCart } from "@/context/cart-context";
 import { MIN_CHECKOUT_SUBTOTAL_USD, meetsCheckoutMinimumUsd } from "@/lib/cart-minimum";
+import { orderGrandTotal } from "@/lib/checkout-shipping";
 import { createClient } from "@/lib/supabase/client";
 
 type ContactFields = {
@@ -113,6 +114,7 @@ export default function CheckoutPage() {
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [customerNotes, setCustomerNotes] = useState("");
   const [paymentNotes, setPaymentNotes] = useState("");
+  const [shippingPreview, setShippingPreview] = useState<{ amount: number; label: string } | null>(null);
 
   const subtotal = selectedLines.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0);
   const usableCards = useMemo(() => savedCards.filter((card) => !isCardExpired(card)), [savedCards]);
@@ -250,6 +252,27 @@ export default function CheckoutPage() {
     return () => {
       mounted = false;
     };
+  }, []);
+
+  useEffect(() => {
+    const ac = new AbortController();
+    (async () => {
+      try {
+        const r = await fetch("/api/checkout/shipping", { signal: ac.signal });
+        if (!r.ok) return;
+        const j = (await r.json()) as { shippingAmount?: number; shippingLabel?: string };
+        if (
+          typeof j.shippingAmount === "number" &&
+          Number.isFinite(j.shippingAmount) &&
+          typeof j.shippingLabel === "string"
+        ) {
+          setShippingPreview({ amount: j.shippingAmount, label: j.shippingLabel });
+        }
+      } catch {
+        /* aborted */
+      }
+    })();
+    return () => ac.abort();
   }, []);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -662,12 +685,20 @@ export default function CheckoutPage() {
                 <span>${subtotal.toFixed(2)}</span>
               </p>
               <p className="flex items-center justify-between text-zinc-600">
-                <span>Shipping</span>
-                <span>Quoted after review</span>
+                <span className="pr-2 text-left leading-snug">
+                  {shippingPreview ? shippingPreview.label : "Shipping"}
+                </span>
+                <span className="shrink-0">
+                  {shippingPreview ? `$${shippingPreview.amount.toFixed(2)}` : "…"}
+                </span>
               </p>
               <p className="flex items-center justify-between border-t border-zinc-200 pt-2 font-semibold text-zinc-900">
                 <span>Total</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>
+                  {shippingPreview
+                    ? `$${orderGrandTotal(subtotal, shippingPreview.amount).toFixed(2)}`
+                    : "…"}
+                </span>
               </p>
             </div>
           </div>

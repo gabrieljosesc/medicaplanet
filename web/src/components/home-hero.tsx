@@ -88,7 +88,7 @@ export function HomeHero({
                 ),
               },
               {
-                label: "No Minimum\nOrder",
+                label: "Free shipping\non first order",
                 icon: (
                   <svg
                     viewBox="0 0 48 48"

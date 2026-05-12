@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { nextImageUnoptimized } from "@/lib/product-image";
 import { resolveOrderItemImage } from "@/lib/order-display";
+import { orderGrandTotal } from "@/lib/checkout-shipping";
 
 type ImgRow = { url: string; sort_order: number };
 
@@ -107,8 +108,27 @@ export default async function OrderDetailPage({ params }: Props) {
           );
         })}
       </ul>
-      <p className="mt-6 text-sm font-semibold text-teal-900">
-        Total ${Number(order.subtotal).toFixed(2)}
+      <p className="mt-6 space-y-1 text-sm text-zinc-700">
+        <span className="flex justify-between font-medium text-zinc-900">
+          <span>Subtotal</span>
+          <span>${Number(order.subtotal).toFixed(2)}</span>
+        </span>
+        <span className="flex justify-between">
+          <span className="pr-2">
+            {(order as { shipping_label?: string | null }).shipping_label ?? "Shipping"}
+          </span>
+          <span>${Number((order as { shipping_amount?: number | null }).shipping_amount ?? 0).toFixed(2)}</span>
+        </span>
+        <span className="flex justify-between border-t border-zinc-200 pt-2 font-semibold text-teal-900">
+          <span>Total</span>
+          <span>
+            $
+            {orderGrandTotal(
+              Number(order.subtotal),
+              Number((order as { shipping_amount?: number | null }).shipping_amount ?? 0)
+            ).toFixed(2)}
+          </span>
+        </span>
       </p>
     </div>
   );

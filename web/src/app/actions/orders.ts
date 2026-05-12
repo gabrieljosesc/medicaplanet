@@ -4,6 +4,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/admin";
 import { meetsCheckoutMinimumUsd, MIN_CHECKOUT_SUBTOTAL_USD } from "@/lib/cart-minimum";
+import { getOrderShippingLine } from "@/lib/checkout-shipping";
 import { parsePriceTiersJson, unitPriceForQuantity } from "@/lib/price-tiers";
 
 const checkoutSchema = z.object({
@@ -115,6 +116,14 @@ export async function submitOrder(
     };
   }
 
+  let shippingLine: { amount: number; label: string };
+  try {
+    shippingLine = await getOrderShippingLine(svc, user.id);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Could not determine shipping.";
+    return { ok: false, message: msg };
+  }
+
   const shipping_address = {
     recipientName: input.recipientName,
     phone: input.phone,
@@ -197,6 +206,8 @@ export async function submitOrder(
     customer_notes: input.customerNotes ?? null,
     status: "pending_csr" as const,
     subtotal,
+    shipping_amount: shippingLine.amount,
+    shipping_label: shippingLine.label,
     payment_card_snapshot: paymentCardSnapshot,
   };
 
@@ -250,6 +261,8 @@ export async function submitOrder(
         customer_notes: input.customerNotes ?? null,
         status: "pending_csr" as const,
         subtotal,
+        shipping_amount: shippingLine.amount,
+        shipping_label: shippingLine.label,
         policy_acknowledged_at: withPolicy.policy_acknowledged_at,
         policy_acknowledgement: withPolicy.policy_acknowledgement,
       };

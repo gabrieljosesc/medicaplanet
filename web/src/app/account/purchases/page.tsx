@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { nextImageUnoptimized } from "@/lib/product-image";
 import { resolveOrderItemImage } from "@/lib/order-display";
+import { orderGrandTotal } from "@/lib/checkout-shipping";
 import { PurchaseFilters } from "./purchase-filters";
 
 export const metadata: Metadata = {
@@ -48,6 +49,8 @@ export default async function PurchasesPage({
       id,
       status,
       subtotal,
+      shipping_amount,
+      shipping_label,
       created_at,
       order_items (
         id,
@@ -160,7 +163,11 @@ export default async function PurchasesPage({
                   </ul>
                   <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-zinc-100 pt-3">
                     <p className="text-sm font-semibold text-teal-900">
-                      Order total: ${Number(order.subtotal).toFixed(2)}
+                      Order total: $
+                      {orderGrandTotal(
+                        Number(order.subtotal),
+                        Number((order as { shipping_amount?: number | null }).shipping_amount ?? 0)
+                      ).toFixed(2)}
                     </p>
                     <Link
                       href={`/account/orders/${order.id}`}
