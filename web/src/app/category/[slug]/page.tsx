@@ -6,6 +6,7 @@ import { CategoryProductToolbar } from "@/components/category-product-toolbar";
 import { CATALOG_PER_PAGE, categoryNavLabel } from "@/lib/catalog-constants";
 import {
   categoryListParamsActive,
+  fetchBestSellersProducts,
   fetchCategoryProducts,
   parseCategoryListParams,
   parsePageParam,
@@ -35,12 +36,10 @@ export default async function CategoryPage({ params, searchParams }: Props) {
     notFound();
   }
 
-  const { rows: productRows, count: productCount } = await fetchCategoryProducts(
-    supabase,
-    cat.id,
-    listParams,
-    { page, perPage: CATALOG_PER_PAGE }
-  );
+  const isBestSellers = slug === "best-sellers";
+  const { rows: productRows, count: productCount } = isBestSellers
+    ? await fetchBestSellersProducts(supabase, listParams, { page, perPage: CATALOG_PER_PAGE })
+    : await fetchCategoryProducts(supabase, cat.id, listParams, { page, perPage: CATALOG_PER_PAGE });
   const total = productCount ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / CATALOG_PER_PAGE));
   const rows = productRows.map((p) => ({
@@ -82,12 +81,21 @@ export default async function CategoryPage({ params, searchParams }: Props) {
         {rows.length === 0 && !filtered ? (
           <div className="col-span-full rounded-xl border border-amber-200 bg-amber-50/80 px-5 py-6 text-sm text-amber-950">
             <p className="font-medium">No products in this category yet.</p>
-            <p className="mt-2 text-amber-900/90">
-              From the <code className="rounded bg-white/80 px-1">web</code> folder run{" "}
-              <code className="rounded bg-white/80 px-1">npm run import:catalog</code> so rows from
-              your Product Master + price list sync into Supabase. If you already imported, re-run
-              after updates — the script upserts by product slug.
-            </p>
+            {isBestSellers ? (
+              <p className="mt-2 text-amber-900/90">
+                Best sellers are picked from products marked{" "}
+                <code className="rounded bg-white/80 px-1">is_featured</code> in Admin → Products,
+                plus a built-in shortlist (e.g. Botox 100u, Xeomin 100u, Dysport 500u, Restylane
+                Kysse). Flag a few products as featured to populate this page.
+              </p>
+            ) : (
+              <p className="mt-2 text-amber-900/90">
+                From the <code className="rounded bg-white/80 px-1">web</code> folder run{" "}
+                <code className="rounded bg-white/80 px-1">npm run import:catalog</code> so rows
+                from your Product Master + price list sync into Supabase. If you already imported,
+                re-run after updates — the script upserts by product slug.
+              </p>
+            )}
           </div>
         ) : rows.length === 0 && filtered ? (
           <div className="col-span-full rounded-xl border border-zinc-200 bg-zinc-50 px-5 py-6 text-sm text-zinc-700">
