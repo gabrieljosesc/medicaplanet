@@ -104,7 +104,7 @@ export default async function PeptidesPage({ searchParams }: Props) {
       ) : null}
 
       <div className="mx-auto mt-8 w-full max-w-[1600px]">
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7">
+        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 lg:gap-7">
         {!cat || (rows.length === 0 && !filtered) ? (
           <p className="text-sm text-zinc-600">
             No peptide products in the database yet. Run{" "}

@@ -97,7 +97,7 @@ export function CatalogHighlightCard({
             alt={title}
             fill
             className="object-contain p-3 transition duration-300 [@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-[1.02]"
-            sizes="(max-width:768px) 100vw, 33vw"
+            sizes="(max-width:1024px) 50vw, 33vw"
             unoptimized={imageUnoptimized}
           />
         </Link>
@@ -106,7 +106,7 @@ export function CatalogHighlightCard({
           type="button"
           aria-label={wishlisted ? `Remove ${title} from wishlist` : `Save ${title} to wishlist`}
           aria-pressed={wishlisted}
-          className="absolute right-3 top-3 z-[25] flex h-10 w-10 items-center justify-center rounded-full border border-white/55 bg-white/45 text-zinc-700 shadow-sm backdrop-blur-md transition hover:bg-white/70 hover:text-rose-600"
+          className="absolute right-2 top-2 z-[25] flex h-8 w-8 items-center justify-center rounded-full border border-white/55 bg-white/45 text-zinc-700 shadow-sm backdrop-blur-md transition hover:bg-white/70 hover:text-rose-600 sm:right-3 sm:top-3 sm:h-10 sm:w-10"
           onClick={toggleWishlist}
         >
           <IconHeart
@@ -116,16 +116,16 @@ export function CatalogHighlightCard({
         </button>
 
         {priceBadge ? (
-          <div className="pointer-events-none absolute bottom-3 right-3 z-[25] rounded-xl border border-zinc-200/90 bg-white/92 px-3 py-1.5 text-xs font-semibold text-zinc-900 shadow-md backdrop-blur-sm tabular-nums ring-1 ring-black/5">
+          <div className="pointer-events-none absolute bottom-2 right-2 z-[25] rounded-lg border border-zinc-200/90 bg-white/92 px-2 py-1 text-[11px] font-semibold text-zinc-900 shadow-md backdrop-blur-sm tabular-nums ring-1 ring-black/5 sm:bottom-3 sm:right-3 sm:rounded-xl sm:px-3 sm:py-1.5 sm:text-xs">
             {priceBadge}
           </div>
         ) : null}
 
       </div>
 
-      <div className="flex flex-1 flex-col px-2 pb-3 pt-4">
+      <div className="flex flex-1 flex-col px-1.5 pb-2 pt-2.5 sm:px-2 sm:pb-3 sm:pt-4">
         {categoryName && categorySlug ? (
-          <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-filler-ink/50">
+          <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-filler-ink/50 sm:text-[11px]">
             <Link
               href={categoryHref(categorySlug)}
               className="text-filler-rose-700/90 transition hover:text-filler-rose-800 hover:underline"
@@ -135,13 +135,13 @@ export function CatalogHighlightCard({
           </p>
         ) : null}
         <Link href={`/product/${slug}`} className="block flex-1 text-left">
-          <h3 className="line-clamp-2 text-lg font-bold tracking-tight text-filler-ink transition group-hover:text-filler-rose-800">
+          <h3 className="line-clamp-2 text-sm font-bold tracking-tight text-filler-ink transition group-hover:text-filler-rose-800 sm:text-lg">
             {title}
           </h3>
           {subtitle ? (
-            <p className="mt-1 text-xs font-medium text-filler-rose-800/90">{subtitle}</p>
+            <p className="mt-1 text-[11px] font-medium text-filler-rose-800/90 sm:text-xs">{subtitle}</p>
           ) : null}
-          <p className="mt-1.5 line-clamp-2 text-sm font-normal leading-snug text-filler-ink/55">
+          <p className="mt-1 line-clamp-2 text-[12px] font-normal leading-snug text-filler-ink/55 sm:mt-1.5 sm:text-sm">
             {blurb}
           </p>
         </Link>
