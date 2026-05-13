@@ -10,7 +10,9 @@ const U = (id: string) =>
 
 /** Curated IDs — medical, aesthetic, lab, pharmacy where relevant. */
 const BY_SLUG: Record<string, string> = {
+  "best-sellers": U("1556228578-8c89e565adf7"),
   rheumatology: U("1584982751601-97aae096518e"),
+  "orthopedic-injections": U("1584982751601-97aae096518e"),
   ophthalmology: U("1579684385127-1ef15d508118"),
   skincare: U("1556228578-8c89e565adf7"),
   "peels-and-masks": U("1570172619643-d9fc15271326"),

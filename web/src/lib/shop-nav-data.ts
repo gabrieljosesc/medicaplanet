@@ -21,6 +21,12 @@ const PLACEHOLDER_OTHER: NavCategory = {
   name: "Others",
 };
 
+const PLACEHOLDER_BEST_SELLERS: NavCategory = {
+  id: "00000000-0000-0000-0000-000000000005",
+  slug: "best-sellers",
+  name: "Best sellers",
+};
+
 const PLACEHOLDER_DERMAL_FILLERS: NavCategory = {
   id: "00000000-0000-0000-0000-000000000003",
   slug: "dermal-fillers",
@@ -34,10 +40,10 @@ const PLACEHOLDER_BOTULINUM: NavCategory = {
 };
 
 /** Pinned to the front of the header nav (in order), even if `sort_order` differs. */
-const PINNED_FIRST_SLUGS = ["dermal-fillers", "botulinum-toxins", "peptides"] as const;
+const PINNED_FIRST_SLUGS = ["best-sellers", "dermal-fillers", "botulinum-toxins", "peptides"] as const;
 
 /**
- * Header order: **Dermal fillers**, **Botulinum toxins**, **Peptides** first,
+ * Header order: **Best sellers**, **Dermal fillers**, **Botulinum toxins**, **Peptides** first,
  * then the remaining categories by `sort_order`, **Others** last.
  */
 export async function getCategoryNavData(): Promise<{
@@ -55,6 +61,7 @@ export async function getCategoryNavData(): Promise<{
   const rows = (categories ?? []) as NavCategory[];
   const other = rows.find((c) => c.slug === "other");
   const pinnedPlaceholders: Record<string, NavCategory> = {
+    "best-sellers": PLACEHOLDER_BEST_SELLERS,
     "dermal-fillers": PLACEHOLDER_DERMAL_FILLERS,
     "botulinum-toxins": PLACEHOLDER_BOTULINUM,
     peptides: PLACEHOLDER_PEPTIDES,
