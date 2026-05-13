@@ -59,7 +59,7 @@ export default async function SearchPage({ searchParams }: Props) {
               </p>
             </div>
           )}
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-7">
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4 lg:gap-7">
             {rows.length === 0 ? (
               <p className="col-span-full text-sm text-zinc-600">
                 No matches. Try different keywords or{" "}
