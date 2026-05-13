@@ -10,6 +10,7 @@ import fs from "fs";
 import path from "path";
 import mammoth from "mammoth";
 import { fileURLToPath } from "url";
+import { applyManualPriceOverride } from "./manual-price-overrides.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const webRoot = path.join(__dirname, "..");
@@ -227,7 +228,7 @@ async function main() {
     }
     usedSlugs.add(slug);
     const catSlug = mapCategorySlug(row.category);
-    products.push({
+    const rec = {
       slug,
       title: row.title,
       description: row.description || null,
@@ -242,7 +243,9 @@ async function main() {
       is_featured: false,
       rating: 4.5,
       review_count: 0,
-    });
+    };
+    applyManualPriceOverride(rec, row.variantProductId);
+    products.push(rec);
   }
 
   for (const p of peptides) {
