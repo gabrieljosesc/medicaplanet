@@ -11,17 +11,19 @@ import {
 } from "@/app/auth/register/registration-schema";
 
 async function getRequestOrigin(): Promise<string> {
+  // Prefer an explicit canonical site URL so auth confirmation emails always
+  // link back to the production domain, regardless of which deployment URL
+  // (e.g. a Vercel preview) the user happened to register on.
+  const explicit = (process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "").trim();
+  if (explicit) return explicit.replace(/\/+$/, "");
+
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host");
   const proto = h.get("x-forwarded-proto") ?? (host?.includes("localhost") ? "http" : "https");
   if (host) return `${proto}://${host}`;
 
-  const rawBase =
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    process.env.NEXT_PUBLIC_APP_URL ??
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-
-  return rawBase.replace(/\/+$/, "");
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return "http://localhost:3000";
 }
 
 async function getAuthEmailRedirectTo(

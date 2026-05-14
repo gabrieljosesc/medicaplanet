@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { categoryNavLabel } from "@/lib/catalog-constants";
 import { FeaturedProductCard } from "@/components/featured-product-card";
 import { HomeBrandMarquee } from "@/components/home-brand-marquee";
@@ -14,7 +15,35 @@ import { nextImageUnoptimized, resolveProductMainImage } from "@/lib/product-ima
 import { resolveFeaturedHomeProducts } from "@/lib/resolve-featured-home";
 import { withStorageImageTransform } from "@/lib/storage-image";
 
-export default async function HomePage() {
+type HomeSearchParams = Promise<Record<string, string | string[] | undefined>>;
+
+function pickParam(value: string | string[] | undefined): string | undefined {
+  if (Array.isArray(value)) return value[0];
+  return value ?? undefined;
+}
+
+export default async function HomePage({ searchParams }: { searchParams?: HomeSearchParams }) {
+  // Forward Supabase auth confirmation links that arrived at the site root
+  // (e.g. when the project's Site URL is bare and Supabase falls back to it
+  // because `redirect_to` was not whitelisted). Without this, users see the
+  // homepage with `?code=...` in the URL and never get their session.
+  const sp = (await searchParams) ?? {};
+  const code = pickParam(sp.code);
+  const tokenHash = pickParam(sp.token_hash);
+  const errorDesc = pickParam(sp.error_description) ?? pickParam(sp.error);
+  if (code || tokenHash || errorDesc) {
+    const forwarded = new URLSearchParams();
+    if (code) forwarded.set("code", code);
+    if (tokenHash) forwarded.set("token_hash", tokenHash);
+    const type = pickParam(sp.type);
+    if (type) forwarded.set("type", type);
+    const next = pickParam(sp.next);
+    forwarded.set("next", next ?? "/auth/login");
+    forwarded.set("verify", pickParam(sp.verify) ?? "confirmed");
+    if (errorDesc) forwarded.set("error_description", errorDesc);
+    redirect(`/auth/callback?${forwarded.toString()}`);
+  }
+
   const supabase = await createClient();
   const [{ data: productsRaw }, { data: allActiveForBrandCounts }] =
     await Promise.all([
