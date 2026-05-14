@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { AccountMobileTabs } from "@/components/account-mobile-tabs";
 import { AccountSidebar } from "@/components/account-sidebar";
 
 export default async function AccountLayout({ children }: { children: React.ReactNode }) {
@@ -21,12 +22,17 @@ export default async function AccountLayout({ children }: { children: React.Reac
 
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(220px,280px)_1fr] lg:items-start">
-      <AccountSidebar
-        displayName={displayName}
-        email={email}
-        avatarUrl={profile?.avatar_url ?? null}
-      />
-      <div className="min-w-0">{children}</div>
+      <div className="hidden lg:block">
+        <AccountSidebar
+          displayName={displayName}
+          email={email}
+          avatarUrl={profile?.avatar_url ?? null}
+        />
+      </div>
+      <div className="min-w-0">
+        <AccountMobileTabs />
+        {children}
+      </div>
     </div>
   );
 }
