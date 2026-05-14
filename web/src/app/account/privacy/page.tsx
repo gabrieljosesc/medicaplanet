@@ -46,7 +46,7 @@ export default async function PrivacyPage() {
             </p>
           </div>
           <a
-            href="mailto:support@medicaplanet.example?subject=Account%20deletion%20request"
+            href="mailto:info@medicaplanet.com?subject=Account%20deletion%20request"
             className="shrink-0 rounded-full border border-zinc-300 px-4 py-2 text-center text-sm font-medium text-zinc-800 hover:bg-zinc-50"
           >
             Email support
