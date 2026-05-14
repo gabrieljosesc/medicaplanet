@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { signOut } from "@/app/actions/auth";
 
 const accountLinks = [
@@ -26,6 +28,11 @@ export function AccountSidebar({
   const pathname = usePathname();
   const purchasesActive =
     pathname === "/account/purchases" || pathname?.startsWith("/account/orders");
+  const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <aside className="space-y-8 lg:sticky lg:top-24 lg:self-start">
@@ -102,16 +109,45 @@ export function AccountSidebar({
         </div>
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">Session</p>
-          <form action={signOut}>
-            <button
-              type="submit"
-              className="block w-full rounded-lg border border-rose-200 bg-rose-50/60 px-3 py-2 text-left text-sm font-medium text-rose-800 transition hover:bg-rose-100"
-            >
-              Log out
-            </button>
-          </form>
+          <button
+            type="button"
+            onClick={() => setConfirmLogoutOpen(true)}
+            className="block w-full rounded-lg border border-rose-200 bg-rose-50/60 px-3 py-2 text-left text-sm font-medium text-rose-800 transition hover:bg-rose-100"
+          >
+            Log out
+          </button>
         </div>
       </nav>
+      {mounted && confirmLogoutOpen
+        ? createPortal(
+            <div className="fixed inset-0 z-[130] flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
+              <div className="w-full max-w-sm rounded-2xl border border-zinc-200/70 bg-white/95 p-5 shadow-2xl ring-1 ring-black/5">
+                <h3 className="text-base font-semibold text-zinc-900">Log out?</h3>
+                <p className="mt-2 text-sm text-zinc-600">
+                  Are you sure you want to log out of your account?
+                </p>
+                <div className="mt-5 flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setConfirmLogoutOpen(false)}
+                    className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+                  >
+                    Cancel
+                  </button>
+                  <form action={signOut}>
+                    <button
+                      type="submit"
+                      className="rounded-full bg-filler-rose-800 px-4 py-2 text-sm font-medium text-white hover:bg-filler-rose-700"
+                    >
+                      Yes, log out
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>,
+            document.body
+          )
+        : null}
     </aside>
   );
 }

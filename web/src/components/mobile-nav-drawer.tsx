@@ -74,6 +74,7 @@ export function MobileNavDrawer({
 }) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
   const [geom, setGeom] = useState<PopoverGeom | null>(null);
   const panelId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -258,15 +259,16 @@ export function MobileNavDrawer({
                       </Link>
                     </li>
                     <li>
-                      <form action={signOut}>
-                        <button
-                          type="submit"
-                          className="block w-full rounded-lg px-1.5 py-1.5 text-left font-medium text-filler-rose-800 transition hover:bg-filler-peach-200/50"
-                          onClick={close}
-                        >
-                          Log out
-                        </button>
-                      </form>
+                      <button
+                        type="button"
+                        className="block w-full rounded-lg px-1.5 py-1.5 text-left font-medium text-filler-rose-800 transition hover:bg-filler-peach-200/50"
+                        onClick={() => {
+                          close();
+                          setConfirmLogoutOpen(true);
+                        }}
+                      >
+                        Log out
+                      </button>
                     </li>
                   </>
                 )}
@@ -439,6 +441,36 @@ export function MobileNavDrawer({
         <HamburgerIcon />
       </button>
       {mounted && portal ? createPortal(portal, document.body) : null}
+      {mounted && confirmLogoutOpen
+        ? createPortal(
+            <div className="fixed inset-0 z-[210] flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
+              <div className="w-full max-w-sm rounded-2xl border border-zinc-200/70 bg-white/95 p-5 shadow-2xl ring-1 ring-black/5">
+                <h3 className="text-base font-semibold text-zinc-900">Log out?</h3>
+                <p className="mt-2 text-sm text-zinc-600">
+                  Are you sure you want to log out of your account?
+                </p>
+                <div className="mt-5 flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setConfirmLogoutOpen(false)}
+                    className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+                  >
+                    Cancel
+                  </button>
+                  <form action={signOut}>
+                    <button
+                      type="submit"
+                      className="rounded-full bg-filler-rose-800 px-4 py-2 text-sm font-medium text-white hover:bg-filler-rose-700"
+                    >
+                      Yes, log out
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>,
+            document.body
+          )
+        : null}
     </>
   );
 }
