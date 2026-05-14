@@ -63,7 +63,7 @@ export async function signInWithPassword(formData: FormData): Promise<void> {
     redirect(`/auth/login?${q.toString()}`);
   }
   revalidatePath("/", "layout");
-  redirect(next ?? "/shop");
+  redirect(next ?? "/");
 }
 
 export type RegisterFormState =

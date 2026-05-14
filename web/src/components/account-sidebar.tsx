@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut } from "@/app/actions/auth";
 
 const accountLinks = [
   { href: "/account/profile", label: "Profile" },
@@ -98,6 +99,17 @@ export function AccountSidebar({
               </Link>
             </li>
           </ul>
+        </div>
+        <div>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">Session</p>
+          <form action={signOut}>
+            <button
+              type="submit"
+              className="block w-full rounded-lg border border-rose-200 bg-rose-50/60 px-3 py-2 text-left text-sm font-medium text-rose-800 transition hover:bg-rose-100"
+            >
+              Log out
+            </button>
+          </form>
         </div>
       </nav>
     </aside>

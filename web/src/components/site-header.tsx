@@ -11,8 +11,14 @@ import { getSiteUserContext } from "@/lib/site-user-context";
  * Desktop chrome lives in `SiteTopBar`.
  */
 export async function SiteHeader() {
-  const { user, isAdmin } = await getSiteUserContext();
+  const { user, profile, isAdmin } = await getSiteUserContext();
   const { categories, othersDropdownCategories, productSamples } = await getCategoryNavData();
+  const userEmail = profile?.email ?? user?.email ?? null;
+  const displayName =
+    (profile?.full_name && profile.full_name.trim()) ||
+    user?.email?.split("@")[0] ||
+    "Account";
+  const avatarUrl = profile?.avatar_url ?? null;
 
   return (
     <header className="sticky top-0 z-50 max-w-full overflow-visible border-b border-filler-peach-300/50 bg-white/95 shadow-sm backdrop-blur-md md:hidden">
@@ -37,6 +43,9 @@ export async function SiteHeader() {
             <CartBadge />
             <MobileNavDrawer
               userPresent={Boolean(user)}
+              userEmail={userEmail}
+              displayName={displayName}
+              avatarUrl={avatarUrl}
               isAdmin={isAdmin}
               categories={categories}
               othersDropdownCategories={othersDropdownCategories}

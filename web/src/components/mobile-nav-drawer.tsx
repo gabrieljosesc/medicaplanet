@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { signOut } from "@/app/actions/auth";
 import { categoryHref } from "@/lib/category-href";
 import { TOP_BAR_NAV } from "@/lib/nav-config";
 import { SITE_EMAIL, SITE_PHONE_DISPLAY, SITE_PHONE_TEL } from "@/lib/site-constants";
@@ -53,12 +55,18 @@ function measurePopover(trigger: HTMLElement): PopoverGeom {
  */
 export function MobileNavDrawer({
   userPresent,
+  userEmail,
+  displayName,
+  avatarUrl,
   isAdmin,
   categories,
   othersDropdownCategories,
   productSamples,
 }: {
   userPresent: boolean;
+  userEmail?: string | null;
+  displayName?: string | null;
+  avatarUrl?: string | null;
   isAdmin: boolean;
   categories: NavCategory[];
   othersDropdownCategories: NavCategory[];
@@ -171,6 +179,41 @@ export function MobileNavDrawer({
               className="min-h-0 w-1/2 min-w-0 overflow-y-auto overscroll-y-contain px-2.5 py-3 text-[13px]"
               aria-label="Site pages"
             >
+              {userPresent ? (
+                <div className="mb-2 rounded-lg border border-filler-peach-200/80 bg-filler-cream/60 p-2">
+                  <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-filler-ink/45">
+                    Signed in
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <span className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full bg-white ring-1 ring-filler-peach-300/70">
+                      {avatarUrl ? (
+                        <Image
+                          src={avatarUrl}
+                          alt=""
+                          fill
+                          sizes="28px"
+                          className="object-cover"
+                          unoptimized={avatarUrl.includes("%")}
+                        />
+                      ) : (
+                        <span className="flex h-full w-full items-center justify-center text-[11px] font-semibold text-filler-rose-800">
+                          {(displayName || userEmail || "U").slice(0, 1).toUpperCase()}
+                        </span>
+                      )}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-[12px] font-semibold leading-tight text-filler-ink">
+                        {displayName || "Account"}
+                      </p>
+                      {userEmail ? (
+                        <p className="truncate text-[10.5px] leading-tight text-filler-ink/55" title={userEmail}>
+                          {userEmail}
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+              ) : null}
               <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-filler-ink/45">Site</p>
               <ul className="space-y-0.5">
                 {!userPresent ? (
@@ -195,15 +238,37 @@ export function MobileNavDrawer({
                     </li>
                   </>
                 ) : (
-                  <li>
-                    <Link
-                      href="/account/profile"
-                      className="block rounded-lg px-1.5 py-1.5 font-semibold text-filler-ink hover:bg-filler-peach-200/50"
-                      onClick={close}
-                    >
-                      Account
-                    </Link>
-                  </li>
+                  <>
+                    <li>
+                      <Link
+                        href="/account/profile"
+                        className="block rounded-lg px-1.5 py-1.5 font-semibold text-filler-ink hover:bg-filler-peach-200/50"
+                        onClick={close}
+                      >
+                        My account
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/account/purchases"
+                        className="block rounded-lg px-1.5 py-1.5 font-medium text-filler-ink hover:bg-filler-peach-200/50"
+                        onClick={close}
+                      >
+                        My purchases
+                      </Link>
+                    </li>
+                    <li>
+                      <form action={signOut}>
+                        <button
+                          type="submit"
+                          className="block w-full rounded-lg px-1.5 py-1.5 text-left font-medium text-filler-rose-800 transition hover:bg-filler-peach-200/50"
+                          onClick={close}
+                        >
+                          Log out
+                        </button>
+                      </form>
+                    </li>
+                  </>
                 )}
                 {TOP_BAR_NAV.map((n) => (
                   <li key={n.href}>
