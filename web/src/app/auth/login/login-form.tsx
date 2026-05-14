@@ -9,11 +9,21 @@ const REMEMBER_KEY = "medicaplanet-remember-email";
 /**
  * Login form with remember-me support.
  *
- * Browser password managers trigger off `autoComplete="username"` +
- * `autoComplete="current-password"`, which lets Chrome / Safari / etc. save
- * credentials on submit and autofill them on every later visit. As a fallback
- * (e.g. when the password manager is disabled) we also stash the last-used
- * email in localStorage so it pre-populates the input.
+ * Both email and password autofill come from the browser's built-in password
+ * manager (Chrome / Safari / Edge / Firefox), triggered by
+ * `autoComplete="username"` + `autoComplete="current-password"`. After the
+ * first successful sign-in the browser prompts "Save password?"; once saved,
+ * it pre-fills both fields on every later visit.
+ *
+ * To avoid fighting the password manager we render the inputs as
+ * **uncontrolled** (`defaultValue`) and only render the form after hydration
+ * with the right initial values — controlled inputs that mutate after mount
+ * cause many browsers to wipe the auto-filled password.
+ *
+ * The "Remember me" checkbox stores **only the email** in `localStorage` as
+ * a fallback when the password manager is disabled. We deliberately never
+ * persist the password client-side because it would be readable in plain
+ * text by any script on the page.
  */
 export function LoginForm({
   initialEmail,
@@ -23,31 +33,50 @@ export function LoginForm({
   next?: string;
 }) {
   const checkboxId = useId();
-  const [email, setEmail] = useState(initialEmail ?? "");
+  const [ready, setReady] = useState(false);
+  const [defaultEmail, setDefaultEmail] = useState(initialEmail ?? "");
   const [remember, setRemember] = useState(true);
-  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setHydrated(true);
+    let next = initialEmail ?? "";
     if (!initialEmail) {
       try {
         const stored = window.localStorage.getItem(REMEMBER_KEY);
-        if (stored) setEmail(stored);
-        else setRemember(true);
+        if (stored) next = stored;
       } catch {
-        /* localStorage blocked — fall through with empty email */
+        /* localStorage blocked — fall through */
       }
     }
+    setDefaultEmail(next);
+    setReady(true);
   }, [initialEmail]);
 
-  const handleSubmit = () => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     try {
-      if (remember && email) window.localStorage.setItem(REMEMBER_KEY, email);
-      else window.localStorage.removeItem(REMEMBER_KEY);
+      const data = new FormData(event.currentTarget);
+      const submittedEmail = String(data.get("email") ?? "").trim();
+      if (remember && submittedEmail) {
+        window.localStorage.setItem(REMEMBER_KEY, submittedEmail);
+      } else {
+        window.localStorage.removeItem(REMEMBER_KEY);
+      }
     } catch {
       /* ignore quota / private mode errors */
     }
   };
+
+  if (!ready) {
+    return (
+      <div
+        aria-hidden
+        className="mt-6 space-y-4"
+      >
+        <div className="h-14 rounded-md bg-zinc-100/70" />
+        <div className="h-14 rounded-md bg-zinc-100/70" />
+        <div className="h-10 rounded-full bg-zinc-100/70" />
+      </div>
+    );
+  }
 
   return (
     <form
@@ -68,8 +97,7 @@ export function LoginForm({
           required
           autoComplete="username"
           inputMode="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          defaultValue={defaultEmail}
           className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
         />
       </div>
@@ -95,7 +123,6 @@ export function LoginForm({
       <button
         type="submit"
         className="w-full rounded-full bg-teal-800 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-900 hover:shadow-md"
-        suppressHydrationWarning={!hydrated}
       >
         Sign in
       </button>
