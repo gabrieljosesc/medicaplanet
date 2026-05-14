@@ -141,6 +141,49 @@ export function CartProvider({
   }
   const supabase = supabaseRef.current;
 
+  // Pending-writes counter so a focus/realtime refetch can't clobber an
+  // optimistic local update with a stale server response while the upsert
+  // round-trip is still in flight.
+  const pendingWritesRef = useRef(0);
+  const pendingRefetchRef = useRef(false);
+
+  const refetchServer = useCallback(async () => {
+    if (!userId || !supabase) return;
+    if (pendingWritesRef.current > 0) {
+      pendingRefetchRef.current = true;
+      return;
+    }
+    const { data, error } = await supabase
+      .from("cart_items")
+      .select("slug,title,unit_price,currency,quantity,selected,image_src,price_tiers")
+      .eq("user_id", userId);
+    if (error || !data) return;
+    if (pendingWritesRef.current > 0) {
+      pendingRefetchRef.current = true;
+      return;
+    }
+    const fresh = data.map((r) => rowToLine(r as CartRow));
+    setLines(fresh);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(storageKey, JSON.stringify(fresh));
+    }
+  }, [userId, supabase, storageKey]);
+
+  const trackWrite = useCallback(
+    <T,>(p: PromiseLike<T> | undefined): void => {
+      if (!p) return;
+      pendingWritesRef.current += 1;
+      Promise.resolve(p).finally(() => {
+        pendingWritesRef.current = Math.max(0, pendingWritesRef.current - 1);
+        if (pendingWritesRef.current === 0 && pendingRefetchRef.current) {
+          pendingRefetchRef.current = false;
+          void refetchServer();
+        }
+      });
+    },
+    [refetchServer]
+  );
+
   // Cross-device sync (logged-in only): pull server cart, merge any guest
   // items on this device, push the merged set back, then become the source
   // of truth for this session.
@@ -172,9 +215,11 @@ export function CartProvider({
       if (guestLines.length > 0) {
         localStorage.removeItem(guestKey);
         if (merged.length > 0) {
-          await supabase
-            .from("cart_items")
-            .upsert(merged.map((l) => lineToRow(userId, l)), { onConflict: "user_id,slug" });
+          trackWrite(
+            supabase
+              .from("cart_items")
+              .upsert(merged.map((l) => lineToRow(userId, l)), { onConflict: "user_id,slug" })
+          );
         }
       }
     })();
@@ -182,27 +227,15 @@ export function CartProvider({
     return () => {
       cancelled = true;
     };
-  }, [userId, storageKey, supabase]);
+  }, [userId, storageKey, supabase, trackWrite]);
 
-  // Keep cart fresh when tab regains focus / another tab updates storage.
+  // Keep cart fresh on focus / storage events / Realtime push from another device.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const syncFromStorage = () => setLines(readStorage(storageKey));
     const onFocus = () => {
-      if (userId && supabase) {
-        supabase
-          .from("cart_items")
-          .select("slug,title,unit_price,currency,quantity,selected,image_src,price_tiers")
-          .eq("user_id", userId)
-          .then(({ data, error }) => {
-            if (error || !data) return;
-            const fresh = data.map((r) => rowToLine(r as CartRow));
-            setLines(fresh);
-            localStorage.setItem(storageKey, JSON.stringify(fresh));
-          });
-      } else {
-        syncFromStorage();
-      }
+      if (userId && supabase) void refetchServer();
+      else syncFromStorage();
     };
     const onVisibility = () => {
       if (document.visibilityState === "visible") onFocus();
@@ -218,52 +251,83 @@ export function CartProvider({
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("storage", onStorage);
     };
-  }, [storageKey, userId, supabase]);
+  }, [storageKey, userId, supabase, refetchServer]);
+
+  // Realtime: push notifications when this user's cart rows change on
+  // another device, so the second device updates within ~1s instead of
+  // waiting for a focus event.
+  useEffect(() => {
+    if (!userId || !supabase) return;
+    const channel = supabase
+      .channel(`cart-${userId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "cart_items",
+          filter: `user_id=eq.${userId}`,
+        },
+        () => {
+          void refetchServer();
+        }
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [userId, supabase, refetchServer]);
 
   const persistServerUpsert = useCallback(
     (line: CartLine) => {
       if (!userId || !supabase) return;
-      void supabase
-        .from("cart_items")
-        .upsert([lineToRow(userId, line)], { onConflict: "user_id,slug" });
+      trackWrite(
+        supabase
+          .from("cart_items")
+          .upsert([lineToRow(userId, line)], { onConflict: "user_id,slug" })
+      );
     },
-    [userId, supabase]
+    [userId, supabase, trackWrite]
   );
 
   const persistServerDelete = useCallback(
     (slug: string) => {
       if (!userId || !supabase) return;
-      void supabase.from("cart_items").delete().eq("user_id", userId).eq("slug", slug);
+      trackWrite(supabase.from("cart_items").delete().eq("user_id", userId).eq("slug", slug));
     },
-    [userId, supabase]
+    [userId, supabase, trackWrite]
   );
 
   const persistServerClear = useCallback(() => {
     if (!userId || !supabase) return;
-    void supabase.from("cart_items").delete().eq("user_id", userId);
-  }, [userId, supabase]);
+    trackWrite(supabase.from("cart_items").delete().eq("user_id", userId));
+  }, [userId, supabase, trackWrite]);
 
   const persistServerSelected = useCallback(
     (slug: string, selected: boolean) => {
       if (!userId || !supabase) return;
-      void supabase
-        .from("cart_items")
-        .update({ selected, updated_at: new Date().toISOString() })
-        .eq("user_id", userId)
-        .eq("slug", slug);
+      trackWrite(
+        supabase
+          .from("cart_items")
+          .update({ selected, updated_at: new Date().toISOString() })
+          .eq("user_id", userId)
+          .eq("slug", slug)
+      );
     },
-    [userId, supabase]
+    [userId, supabase, trackWrite]
   );
 
   const persistServerSelectAll = useCallback(
     (selected: boolean) => {
       if (!userId || !supabase) return;
-      void supabase
-        .from("cart_items")
-        .update({ selected, updated_at: new Date().toISOString() })
-        .eq("user_id", userId);
+      trackWrite(
+        supabase
+          .from("cart_items")
+          .update({ selected, updated_at: new Date().toISOString() })
+          .eq("user_id", userId)
+      );
     },
-    [userId, supabase]
+    [userId, supabase, trackWrite]
   );
 
   const addLine = useCallback(
@@ -314,16 +378,18 @@ export function CartProvider({
         localStorage.setItem(storageKey, JSON.stringify(next));
         if (touched) persistServerUpsert(touched);
         if (line.deselectOthers && userId && supabase) {
-          void supabase
-            .from("cart_items")
-            .update({ selected: false, updated_at: new Date().toISOString() })
-            .eq("user_id", userId)
-            .neq("slug", line.slug);
+          trackWrite(
+            supabase
+              .from("cart_items")
+              .update({ selected: false, updated_at: new Date().toISOString() })
+              .eq("user_id", userId)
+              .neq("slug", line.slug)
+          );
         }
         return next;
       });
     },
-    [storageKey, persistServerUpsert, userId, supabase]
+    [storageKey, persistServerUpsert, userId, supabase, trackWrite]
   );
 
   const setQty = useCallback(
