@@ -11,6 +11,7 @@ import path from "path";
 import mammoth from "mammoth";
 import { fileURLToPath } from "url";
 import { applyManualPriceOverride } from "./manual-price-overrides.mjs";
+import { isRemovedProductSlug } from "./manual-product-removals.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const webRoot = path.join(__dirname, "..");
@@ -250,12 +251,14 @@ async function main() {
 
   for (const p of peptides) {
     const slugBase = slugify(p.title);
+    if (isRemovedProductSlug(slugBase)) continue;
     let slug = slugBase || slugify(p.title.slice(0, 20));
     let n = 0;
     while (usedSlugs.has(slug)) {
       n += 1;
       slug = `${slugBase}-${n}`;
     }
+    if (isRemovedProductSlug(slug)) continue;
     usedSlugs.add(slug);
     products.push({
       slug,

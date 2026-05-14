@@ -18,6 +18,7 @@ import fs from "fs";
 import mammoth from "mammoth";
 import path from "path";
 import { fileURLToPath } from "url";
+import { isRemovedProductSlug } from "./manual-product-removals.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const webRoot = path.join(__dirname, "..");
@@ -197,6 +198,7 @@ async function main() {
         match = await findStoreBySearch(item.title);
       }
       const baseSlug = match ? String(match.slug) : slugify(item.title);
+      if (isRemovedProductSlug(baseSlug) || isRemovedProductSlug(slugify(item.title))) continue;
       const slug = uniqueSlug(baseSlug);
       const price = match ? storePriceDollars(match) : 0;
       const imageUrl = match ? pickImageUrl(match) : null;
@@ -226,6 +228,7 @@ async function main() {
   } else {
     console.warn("Docx not found at", PEPTIDES_DOCX, "— importing all", store.length, "Peptides from Purechain Store API.");
     for (const p of store) {
+      if (isRemovedProductSlug(p.slug)) continue;
       const desc = stripHtml(p.description || p.short_description || "");
       rows.push({
         slug: p.slug,
