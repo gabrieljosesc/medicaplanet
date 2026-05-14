@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { resendVerificationEmail, signInWithPassword } from "@/app/actions/auth";
-import { PasswordField } from "@/components/password-field";
+import { resendVerificationEmail } from "@/app/actions/auth";
 import { safeAuthRedirectTarget } from "@/lib/safe-redirect";
+import { LoginForm } from "./login-form";
 
 type Props = {
   searchParams: Promise<{
@@ -77,31 +77,7 @@ export default async function LoginPage({ searchParams }: Props) {
           </button>
         </form>
       )}
-      <form action={signInWithPassword} className="mt-6 space-y-4">
-        {next ? <input type="hidden" name="next" value={next} /> : null}
-        <div>
-          <label className="text-xs font-medium text-zinc-600">Email</label>
-          <input
-            name="email"
-            type="email"
-            required
-            defaultValue={email}
-            className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
-          />
-        </div>
-        <PasswordField name="password" label="Password" autoComplete="current-password" required />
-        <div className="text-right">
-          <Link href="/auth/forgot-password" className="text-xs font-medium text-teal-800 hover:underline">
-            Forgot your password?
-          </Link>
-        </div>
-        <button
-          type="submit"
-          className="w-full rounded-full bg-teal-800 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-900 hover:shadow-md"
-        >
-          Sign in
-        </button>
-      </form>
+      <LoginForm initialEmail={email} next={next || undefined} />
       <p className="mt-4 text-center text-sm text-zinc-600">
         No account?{" "}
         <Link href={registerHref} className="font-medium text-teal-800 hover:underline">
