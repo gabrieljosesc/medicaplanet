@@ -3,6 +3,7 @@
 import { useEffect, useId, useState } from "react";
 import { signInWithPassword } from "@/app/actions/auth";
 import { PasswordField } from "@/components/password-field";
+import { SubmitButton } from "@/components/submit-button";
 
 const REMEMBER_EMAIL_KEY = "medicaplanet-remember-email";
 const REMEMBER_PASSWORD_KEY = "medicaplanet-remember-password";
@@ -138,12 +139,7 @@ export function LoginForm({
           Forgot your password?
         </a>
       </div>
-      <button
-        type="submit"
-        className="w-full rounded-full bg-teal-800 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-900 hover:shadow-md"
-      >
-        Sign in
-      </button>
+      <SubmitButton pendingLabel="Signing in…">Sign in</SubmitButton>
     </form>
   );
 }

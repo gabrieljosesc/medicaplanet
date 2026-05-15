@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import { CartProvider } from "@/context/cart-context";
 import { LayoutShell } from "@/components/layout-shell";
+import { NavigationProgressProvider } from "@/components/navigation-progress";
 import { createClient } from "@/lib/supabase/server";
 
 const geistSans = Geist({
@@ -38,7 +40,11 @@ export default async function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full`}>
       <body className="flex min-h-full flex-col bg-filler-cream text-filler-ink antialiased">
         <CartProvider cartOwnerKey={user?.id ?? null}>
-          <LayoutShell>{children}</LayoutShell>
+          <Suspense fallback={null}>
+            <NavigationProgressProvider>
+              <LayoutShell>{children}</LayoutShell>
+            </NavigationProgressProvider>
+          </Suspense>
         </CartProvider>
       </body>
     </html>

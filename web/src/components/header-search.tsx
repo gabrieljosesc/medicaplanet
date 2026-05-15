@@ -2,7 +2,7 @@
 
 import { IconSearch } from "@/components/nav-icons";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useProgressRouter } from "@/lib/use-progress-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type SuggestItem = { slug: string; title: string; category: string | null };
@@ -11,7 +11,7 @@ const DEBOUNCE_MS = 280;
 
 export function HeaderSearch({ variant = "default" }: { variant?: "default" | "hero" }) {
   const hero = variant === "hero";
-  const router = useRouter();
+  const router = useProgressRouter();
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const [suggestions, setSuggestions] = useState<SuggestItem[]>([]);

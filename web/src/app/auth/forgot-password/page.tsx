@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requestPasswordReset } from "@/app/actions/auth";
+import { SubmitButton } from "@/components/submit-button";
 
 type Props = {
   searchParams: Promise<{
@@ -44,12 +45,7 @@ export default async function ForgotPasswordPage({ searchParams }: Props) {
             className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
           />
         </label>
-        <button
-          type="submit"
-          className="w-full rounded-full bg-teal-800 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-900 hover:shadow-md"
-        >
-          Send reset link
-        </button>
+        <SubmitButton pendingLabel="Sending…">Send reset link</SubmitButton>
       </form>
 
       <p className="mt-4 text-center text-sm text-zinc-600">

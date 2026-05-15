@@ -33,6 +33,7 @@ export function ProductBuyBox({
   const { addLine } = useCart();
   const [qty, setQty] = useState(1);
   const [msg, setMsg] = useState<string | null>(null);
+  const [adding, setAdding] = useState(false);
 
   const hasPrice = basePrice > 0 || tiers.length > 0;
   const unit = useMemo(
@@ -83,8 +84,10 @@ export function ProductBuyBox({
       <div className="flex flex-wrap items-center gap-3">
         <button
           type="button"
-          disabled={disabled}
+          disabled={disabled || adding}
+          aria-busy={adding}
           onClick={() => {
+            setAdding(true);
             addLine({
               slug,
               title,
@@ -95,11 +98,14 @@ export function ProductBuyBox({
               imageSrc: heroImageSrc ?? undefined,
             });
             setMsg("Added to cart");
-            setTimeout(() => setMsg(null), 2000);
+            setTimeout(() => {
+              setAdding(false);
+              setMsg(null);
+            }, 1200);
           }}
-          className="rounded-full bg-teal-800 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-teal-900 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-full bg-teal-800 px-6 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-teal-900 active:scale-[0.98] active:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Add to cart
+          {adding ? "Added ✓" : "Add to cart"}
         </button>
         {msg && <span className="text-sm text-teal-800">{msg}</span>}
       </div>

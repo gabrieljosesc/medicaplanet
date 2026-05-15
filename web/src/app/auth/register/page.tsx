@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { registerWithProfile, type RegisterFormState } from "@/app/actions/auth";
 import { COUNTRY_OPTIONS } from "@/app/auth/register/countries";
 import { CA_PROVINCE_OPTIONS, US_STATE_OPTIONS } from "@/app/auth/register/region-options";
+import { LoadingSpinner } from "@/components/loading-spinner";
 import { PasswordField } from "@/components/password-field";
 import { safeAuthRedirectTarget } from "@/lib/safe-redirect";
 
@@ -430,9 +431,17 @@ function RegisterFormInner({
           <button
             type="submit"
             disabled={pending}
-            className="inline-flex min-w-44 justify-center rounded-full bg-teal-700 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-800 disabled:pointer-events-none disabled:opacity-50"
+            aria-busy={pending}
+            className="inline-flex min-w-44 items-center justify-center gap-2 rounded-full bg-teal-700 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-800 active:scale-[0.98] active:opacity-90 disabled:pointer-events-none disabled:opacity-50"
           >
-            {pending ? "Creating account..." : "Register"}
+            {pending ? (
+              <>
+                <LoadingSpinner className="h-4 w-4 shrink-0" />
+                Creating account…
+              </>
+            ) : (
+              "Register"
+            )}
           </button>
         </div>
       </form>

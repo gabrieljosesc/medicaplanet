@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useProgressRouter } from "@/lib/use-progress-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type Props = {
@@ -39,7 +40,7 @@ function mergeParams(
 }
 
 export function CategoryProductToolbar({ basePath, categorySlug }: Props) {
-  const router = useRouter();
+  const router = useProgressRouter();
   const sp = useSearchParams();
   const urlQ = sp.get("q") ?? "";
 
