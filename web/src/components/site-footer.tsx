@@ -132,8 +132,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-filler-rose-800/40 px-4 py-4 text-center text-xs text-filler-cream/55">
-        We supply only to persons licensed to purchase and use these products. © {new Date().getFullYear()}{" "}
-        MedicaPlanet.
+        We Supply to Licensed Professionals Only. © 2020 MedicaPlanet.
       </div>
     </footer>
   );
