@@ -10,6 +10,9 @@
  * Optional: `web/data/purechain-peptides-overrides.json` — object keyed by Medica **slug** with `{ "price": number, "imageUrl": "https://..." }`
  * to fill list price and image when a docx line does not match the Purechain API (or image is missing).
  *
+ * Optional: `web/data/peptide-wholesale-pricing.json` — `{ "prices": { slug: USD }, "slugAliases": { catalogSlug: priceTableSlug } }`.
+ * When present, matched slugs overwrite list price after Purechain/API pricing (spreadsheet wholesale list).
+ *
  * Run: npm run import:purechain-peptides  (from web/)
  */
 import { createClient } from "@supabase/supabase-js";
@@ -31,6 +34,7 @@ const PURECHAIN_STORE =
 const PEPTIDES_DOCX = path.join(repoRoot, "Peptides description v2.docx");
 const SLUG_ORDER_OUT = path.join(webRoot, "src", "data", "peptides-slug-order.json");
 const OVERRIDES_PATH = path.join(webRoot, "data", "purechain-peptides-overrides.json");
+const WHOLESALE_PRICE_PATH = path.join(webRoot, "data", "peptide-wholesale-pricing.json");
 
 function slugify(s) {
   return String(s || "")
@@ -137,7 +141,30 @@ function loadOverrides() {
   }
 }
 
-/** Fills $0 or missing image from overrides (docx slugs that did not match the API). */
+function loadPeptideWholesalePricing() {
+  if (!fs.existsSync(WHOLESALE_PRICE_PATH)) return { prices: {}, slugAliases: {} };
+  try {
+    const raw = JSON.parse(fs.readFileSync(WHOLESALE_PRICE_PATH, "utf8"));
+    return {
+      prices: raw.prices && typeof raw.prices === "object" ? raw.prices : {},
+      slugAliases: raw.slugAliases && typeof raw.slugAliases === "object" ? raw.slugAliases : {},
+    };
+  } catch {
+    return { prices: {}, slugAliases: {} };
+  }
+}
+
+function resolveWholesalePrice(slug, wholesale) {
+  const viaAlias = wholesale.slugAliases?.[slug];
+  const keysToTry = viaAlias ? [viaAlias, slug] : [slug];
+  for (const k of keysToTry) {
+    const p = wholesale.prices?.[k];
+    if (typeof p === "number" && p >= 0) return p;
+  }
+  return null;
+}
+
+/** Fills $0 or missing image from overrides. List price for peptides can be set by `peptide-wholesale-pricing.json`. */
 function applyOverrides(row, overrides) {
   const o = overrides[row.slug];
   if (!o) return;
@@ -167,6 +194,7 @@ async function main() {
     process.exit(1);
   }
   const overrides = loadOverrides();
+  const wholesalePricing = loadPeptideWholesalePricing();
 
   /** @type {Array<{slug:string,title:string,description:string,price:number,imageUrl:string|null}>} */
   const rows = [];
@@ -213,6 +241,8 @@ async function main() {
         imageUrl,
       };
       applyOverrides(row, overrides);
+      const w = resolveWholesalePrice(row.slug, wholesalePricing);
+      if (w != null) row.price = w;
       if ((!row.price || row.price === 0) && !row.imageUrl) {
         stillNeedManual.push(item.title);
       }
@@ -230,13 +260,17 @@ async function main() {
     for (const p of store) {
       if (isRemovedProductSlug(p.slug)) continue;
       const desc = stripHtml(p.description || p.short_description || "");
-      rows.push({
+      const row = {
         slug: p.slug,
         title: p.name.trim().slice(0, 200),
         description: desc.slice(0, 20000) || "Research use only.",
         price: storePriceDollars(p),
         imageUrl: pickImageUrl(p),
-      });
+      };
+      applyOverrides(row, overrides);
+      const w = resolveWholesalePrice(row.slug, wholesalePricing);
+      if (w != null) row.price = w;
+      rows.push(row);
     }
   }
 

@@ -1,7 +1,9 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { PeptideCoaSection } from "@/components/peptide-coa-section";
 import { ProductBuyBox } from "@/components/product-buy-box";
 import { ProductImageGallery } from "@/components/product-image-gallery";
+import { getPeptideCoaLinks } from "@/lib/peptide-coa";
 import { createClient } from "@/lib/supabase/server";
 import { nextImageUnoptimized, resolveProductMainImage } from "@/lib/product-image";
 import { withStorageImageTransform } from "@/lib/storage-image";
@@ -48,6 +50,13 @@ export default async function ProductPage({ params }: Props) {
       ? gallerySlides
       : [{ src: hero, alt: product.title, unoptimized: nextImageUnoptimized(hero) }];
 
+  const categoryRel = product.categories as { slug?: string } | { slug?: string }[] | null;
+  const categorySlug = Array.isArray(categoryRel)
+    ? categoryRel[0]?.slug ?? null
+    : categoryRel?.slug ?? null;
+  const isPeptideCategory = categorySlug === "peptides";
+  const coaLinks = isPeptideCategory ? getPeptideCoaLinks(product.slug) : [];
+
   return (
     <div className="grid gap-10 lg:grid-cols-2">
       {slidesForUi.length > 1 ? (
@@ -81,6 +90,7 @@ export default async function ProductPage({ params }: Props) {
           disabled={!product.is_active}
           heroImageSrc={slidesForUi[0]!.src}
         />
+        {coaLinks.length > 0 ? <PeptideCoaSection links={coaLinks} /> : null}
         <div className="prose prose-sm mt-8 max-w-none text-zinc-700 whitespace-pre-wrap">
           {product.description || "Description coming soon."}
         </div>
