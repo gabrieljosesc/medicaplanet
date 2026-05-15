@@ -4,26 +4,34 @@ import { useEffect, useId, useState } from "react";
 import { signInWithPassword } from "@/app/actions/auth";
 import { PasswordField } from "@/components/password-field";
 
-const REMEMBER_KEY = "medicaplanet-remember-email";
+const REMEMBER_EMAIL_KEY = "medicaplanet-remember-email";
+const REMEMBER_PASSWORD_KEY = "medicaplanet-remember-password";
+
+function loadRememberedCredentials(): { email: string; password: string } {
+  if (typeof window === "undefined") return { email: "", password: "" };
+  try {
+    return {
+      email: window.localStorage.getItem(REMEMBER_EMAIL_KEY) ?? "",
+      password: window.localStorage.getItem(REMEMBER_PASSWORD_KEY) ?? "",
+    };
+  } catch {
+    return { email: "", password: "" };
+  }
+}
+
+function saveRememberedCredentials(email: string, password: string) {
+  window.localStorage.setItem(REMEMBER_EMAIL_KEY, email);
+  window.localStorage.setItem(REMEMBER_PASSWORD_KEY, password);
+}
+
+function clearRememberedCredentials() {
+  window.localStorage.removeItem(REMEMBER_EMAIL_KEY);
+  window.localStorage.removeItem(REMEMBER_PASSWORD_KEY);
+}
 
 /**
- * Login form with remember-me support.
- *
- * Both email and password autofill come from the browser's built-in password
- * manager (Chrome / Safari / Edge / Firefox), triggered by
- * `autoComplete="username"` + `autoComplete="current-password"`. After the
- * first successful sign-in the browser prompts "Save password?"; once saved,
- * it pre-fills both fields on every later visit.
- *
- * To avoid fighting the password manager we render the inputs as
- * **uncontrolled** (`defaultValue`) and only render the form after hydration
- * with the right initial values — controlled inputs that mutate after mount
- * cause many browsers to wipe the auto-filled password.
- *
- * The "Remember me" checkbox stores **only the email** in `localStorage` as
- * a fallback when the password manager is disabled. We deliberately never
- * persist the password client-side because it would be readable in plain
- * text by any script on the page.
+ * Login form with "Remember me" — when checked, email and password are saved in
+ * the browser's localStorage so both fields are pre-filled after logout.
  */
 export function LoginForm({
   initialEmail,
@@ -35,19 +43,19 @@ export function LoginForm({
   const checkboxId = useId();
   const [ready, setReady] = useState(false);
   const [defaultEmail, setDefaultEmail] = useState(initialEmail ?? "");
+  const [defaultPassword, setDefaultPassword] = useState("");
   const [remember, setRemember] = useState(true);
 
   useEffect(() => {
-    let next = initialEmail ?? "";
-    if (!initialEmail) {
-      try {
-        const stored = window.localStorage.getItem(REMEMBER_KEY);
-        if (stored) next = stored;
-      } catch {
-        /* localStorage blocked — fall through */
-      }
-    }
-    setDefaultEmail(next);
+    const fromUrl = initialEmail ?? "";
+    const stored = loadRememberedCredentials();
+    const email = fromUrl || stored.email;
+    const password = fromUrl ? "" : stored.password;
+    const hasStored = Boolean(stored.email && stored.password);
+
+    setDefaultEmail(email);
+    setDefaultPassword(password);
+    setRemember(hasStored || !fromUrl);
     setReady(true);
   }, [initialEmail]);
 
@@ -55,27 +63,31 @@ export function LoginForm({
     try {
       const data = new FormData(event.currentTarget);
       const submittedEmail = String(data.get("email") ?? "").trim();
+      const submittedPassword = String(data.get("password") ?? "");
+
       if (remember && submittedEmail) {
-        window.localStorage.setItem(REMEMBER_KEY, submittedEmail);
+        saveRememberedCredentials(submittedEmail, submittedPassword);
       } else {
-        window.localStorage.removeItem(REMEMBER_KEY);
+        clearRememberedCredentials();
       }
     } catch {
       /* ignore quota / private mode errors */
     }
   };
 
+  const handleRememberChange = (checked: boolean) => {
+    setRemember(checked);
+    if (!checked) {
+      try {
+        clearRememberedCredentials();
+      } catch {
+        /* ignore */
+      }
+    }
+  };
+
   if (!ready) {
-    return (
-      <div
-        aria-hidden
-        className="mt-6 space-y-4"
-      >
-        <div className="h-14 rounded-md bg-zinc-100/70" />
-        <div className="h-14 rounded-md bg-zinc-100/70" />
-        <div className="h-10 rounded-full bg-zinc-100/70" />
-      </div>
-    );
+    return <LoginFormSkeleton />;
   }
 
   return (
@@ -101,14 +113,20 @@ export function LoginForm({
           className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
         />
       </div>
-      <PasswordField name="password" label="Password" autoComplete="current-password" required />
+      <PasswordField
+        name="password"
+        label="Password"
+        autoComplete="current-password"
+        required
+        defaultValue={defaultPassword}
+      />
       <div className="flex items-center justify-between text-xs">
         <label htmlFor={checkboxId} className="flex cursor-pointer items-center gap-2 text-zinc-700">
           <input
             id={checkboxId}
             type="checkbox"
             checked={remember}
-            onChange={(e) => setRemember(e.target.checked)}
+            onChange={(e) => handleRememberChange(e.target.checked)}
             className="h-4 w-4 rounded border-zinc-300 text-teal-800 focus:ring-teal-700"
           />
           Remember me
@@ -127,5 +145,15 @@ export function LoginForm({
         Sign in
       </button>
     </form>
+  );
+}
+
+function LoginFormSkeleton() {
+  return (
+    <div aria-hidden className="mt-6 space-y-4">
+      <div className="h-14 rounded-md bg-zinc-100/70" />
+      <div className="h-14 rounded-md bg-zinc-100/70" />
+      <div className="h-10 rounded-full bg-zinc-100/70" />
+    </div>
   );
 }
