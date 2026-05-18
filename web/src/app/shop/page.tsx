@@ -2,7 +2,11 @@ import { Suspense } from "react";
 import { CatalogHighlightCard } from "@/components/catalog-highlight-card";
 import { CatalogPagination } from "@/components/catalog-pagination";
 import { CategoryProductToolbar } from "@/components/category-product-toolbar";
-import { CATALOG_PER_PAGE, categoryNavLabel } from "@/lib/catalog-constants";
+import {
+  CATALOG_PER_PAGE,
+  CATALOG_PRODUCTS_ANCHOR_ID,
+  categoryNavLabel,
+} from "@/lib/catalog-constants";
 import { fetchAllProductsPage } from "@/lib/all-products-list";
 import {
   categoryListParamsActive,
@@ -68,7 +72,10 @@ export default async function ShopPage({ searchParams }: Props) {
         <CategoryProductToolbar basePath="/shop" />
       </Suspense>
 
-      <div className="mx-auto mt-8 w-full max-w-[1600px]">
+      <div
+        id={CATALOG_PRODUCTS_ANCHOR_ID}
+        className="mx-auto mt-8 w-full max-w-[1600px] scroll-mt-28 sm:scroll-mt-32"
+      >
         {mapped.length === 0 && !filtered ? (
           <div className="rounded-2xl border border-amber-200/80 bg-amber-50/60 px-5 py-6 text-sm text-amber-950">
             <p className="font-medium">No products in the catalog yet.</p>

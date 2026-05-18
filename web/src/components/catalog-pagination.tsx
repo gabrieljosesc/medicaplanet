@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { CATALOG_PRODUCTS_ANCHOR_ID } from "@/lib/catalog-constants";
 
 type Props = {
   basePath: string;
@@ -17,23 +19,45 @@ function buildHref(basePath: string, sp: URLSearchParams, nextPage: number) {
   return qs ? `${basePath}?${qs}` : basePath;
 }
 
+function scrollToProductList() {
+  const el = document.getElementById(CATALOG_PRODUCTS_ANCHOR_ID);
+  if (!el) return;
+  el.scrollIntoView({ behavior: "instant", block: "start" });
+}
+
+/** After pagination navigation, scroll the product grid into view (below header/toolbar). */
+function useScrollToProductsOnPageChange() {
+  const sp = useSearchParams();
+  const pageKey = sp.get("page") ?? "1";
+  const skipInitial = useRef(true);
+
+  useEffect(() => {
+    if (skipInitial.current) {
+      skipInitial.current = false;
+      return;
+    }
+    requestAnimationFrame(scrollToProductList);
+  }, [pageKey]);
+}
+
 export function CatalogPagination({ basePath, currentPage, totalPages }: Props) {
   const sp = useSearchParams();
+  useScrollToProductsOnPageChange();
+
   if (totalPages <= 1) return null;
 
   const page = Math.min(Math.max(1, currentPage), totalPages);
   const show = simpleWindow(page, totalPages);
+  const linkClass =
+    "flex h-9 w-9 items-center justify-center rounded-full border border-filler-rose-300/90 bg-white text-sm font-medium text-filler-ink transition hover:border-filler-rose-400 hover:bg-filler-peach-200/30";
+
   return (
     <nav
       className="mt-10 flex flex-wrap items-center justify-center gap-2"
       aria-label="Pagination"
     >
       {page > 1 ? (
-        <Link
-          href={buildHref(basePath, sp, page - 1)}
-          scroll={false}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-filler-rose-300/90 bg-white text-sm font-medium text-filler-ink transition hover:border-filler-rose-400 hover:bg-filler-peach-200/30"
-        >
+        <Link href={buildHref(basePath, sp, page - 1)} className={linkClass} aria-label="Previous page">
           ←
         </Link>
       ) : (
@@ -57,13 +81,13 @@ export function CatalogPagination({ basePath, currentPage, totalPages }: Props) 
           <Link
             key={item}
             href={buildHref(basePath, sp, item)}
-            scroll={false}
             className={
               item === page
                 ? "flex h-9 w-9 items-center justify-center rounded-full border border-filler-rose-400 bg-filler-pink-300/95 text-sm font-semibold text-white shadow-[0_0_0_3px_rgba(251,182,206,0.4)]"
-                : "flex h-9 w-9 items-center justify-center rounded-full border border-filler-rose-300/90 bg-white text-sm font-medium text-filler-ink transition hover:border-filler-rose-400 hover:bg-filler-peach-200/30"
+                : linkClass
             }
             aria-current={item === page ? "page" : undefined}
+            aria-label={item === page ? `Page ${item}, current` : `Page ${item}`}
           >
             {item}
           </Link>
@@ -71,11 +95,7 @@ export function CatalogPagination({ basePath, currentPage, totalPages }: Props) 
       )}
 
       {page < totalPages ? (
-        <Link
-          href={buildHref(basePath, sp, page + 1)}
-          scroll={false}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-filler-rose-300/90 bg-white text-sm font-medium text-filler-ink transition hover:border-filler-rose-400 hover:bg-filler-peach-200/30"
-        >
+        <Link href={buildHref(basePath, sp, page + 1)} className={linkClass} aria-label="Next page">
           →
         </Link>
       ) : (

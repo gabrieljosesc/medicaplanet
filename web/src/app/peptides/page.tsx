@@ -3,7 +3,11 @@ import { Suspense } from "react";
 import { CatalogHighlightCard } from "@/components/catalog-highlight-card";
 import { CatalogPagination } from "@/components/catalog-pagination";
 import { CategoryProductToolbar } from "@/components/category-product-toolbar";
-import { CATALOG_PER_PAGE, categoryNavLabel } from "@/lib/catalog-constants";
+import {
+  CATALOG_PER_PAGE,
+  CATALOG_PRODUCTS_ANCHOR_ID,
+  categoryNavLabel,
+} from "@/lib/catalog-constants";
 import {
   type CategoryProductRow,
   categoryListParamsActive,
@@ -103,7 +107,10 @@ export default async function PeptidesPage({ searchParams }: Props) {
         </Suspense>
       ) : null}
 
-      <div className="mx-auto mt-8 w-full max-w-[1600px]">
+      <div
+        id={CATALOG_PRODUCTS_ANCHOR_ID}
+        className="mx-auto mt-8 w-full max-w-[1600px] scroll-mt-28 sm:scroll-mt-32"
+      >
         <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 lg:gap-7">
         {!cat || (rows.length === 0 && !filtered) ? (
           <p className="text-sm text-zinc-600">
