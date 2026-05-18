@@ -72,18 +72,20 @@ export default async function CategoryPage({ params, searchParams }: Props) {
         {categoryNavLabel(cat.slug, cat.name)}
       </h1>
 
-      <Suspense
-        fallback={
-          <div className="mt-6 h-20 animate-pulse bg-zinc-100/60 md:mt-8 md:rounded-xl md:py-2" />
-        }
-      >
-        <CategoryProductToolbar basePath={`/category/${slug}`} categorySlug={slug} />
-      </Suspense>
-
-      <div
+      <section
         id={CATALOG_PRODUCTS_ANCHOR_ID}
-        className="mx-auto mt-8 w-full max-w-[1600px] scroll-mt-28 sm:scroll-mt-32"
+        className="scroll-mt-28 sm:scroll-mt-32"
+        aria-label="Category filters and products"
       >
+        <Suspense
+          fallback={
+            <div className="mt-6 h-20 animate-pulse bg-zinc-100/60 md:mt-8 md:rounded-xl md:py-2" />
+          }
+        >
+          <CategoryProductToolbar basePath={`/category/${slug}`} categorySlug={slug} />
+        </Suspense>
+
+        <div className="mx-auto mt-8 w-full max-w-[1600px]">
       <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 lg:gap-7">
         {rows.length === 0 && !filtered ? (
           <div className="col-span-full rounded-xl border border-amber-200 bg-amber-50/80 px-5 py-6 text-sm text-amber-950">
@@ -142,7 +144,8 @@ export default async function CategoryPage({ params, searchParams }: Props) {
       <Suspense fallback={null}>
         <CatalogPagination basePath={`/category/${slug}`} currentPage={page} totalPages={totalPages} />
       </Suspense>
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

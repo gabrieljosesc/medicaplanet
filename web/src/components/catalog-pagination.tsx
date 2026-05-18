@@ -25,7 +25,7 @@ function scrollToProductList() {
   el.scrollIntoView({ behavior: "instant", block: "start" });
 }
 
-/** After pagination navigation, scroll the product grid into view (below header/toolbar). */
+/** After pagination navigation, scroll search toolbar + product grid into view. */
 function useScrollToProductsOnPageChange() {
   const sp = useSearchParams();
   const pageKey = sp.get("page") ?? "1";

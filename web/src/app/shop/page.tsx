@@ -64,18 +64,20 @@ export default async function ShopPage({ searchParams }: Props) {
         Browse the full MedicaPlanet catalog. Use a category link on a card to filter that range.
       </p>
 
-      <Suspense
-        fallback={
-          <div className="mt-6 h-20 animate-pulse bg-filler-peach-100/60 md:mt-8 md:rounded-xl md:py-2" />
-        }
-      >
-        <CategoryProductToolbar basePath="/shop" />
-      </Suspense>
-
-      <div
+      <section
         id={CATALOG_PRODUCTS_ANCHOR_ID}
-        className="mx-auto mt-8 w-full max-w-[1600px] scroll-mt-28 sm:scroll-mt-32"
+        className="scroll-mt-28 sm:scroll-mt-32"
+        aria-label="Catalog filters and products"
       >
+        <Suspense
+          fallback={
+            <div className="mt-6 h-20 animate-pulse bg-filler-peach-100/60 md:mt-8 md:rounded-xl md:py-2" />
+          }
+        >
+          <CategoryProductToolbar basePath="/shop" />
+        </Suspense>
+
+        <div className="mx-auto mt-8 w-full max-w-[1600px]">
         {mapped.length === 0 && !filtered ? (
           <div className="rounded-2xl border border-amber-200/80 bg-amber-50/60 px-5 py-6 text-sm text-amber-950">
             <p className="font-medium">No products in the catalog yet.</p>
@@ -127,7 +129,8 @@ export default async function ShopPage({ searchParams }: Props) {
         <Suspense fallback={null}>
           <CatalogPagination basePath="/shop" currentPage={page} totalPages={totalPages} />
         </Suspense>
-      </div>
+        </div>
+      </section>
     </div>
   );
 }
