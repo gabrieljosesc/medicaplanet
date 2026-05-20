@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { updateOrderAction } from "@/app/actions/admin";
 import { decryptCardPan } from "@/lib/payment-card-crypto";
 import { orderGrandTotal } from "@/lib/checkout-shipping";
+import { displayOrderReference } from "@/lib/order-reference";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -26,7 +27,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
         ← Orders
       </Link>
       <h1 className="mt-4 text-2xl font-semibold text-zinc-900">Order detail</h1>
-      <p className="font-mono text-xs text-zinc-500">{order.id}</p>
+      <p className="font-mono text-xs text-zinc-500">{displayOrderReference(order)}</p>
       <div className="mt-4 grid gap-2 text-sm text-zinc-700">
         <p>
           <strong>{order.full_name}</strong> · {order.email}

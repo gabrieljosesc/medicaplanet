@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { nextImageUnoptimized } from "@/lib/product-image";
 import { resolveOrderItemImage } from "@/lib/order-display";
 import { orderGrandTotal } from "@/lib/checkout-shipping";
+import { displayOrderReference } from "@/lib/order-reference";
 import { PurchaseFilters } from "./purchase-filters";
 
 export const metadata: Metadata = {
@@ -47,6 +48,7 @@ export default async function PurchasesPage({
     .select(
       `
       id,
+      reference_number,
       status,
       subtotal,
       shipping_amount,
@@ -80,7 +82,7 @@ export default async function PurchasesPage({
 
   if (q) {
     orders = orders.filter((o) => {
-      if (String(o.id).toLowerCase().includes(q)) return true;
+      if (displayOrderReference(o).toLowerCase().includes(q)) return true;
       const items = Array.isArray(o.order_items) ? o.order_items : [];
       return items.some((it: { title?: string }) => (it.title ?? "").toLowerCase().includes(q));
     });
@@ -114,7 +116,7 @@ export default async function PurchasesPage({
                 className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-100 bg-zinc-50/80 px-4 py-3 text-sm">
-                  <span className="font-mono text-xs text-zinc-500">{order.id}</span>
+                  <span className="font-mono text-xs text-zinc-500">{displayOrderReference(order)}</span>
                   <span className="rounded-full bg-white px-2.5 py-0.5 text-xs font-medium capitalize text-teal-900 ring-1 ring-teal-200">
                     {formatStatus(order.status)}
                   </span>

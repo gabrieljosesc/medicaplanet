@@ -1,7 +1,8 @@
-type Props = { searchParams: Promise<{ id?: string }> };
+type Props = { searchParams: Promise<{ ref?: string; id?: string }> };
 
 export default async function CheckoutSuccessPage({ searchParams }: Props) {
-  const { id } = await searchParams;
+  const { ref, id } = await searchParams;
+  const reference = ref ?? id;
   return (
     <div className="rounded-xl border border-teal-200 bg-teal-50/60 p-8 text-center">
       <h1 className="text-xl font-semibold text-teal-950">Order received</h1>
@@ -10,9 +11,9 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
         <br />
         A confirmation email will be sent shortly.
       </p>
-      {id && (
+      {reference && (
         <p className="mt-4 text-xs text-teal-900/80">
-          Reference: <span className="font-mono">{id}</span>
+          Reference: <span className="font-mono">{reference}</span>
         </p>
       )}
     </div>

@@ -6,6 +6,7 @@ import { createServiceClient } from "@/lib/supabase/admin";
 import { meetsCheckoutMinimumUsd, MIN_CHECKOUT_SUBTOTAL_USD } from "@/lib/cart-minimum";
 import { getOrderShippingLine } from "@/lib/checkout-shipping";
 import { parsePriceTiersJson, unitPriceForQuantity } from "@/lib/price-tiers";
+import { displayOrderReference } from "@/lib/order-reference";
 
 const checkoutSchema = z.object({
   firstName: z.string().min(1),
@@ -49,8 +50,10 @@ function isCardExpired(expMonth: number, expYear: number): boolean {
 }
 
 export type CheckoutResult =
-  | { ok: true; orderId: string }
+  | { ok: true; orderId: string; orderReference: string }
   | { ok: false; message: string };
+
+const ORDER_INSERT_SELECT = "id, reference_number";
 
 export async function submitOrder(
   raw: z.infer<typeof checkoutSchema>
@@ -225,13 +228,14 @@ export async function submitOrder(
   let order:
     | {
         id: string;
+        reference_number?: string | null;
       }
     | null = null;
   let oErr: { message?: string; code?: string } | null = null;
 
   // Preferred insert with policy audit fields.
   {
-    const res = await svc.from("orders").insert(withPolicy).select("id").single();
+    const res = await svc.from("orders").insert(withPolicy).select(ORDER_INSERT_SELECT).single();
     order = res.data;
     oErr = res.error;
   }
@@ -242,7 +246,7 @@ export async function submitOrder(
     const missingPolicyColumns =
       msg.includes("policy_acknowledged_at") || msg.includes("policy_acknowledgement");
     if (missingPolicyColumns) {
-      const retry = await svc.from("orders").insert(baseOrderInsert).select("id").single();
+      const retry = await svc.from("orders").insert(baseOrderInsert).select(ORDER_INSERT_SELECT).single();
       order = retry.data;
       oErr = retry.error;
     }
@@ -266,7 +270,7 @@ export async function submitOrder(
         policy_acknowledged_at: withPolicy.policy_acknowledged_at,
         policy_acknowledgement: withPolicy.policy_acknowledgement,
       };
-      const res = await svc.from("orders").insert(noCardCols).select("id").single();
+      const res = await svc.from("orders").insert(noCardCols).select(ORDER_INSERT_SELECT).single();
       order = res.data;
       oErr = res.error;
     }
@@ -288,5 +292,9 @@ export async function submitOrder(
   if (iErr) {
     return { ok: false, message: iErr.message };
   }
-  return { ok: true, orderId: order.id };
+  return {
+    ok: true,
+    orderId: order.id,
+    orderReference: displayOrderReference(order),
+  };
 }

@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { nextImageUnoptimized } from "@/lib/product-image";
 import { resolveOrderItemImage } from "@/lib/order-display";
 import { orderGrandTotal } from "@/lib/checkout-shipping";
+import { displayOrderReference } from "@/lib/order-reference";
 
 type ImgRow = { url: string; sort_order: number };
 
@@ -72,7 +73,7 @@ export default async function OrderDetailPage({ params }: Props) {
         ← My purchases
       </Link>
       <h1 className="mt-4 text-2xl font-semibold text-zinc-900">Order</h1>
-      <p className="font-mono text-xs text-zinc-500">{order.id}</p>
+      <p className="font-mono text-xs text-zinc-500">{displayOrderReference(order)}</p>
       <p className="mt-2 text-sm text-zinc-600">Status: {formatStatus(order.status)}</p>
       <ul className="mt-6 space-y-4">
         {items.map((row) => {

@@ -333,7 +333,7 @@ export default function CheckoutPage() {
     }
 
     selectedLines.forEach((line) => removeLine(line.slug));
-    router.push(`/checkout/success?id=${res.orderId}`);
+    router.push(`/checkout/success?ref=${encodeURIComponent(res.orderReference)}`);
   }
 
   if (lines.length === 0) {

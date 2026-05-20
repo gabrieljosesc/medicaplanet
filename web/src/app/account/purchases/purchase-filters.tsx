@@ -49,7 +49,7 @@ export function PurchaseFilters({
         <input
           name="q"
           defaultValue={q ?? ""}
-          placeholder="Search order ID or product…"
+          placeholder="Search reference or product…"
           className="min-w-0 flex-1 rounded-lg border border-zinc-300 px-3 py-2 text-sm"
         />
         <button

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { displayOrderReference } from "@/lib/order-reference";
 
 type Props = { searchParams: Promise<{ q?: string }> };
 
@@ -17,14 +18,17 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
   const supabase = await createClient();
   let query = supabase
     .from("orders")
-    .select("id,email,full_name,status,subtotal,created_at,policy_acknowledged_at")
+    .select("id,reference_number,email,full_name,status,subtotal,created_at,policy_acknowledged_at")
     .order("created_at", { ascending: false })
     .limit(100);
   if (q) {
     if (isUuid(q)) {
       query = query.or(`id.eq.${q},full_name.ilike.%${escapeIlike(q)}%,email.ilike.%${escapeIlike(q)}%`);
     } else {
-      query = query.or(`full_name.ilike.%${escapeIlike(q)}%,email.ilike.%${escapeIlike(q)}%`);
+      const term = escapeIlike(q);
+      query = query.or(
+        `full_name.ilike.%${term}%,email.ilike.%${term}%,reference_number.ilike.%${term}%`
+      );
     }
   }
   const { data: orders } = await query;
@@ -39,7 +43,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
               type="search"
               name="q"
               defaultValue={q}
-              placeholder="Search order ID, name, email"
+              placeholder="Search reference, name, email"
               className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm sm:w-72"
             />
             <button
@@ -63,7 +67,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
         <thead>
           <tr className="border-b border-zinc-200 text-xs uppercase text-zinc-500">
             <th className="py-2 pr-2">When</th>
-            <th className="py-2 pr-2">Order ID</th>
+            <th className="py-2 pr-2">Reference</th>
             <th className="py-2 pr-2">Customer</th>
             <th className="py-2 pr-2">Status</th>
             <th className="py-2 pr-2">Policy ack</th>
@@ -78,7 +82,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
               </td>
               <td className="py-2 pr-2 font-mono text-xs text-zinc-600">
                 <Link href={`/admin/orders/${o.id}`} className="hover:underline">
-                  {o.id}
+                  {displayOrderReference(o)}
                 </Link>
               </td>
               <td className="py-2 pr-2">
