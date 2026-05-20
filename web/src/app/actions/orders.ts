@@ -7,6 +7,7 @@ import { meetsCheckoutMinimumUsd, MIN_CHECKOUT_SUBTOTAL_USD } from "@/lib/cart-m
 import { getOrderShippingLine } from "@/lib/checkout-shipping";
 import { parsePriceTiersJson, unitPriceForQuantity } from "@/lib/price-tiers";
 import { displayOrderReference } from "@/lib/order-reference";
+import { sendOrderReceivedEmail } from "@/lib/email/order-emails";
 
 const checkoutSchema = z.object({
   firstName: z.string().min(1),
@@ -292,6 +293,23 @@ export async function submitOrder(
   if (iErr) {
     return { ok: false, message: iErr.message };
   }
+
+  void sendOrderReceivedEmail({
+    id: order.id,
+    reference_number: order.reference_number,
+    email: input.email,
+    full_name: fullName,
+    status: "pending_csr",
+    subtotal,
+    shipping_amount: shippingLine.amount,
+    shipping_label: shippingLine.label,
+    order_items: lines.map((l) => ({
+      title: l.title,
+      quantity: l.quantity,
+      unit_price: l.unit_price,
+    })),
+  }).catch((err) => console.error("[email] order received:", err));
+
   return {
     ok: true,
     orderId: order.id,

@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/admin";
+import { sendOrderStatusEmail, type OrderStatus } from "@/lib/email/order-emails";
 
 async function requireAdmin() {
   const supabase = await createClient();
@@ -102,13 +104,34 @@ export async function createProductAction(formData: FormData): Promise<void> {
 export async function updateOrderAction(formData: FormData): Promise<void> {
   const { supabase } = await requireAdmin();
   const id = String(formData.get("id"));
-  const status = String(formData.get("status"));
+  const status = String(formData.get("status")) as OrderStatus;
   const admin_notes = String(formData.get("admin_notes") || "");
+
+  const { data: before } = await supabase.from("orders").select("status").eq("id", id).single();
+  const previousStatus = (before?.status ?? "pending_csr") as OrderStatus;
 
   const { error } = await supabase.from("orders").update({ status, admin_notes }).eq("id", id);
   if (error) {
     redirect("/admin/orders/" + id + "?error=" + encodeURIComponent(error.message));
   }
+
+  if (previousStatus !== status) {
+    const svc = createServiceClient();
+    const { data: order } = await svc
+      .from("orders")
+      .select(
+        "id, reference_number, email, full_name, status, subtotal, shipping_amount, shipping_label, order_items ( title, quantity, unit_price )"
+      )
+      .eq("id", id)
+      .single();
+
+    if (order) {
+      void sendOrderStatusEmail(order, previousStatus, status).catch((err) =>
+        console.error("[email] order status:", err)
+      );
+    }
+  }
+
   revalidatePath("/admin/orders");
   revalidatePath(`/admin/orders/${id}`);
   redirect("/admin/orders/" + id + "?saved=1");
