@@ -1,0 +1,1010 @@
+{
+  "_readme": "Volume tiers for peptides (qty 1–5, 6–10, 11–25, 26–1000). Regenerate from spreadsheet via npm run import:peptide-volume-pricing.",
+  "tiersBySlug": {
+    "glow-bpc-157-10mg-ghk-cu-50mg-tb500-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 119
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 115
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 109
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 99
+      }
+    ],
+    "klow-bpc-157-10mg-ghk-cu-50mg-tb500-10mg-kpv-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 139
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 135
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 129
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 119
+      }
+    ],
+    "2x-blend-tesamorelin-10mg-ipamorelin-2mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 99
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 95
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 89
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 85
+      }
+    ],
+    "aod-9604-5mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 59
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 57
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 54
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 49
+      }
+    ],
+    "ara-290-14mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 79
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 75
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 69
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 59
+      }
+    ],
+    "bpc-5mg-tb-5mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 89
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 85
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 79
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 69
+      }
+    ],
+    "bpc-157-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 59
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 55
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 49
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 45
+      }
+    ],
+    "bpc-157-20mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 99
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 89
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 81
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 75
+      }
+    ],
+    "cagrilintide-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 129
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 119
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 109
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 99
+      }
+    ],
+    "cagrilintide-5mg-semaglutide-5mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 119
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 115
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 109
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 99
+      }
+    ],
+    "cjc-1295-with-dac-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 109
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 105
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 99
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 95
+      }
+    ],
+    "cjc-1295-without-dac-5mg-ipa-5mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 79
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 75
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 69
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 65
+      }
+    ],
+    "dsip-5mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 49
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 45
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 39
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 35
+      }
+    ],
+    "epithalon-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 45
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 42
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 39
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 35
+      }
+    ],
+    "ghk-cu-100mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 79
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 75
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 69
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 59
+      }
+    ],
+    "ghk-cu-50mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 59
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 55
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 49
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 45
+      }
+    ],
+    "hexarelin-5mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 59
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 56
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 52
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 49
+      }
+    ],
+    "igf-1-lr3-1mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 99
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 89
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 79
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 69
+      }
+    ],
+    "ipamorelin-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 59
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 55
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 49
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 45
+      }
+    ],
+    "kisspeptin-10": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 69
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 65
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 59
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 55
+      }
+    ],
+    "kpv-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 79
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 75
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 68
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 59
+      }
+    ],
+    "melanotan-ii-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 49
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 45
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 39
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 35
+      }
+    ],
+    "mots-c-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 49
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 47
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 44
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 39
+      }
+    ],
+    "nad-1000mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 99
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 89
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 85
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 79
+      }
+    ],
+    "oxytocin-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 69
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 65
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 59
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 55
+      }
+    ],
+    "pe-22-28-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 65
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 63
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 61
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 59
+      }
+    ],
+    "pt-141-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 45
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 44
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 42
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 39
+      }
+    ],
+    "retatrutide-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 129
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 125
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 119
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 115
+      }
+    ],
+    "retatrutide-20mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 175
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 165
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 155
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 145
+      }
+    ],
+    "retatrutide-5mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 99
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 95
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 89
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 85
+      }
+    ],
+    "selank-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 59
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 55
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 49
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 45
+      }
+    ],
+    "semaglutide-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 85
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 82
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 79
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 76
+      }
+    ],
+    "semaglutide-20mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 185
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 179
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 175
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 169
+      }
+    ],
+    "semaglutide-5mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 49
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 46
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 43
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 39
+      }
+    ],
+    "semax-30mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 68
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 66
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 64
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 61
+      }
+    ],
+    "sermorelin-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 79
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 75
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 72
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 69
+      }
+    ],
+    "ss-31-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 59
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 57
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 53
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 49
+      }
+    ],
+    "tb-500-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 69
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 66
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 62
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 59
+      }
+    ],
+    "tesamorelin-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 70
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 68
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 65
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 61
+      }
+    ],
+    "tesofensine-500mcg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 99
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 95
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 91
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 85
+      }
+    ],
+    "thymosin-alpha-1-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 79
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 77
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 75
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 71
+      }
+    ],
+    "tirzepatide-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 75
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 73
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 71
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 69
+      }
+    ],
+    "tirzepatide-30mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 169
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 165
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 159
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 155
+      }
+    ],
+    "tirzepatide-5mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 69
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 65
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 61
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 55
+      }
+    ],
+    "wolverine-blend-bpc-157-10mg-tb500-10mg": [
+      {
+        "minQ": 1,
+        "maxQ": 5,
+        "price": 89
+      },
+      {
+        "minQ": 6,
+        "maxQ": 10,
+        "price": 86
+      },
+      {
+        "minQ": 11,
+        "maxQ": 25,
+        "price": 83
+      },
+      {
+        "minQ": 26,
+        "maxQ": 1000,
+        "price": 79
+      }
+    ]
+  },
+  "slugAliases": {
+    "aod-9604-5-mg": "aod-9604-5mg",
+    "dsip-10mg": "dsip-5mg",
+    "kisspeptin-5mg": "kisspeptin-10",
+    "mt-ii-melanotan-ii-10mg-1": "melanotan-ii-10mg",
+    "thymosin-alpha-1-ta1-10mg": "thymosin-alpha-1-10mg",
+    "cagrilintide-5mgsemaglutide-5mg": "cagrilintide-5mg-semaglutide-5mg",
+    "klow-bpc-157-10mgghk-cu-50mgtb500-10mg-kpv-10mg": "klow-bpc-157-10mg-ghk-cu-50mg-tb500-10mg-kpv-10mg",
+    "cjc-1295-no-dac-10mg": "cjc-1295-without-dac-5mg-ipa-5mg",
+    "nad": "nad-1000mg",
+    "retatrutide": "retatrutide-10mg",
+    "igf-1-des": "igf-1-lr3-1mg",
+    "mt-ii-melanotan-ii-10mg": "melanotan-ii-10mg",
+    "tirzepatide": "tirzepatide-10mg"
+  }
+}

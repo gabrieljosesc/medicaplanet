@@ -35,6 +35,7 @@ const PEPTIDES_DOCX = path.join(repoRoot, "Peptides description v2.docx");
 const SLUG_ORDER_OUT = path.join(webRoot, "src", "data", "peptides-slug-order.json");
 const OVERRIDES_PATH = path.join(webRoot, "data", "purechain-peptides-overrides.json");
 const WHOLESALE_PRICE_PATH = path.join(webRoot, "data", "peptide-wholesale-pricing.json");
+const VOLUME_PRICE_PATH = path.join(webRoot, "data", "peptide-volume-pricing.json");
 
 function slugify(s) {
   return String(s || "")
@@ -164,6 +165,39 @@ function resolveWholesalePrice(slug, wholesale) {
   return null;
 }
 
+function loadPeptideVolumePricing() {
+  if (!fs.existsSync(VOLUME_PRICE_PATH)) return { tiersBySlug: {}, slugAliases: {} };
+  try {
+    const raw = JSON.parse(fs.readFileSync(VOLUME_PRICE_PATH, "utf8"));
+    return {
+      tiersBySlug: raw.tiersBySlug && typeof raw.tiersBySlug === "object" ? raw.tiersBySlug : {},
+      slugAliases: raw.slugAliases && typeof raw.slugAliases === "object" ? raw.slugAliases : {},
+    };
+  } catch {
+    return { tiersBySlug: {}, slugAliases: {} };
+  }
+}
+
+function resolveVolumeTiers(slug, volume, title) {
+  const viaAlias = volume.slugAliases?.[slug];
+  const keysToTry = viaAlias ? [viaAlias, slug] : [slug];
+  for (const k of keysToTry) {
+    const t = volume.tiersBySlug?.[k];
+    if (Array.isArray(t) && t.length) return t;
+  }
+  if (title) {
+    const nk = String(title).toLowerCase().replace(/[®™]/g, "").trim();
+    const map = {
+      tirzepatide: "tirzepatide-10mg",
+      retatrutide: "retatrutide-10mg",
+      semaglutide: "semaglutide-10mg",
+    };
+    const key = map[nk];
+    if (key && volume.tiersBySlug?.[key]) return volume.tiersBySlug[key];
+  }
+  return null;
+}
+
 /** Fills $0 or missing image from overrides. List price for peptides can be set by `peptide-wholesale-pricing.json`. */
 function applyOverrides(row, overrides) {
   const o = overrides[row.slug];
@@ -195,6 +229,7 @@ async function main() {
   }
   const overrides = loadOverrides();
   const wholesalePricing = loadPeptideWholesalePricing();
+  const volumePricing = loadPeptideVolumePricing();
 
   /** @type {Array<{slug:string,title:string,description:string,price:number,imageUrl:string|null}>} */
   const rows = [];
@@ -241,8 +276,14 @@ async function main() {
         imageUrl,
       };
       applyOverrides(row, overrides);
-      const w = resolveWholesalePrice(row.slug, wholesalePricing);
-      if (w != null) row.price = w;
+      const tiers = resolveVolumeTiers(row.slug, volumePricing, row.title);
+      if (tiers?.length) {
+        row.priceTiers = tiers;
+        row.price = tiers[0].price;
+      } else {
+        const w = resolveWholesalePrice(row.slug, wholesalePricing);
+        if (w != null) row.price = w;
+      }
       if ((!row.price || row.price === 0) && !row.imageUrl) {
         stillNeedManual.push(item.title);
       }
@@ -268,8 +309,14 @@ async function main() {
         imageUrl: pickImageUrl(p),
       };
       applyOverrides(row, overrides);
-      const w = resolveWholesalePrice(row.slug, wholesalePricing);
-      if (w != null) row.price = w;
+      const tiers = resolveVolumeTiers(row.slug, volumePricing, row.title);
+      if (tiers?.length) {
+        row.priceTiers = tiers;
+        row.price = tiers[0].price;
+      } else {
+        const w = resolveWholesalePrice(row.slug, wholesalePricing);
+        if (w != null) row.price = w;
+      }
       rows.push(row);
     }
   }
@@ -294,7 +341,7 @@ async function main() {
 
   for (const row of rows) {
     if (!row.slug) continue;
-    const { slug, title, description, price, imageUrl } = row;
+    const { slug, title, description, price, imageUrl, priceTiers } = row;
     if (!imageUrl) {
       console.warn("No image for", slug);
     }
@@ -307,7 +354,7 @@ async function main() {
       variant_product_id: null,
       base_price: price,
       currency: "USD",
-      price_tiers: [],
+      price_tiers: Array.isArray(priceTiers) ? priceTiers : [],
       is_active: true,
       is_featured: false,
       rating: 4.5,

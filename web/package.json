@@ -9,6 +9,7 @@
     "lint": "eslint",
     "import:catalog": "node scripts/import-catalog.mjs",
     "import:purechain-peptides": "node scripts/import-purechain-peptides.mjs",
+    "import:peptide-volume-pricing": "node scripts/build-peptide-volume-pricing.mjs",
     "upload:product-images": "tsx scripts/upload-product-images.ts",
     "audit:product-images": "tsx scripts/audit-product-images.ts"
   },
