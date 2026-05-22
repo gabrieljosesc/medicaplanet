@@ -111,6 +111,7 @@ const CATALOG_SLUG_ALIASES = {
   "cjc-1295-no-dac-10mg": "cjc-1295-without-dac-5mg-ipa-5mg",
   "dsip-10mg": "dsip-5mg",
   "kisspeptin-5mg": "kisspeptin-10",
+  "kisspeptin-10mg": "kisspeptin-10",
   "mt-ii-melanotan-ii-10mg": "melanotan-ii-10mg",
   "mt-ii-melanotan-ii-10mg-1": "melanotan-ii-10mg",
   "thymosin-alpha-1-ta1-10mg": "thymosin-alpha-1-10mg",
@@ -281,7 +282,12 @@ async function main() {
   await applyToSupabase(out);
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+const isMain =
+  process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
+
+if (isMain) {
+  main().catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
+}

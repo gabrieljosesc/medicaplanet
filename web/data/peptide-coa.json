@@ -1,9 +1,20 @@
 {
-  "_readme": "Certificate of Analysis PDFs under public/COA. Keys are product slugs (peptides category only). Labels appear as pill buttons on the product page.",
+  "_readme": "Certificate of Analysis PDFs under public/COA. Keys are product slugs (peptides category only).",
   "slugAliases": {
-    "mt-ii-melanotan-ii-10mg-1": "melanotan-ii-10mg",
+    "aod-9604-5-mg": "aod-9604-5mg",
+    "dsip-10mg": "dsip-5mg",
+    "kisspeptin-5mg": "kisspeptin-10",
+    "kisspeptin-10mg": "kisspeptin-10",
+    "cjc-1295-no-dac-10mg": "cjc-1295-without-dac-5mg-ipa-5mg",
+    "nad": "nad-1000mg",
+    "retatrutide": "retatrutide-10mg",
+    "tirzepatide": "tirzepatide-10mg",
+    "cagrilintide-5mgsemaglutide-5mg": "cagrilintide-5mg-semaglutide-5mg",
     "klow-bpc-157-10mgghk-cu-50mgtb500-10mg-kpv-10mg": "klow-bpc-157-10mg-ghk-cu-50mg-tb500-10mg-kpv-10mg",
-    "kisspeptin-5mg": "kisspeptin-10mg"
+    "mt-ii-melanotan-ii-10mg-1": "melanotan-ii-10mg",
+    "mt-ii-melanotan-ii-10mg": "melanotan-ii-10mg",
+    "igf-1-des": "igf-1-lr3-1mg",
+    "thymosin-alpha-1-ta1-10mg": "thymosin-alpha-1-10mg"
   },
   "entries": {
     "glow-bpc-157-10mg-ghk-cu-50mg-tb500-10mg": [
@@ -27,10 +38,7 @@
     "bpc-157-20mg": [
       { "label": "BPC-157 20mg", "file": "12874_NOVERA_COMPOUNDS_LLC_BPC-157_20mg.pdf" }
     ],
-    "bpc-157-500mcg": [
-      { "label": "BPC-157 500mcg", "file": "12875_NOVERA_COMPOUNDS_LLC_BPC-157_500mcg.pdf" }
-    ],
-    "aod-9604-5-mg": [
+    "aod-9604-5mg": [
       { "label": "AOD-9604 5mg (Novera)", "file": "12642_NOVERA_COMPOUNDS_LLC_AOD_9604_5mg.pdf" },
       { "label": "AOD-9604 5mg", "file": "Endotoxin_2368_NC_AOD9604_5mg.pdf" }
     ],
@@ -38,21 +46,20 @@
       { "label": "Cagrilintide 10mg", "file": "13013_NOVERA_COMPOUNDS_LLC_Cagrilintide_10mg.pdf" },
       { "label": "Cagrilintide", "file": "Endotoxin_2443_NC_Cagrilintide.pdf" }
     ],
-    "cagrilintide-5mgsemaglutide-5mg": [
-      { "label": "Semaglutide 5mg", "file": "12222_NOVERA_COMPOUNDS_LLC_Semaglutide_5mg.pdf" },
-      { "label": "Semaglutide 5mg (alt)", "file": "Endotoxin_2260_NC_SEMAGLUTIDE_5mg.pdf" },
-      { "label": "Cagrilintide", "file": "Endotoxin_2443_NC_Cagrilintide.pdf" }
+    "cagrilintide-5mg-semaglutide-5mg": [
+      { "label": "Semaglutide 5mg (Novera)", "file": "12222_NOVERA_COMPOUNDS_LLC_Semaglutide_5mg.pdf" },
+      { "label": "Semaglutide 5mg", "file": "Endotoxin_2260_NC_SEMAGLUTIDE_5mg.pdf" }
     ],
     "cjc-1295-with-dac-10mg": [
       { "label": "CJC-1295 with DAC", "file": "12858_NOVERA_COMPOUNDS_LLC_CJCwDAC.pdf" },
       { "label": "CJC-1295 w/ DAC", "file": "Endotoxin_2429_NC_CJC-1295wDAC_CDC10N020525.pdf" }
     ],
-    "cjc-1295-no-dac-10mg": [
+    "cjc-1295-without-dac-5mg-ipa-5mg": [
       { "label": "CJC + Ipamorelin blend (Novera A)", "file": "12714_NOVERA_COMPOUNDS_LLC_Ipamorelin_5mg_CJCnoDAC_5mg.pdf" },
       { "label": "CJC + Ipamorelin blend (Novera B)", "file": "12553_NOVERA_COMPOUNDS_LLC_Ipamorelin_5mg_CJCnoDAC_5mg.pdf" },
       { "label": "CJC + Ipamorelin", "file": "Endotoxin_2349_NC_CJC_5mg_Ipamorelin_5mg.pdf" }
     ],
-    "dsip-10mg": [
+    "dsip-5mg": [
       { "label": "DSIP 5mg", "file": "12719_NOVERA_COMPOUNDS_LLC_DSIP_5mg.pdf" },
       { "label": "DSIP", "file": "Endotoxin_2388_NC_DSIP_395336.pdf" }
     ],
@@ -62,10 +69,6 @@
       { "label": "Epithalon (Lot B)", "file": "Endotoxin_2356_NC_Epithalon_10mg_395228.pdf" },
       { "label": "Epithalon (Lot C)", "file": "Endotoxin_2357_NC_Epithalon_10mg_395529.pdf" },
       { "label": "Epithalon (Lot D)", "file": "Endotoxin_2432_NC_Epithalon_EPI50A111425.pdf" }
-    ],
-    "foxo4-dri": [
-      { "label": "FOXO4-DRI (Novera A)", "file": "12785_NOVERA_COMPOUNDS_LLC_FOX04-DRI_10mg.pdf" },
-      { "label": "FOXO4-DRI (Novera B)", "file": "12786_NOVERA_COMPOUNDS_LLC_FOX04-DRI_10mg.pdf" }
     ],
     "ghk-cu-100mg": [
       { "label": "GHK-Cu 100mg", "file": "12837_NOVERA_COMPOUNDS_LLC_GHK_Cu_100mg.pdf" },
@@ -80,7 +83,7 @@
       { "label": "Ipamorelin 10mg", "file": "12716_NOVERA_COMPOUNDS_LLC_Ipamorelin_10mg.pdf" },
       { "label": "Ipamorelin 10mg (alt)", "file": "Endotoxin_2261_NC_Ipamorelin_10mg.pdf" }
     ],
-    "kisspeptin-10mg": [
+    "kisspeptin-10": [
       { "label": "Kisspeptin 10mg (Novera A)", "file": "12746_NOVERA_COMPOUNDS_LLC_Kisspeptin_10mg_395490.pdf" },
       { "label": "Kisspeptin 10mg (Novera B)", "file": "12747_NOVERA_COMPOUNDS_LLC_Kisspeptin_10mg_395401.pdf" },
       { "label": "Kisspeptin-10 (Lot A)", "file": "Endotoxin_2391_NC_Kisspeptin-10_395490.pdf" },
@@ -90,11 +93,7 @@
       { "label": "Melanotan II (Novera A)", "file": "12634_NOVERA_COMPOUNDS_LLC_MelanotanII_10mg.pdf" },
       { "label": "Melanotan II (Novera B)", "file": "12635_NOVERA_COMPOUNDS_LLC_MelanotanII_10mg.pdf" },
       { "label": "Melanotan II (Novera C)", "file": "12636_NOVERA_COMPOUNDS_LLC_MelanotanII_10mg.pdf" },
-      { "label": "Melanotan II (Novera D)", "file": "12637_NOVERA_COMPOUNDS_LLC_MelanotanII_10mg.pdf" },
-      { "label": "Melanotan II (Novera E)", "file": "12638_NOVERA_COMPOUNDS_LLC_MelanotanII_10mg.pdf" },
       { "label": "Melanotan II (Lot A)", "file": "Endotoxin_2416_NC_MelanotanII_395219.pdf" },
-      { "label": "Melanotan II (Lot B)", "file": "Endotoxin_2418_NC_MelanotanII_395517.pdf" },
-      { "label": "Melanotan II (Lot C)", "file": "Endotoxin_2419_NC_MelanotanII_395474.pdf" },
       { "label": "Melanotan II (Lot D)", "file": "Endotoxin_2417_NC_MelanotanII_395701.pdf" }
     ],
     "mots-c-10mg": [
@@ -104,33 +103,30 @@
       { "label": "PT-141 10mg (Novera)", "file": "12629_NOVERA_COMPOUNDS_LLC_PT-141_10mg.pdf" },
       { "label": "PT-141 10mg", "file": "Endotoxin_2367_NC_PT-141_10mg.pdf" }
     ],
-    "retatrutide": [
+    "retatrutide-5mg": [
       { "label": "Retatrutide 5mg (Novera)", "file": "Endotoxin_2360_NC_Retatrutide_5mg_395313.pdf" },
-      { "label": "Retatrutide 5mg (alt)", "file": "Endotoxin_2361_NC_Retatrutide_5mg_395348.pdf" },
+      { "label": "Retatrutide 5mg (alt)", "file": "Endotoxin_2361_NC_Retatrutide_5mg_395348.pdf" }
+    ],
+    "retatrutide-10mg": [
       { "label": "Retatrutide 10mg (Novera)", "file": "12532_NOVERA_COMPOUNDS_LLC_Retatrutide_10mg.pdf" },
       { "label": "Retatrutide 10mg (alt)", "file": "Endotoxin_2336_NC_Retatrutide_10mg.pdf" },
-      { "label": "Retatrutide 10mg (alt B)", "file": "Endotoxin_2359_NC_Retatrutide_10mg.pdf" },
+      { "label": "Retatrutide 10mg (alt B)", "file": "Endotoxin_2359_NC_Retatrutide_10mg.pdf" }
+    ],
+    "retatrutide-20mg": [
       { "label": "Retatrutide 20mg (Novera)", "file": "12586_NOVERA_COMPOUNDS_LLC_Retatrutide_20mg.pdf" },
-      { "label": "Retatrutide 20mg", "file": "Endotoxin_2338_NC_Retatrutide_20mg.pdf" },
-      { "label": "Retatrutide 60mg", "file": "13004_NOVERA_COMPOUNDS_LLC_Retatrutide_60mg.pdf" },
-      { "label": "Retatrutide (renew lot)", "file": "Endotoxin_2444_NC_Retatrutide (RENEW).pdf" }
+      { "label": "Retatrutide 20mg", "file": "Endotoxin_2338_NC_Retatrutide_20mg.pdf" }
     ],
     "ss-31-10mg": [
       { "label": "SS-31 (Lot A)", "file": "Endotoxin_2376_NC_SS-31_395405.pdf" },
       { "label": "SS-31 (Lot B)", "file": "Endotoxin_2377_NC_SS-31_395226.pdf" }
     ],
-    "tesamorelin-10mg": [
-      { "label": "Tesamorelin + Ipamorelin (Novera)", "file": "12928_NOVERA_COMPOUNDS_LLC_Tesamorelin_Ipamorelin.pdf" },
-      { "label": "Tesamorelin + Ipamorelin", "file": "Endotoxin_2445_NC_Tesamorelin_Ipamorelin.pdf" }
-    ],
     "tesofensine-500mcg": [
       { "label": "Tesofensine (Novera)", "file": "12901_NOVERA_COMPOUNDS_LLC_Tesofensine.pdf" },
       { "label": "Tesofensine", "file": "Endotoxin_2446_NC_Tesofensine_500mcg.pdf" }
     ],
-    "thymosin-alpha-1-ta1-10mg": [
+    "thymosin-alpha-1-10mg": [
       { "label": "Thymosin α-1 (Novera A)", "file": "12601_NOVERA_COMPOUNDS_LLC_Thymosin_Alpha-1_10mg.pdf" },
       { "label": "Thymosin α-1 (Novera B)", "file": "12624_NOVERA_COMPOUNDS_LLC_Thymosin_Alpha-1_10mg.pdf" },
-      { "label": "Thymosin α-1 (Novera C)", "file": "12625_NOVERA_COMPOUNDS_LLC_Thymosin_Alpha-1_10mg.pdf" },
       { "label": "Thymosin α-1 (Lot A)", "file": "Endotoxin_2365_NC_Thymosin_Alpha-1_10mg_395295.pdf" },
       { "label": "Thymosin α-1 (Lot B)", "file": "Endotoxin_2366_NC_Thymosin_Alpha-1_10mg_395318.pdf" }
     ],
@@ -138,11 +134,15 @@
       { "label": "Tirzepatide 10mg (Novera)", "file": "12563_NOVERA_COMPOUNDS_LLC_Tirzepatide_10mg.pdf" },
       { "label": "Tirzepatide 10mg", "file": "Endotoxin_2353_NC_Tirzepatide_10mg.pdf" }
     ],
-    "tirzepatide-15mg": [
+    "tirzepatide-5mg": [
+      { "label": "Tirzepatide 10mg (Novera)", "file": "12563_NOVERA_COMPOUNDS_LLC_Tirzepatide_10mg.pdf" },
+      { "label": "Tirzepatide 10mg", "file": "Endotoxin_2353_NC_Tirzepatide_10mg.pdf" }
+    ],
+    "tirzepatide-30mg": [
       { "label": "Tirzepatide 15mg (Novera)", "file": "12564_NOVERA_COMPOUNDS_LLC_Tirzepatide_15mg.pdf" },
       { "label": "Tirzepatide 15mg", "file": "Endotoxin_2354_NC_Tirzepatide_15mg.pdf" }
     ],
-    "igf-1-des": [
+    "igf-1-lr3-1mg": [
       { "label": "IGF-1 LR3 (Novera)", "file": "12863_NOVERA_COMPOUNDS_LLC_IGF-1_LR3.pdf" },
       { "label": "IGF-1 LR3", "file": "Endotoxin_2430_NC_IGF-1_LR3_IGFR12172025-J.pdf" }
     ],
@@ -150,6 +150,14 @@
       { "label": "KPV", "file": "12845_NOVERA_COMPOUNDS_LLC_KPV.pdf" }
     ],
     "semaglutide-5mg": [
+      { "label": "Semaglutide 5mg (Novera)", "file": "12222_NOVERA_COMPOUNDS_LLC_Semaglutide_5mg.pdf" },
+      { "label": "Semaglutide 5mg", "file": "Endotoxin_2260_NC_SEMAGLUTIDE_5mg.pdf" }
+    ],
+    "semaglutide-10mg": [
+      { "label": "Semaglutide 5mg (Novera)", "file": "12222_NOVERA_COMPOUNDS_LLC_Semaglutide_5mg.pdf" },
+      { "label": "Semaglutide 5mg", "file": "Endotoxin_2260_NC_SEMAGLUTIDE_5mg.pdf" }
+    ],
+    "semaglutide-20mg": [
       { "label": "Semaglutide 5mg (Novera)", "file": "12222_NOVERA_COMPOUNDS_LLC_Semaglutide_5mg.pdf" },
       { "label": "Semaglutide 5mg", "file": "Endotoxin_2260_NC_SEMAGLUTIDE_5mg.pdf" }
     ]

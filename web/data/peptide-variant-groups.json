@@ -1,0 +1,29 @@
+{
+  "_readme": "Products sharing a dose selector on the product page. Keys are group ids; values list dose variants in display order.",
+  "groups": {
+    "retatrutide": {
+      "label": "Retatrutide",
+      "variants": [
+        { "slug": "retatrutide-5mg", "label": "5mg" },
+        { "slug": "retatrutide-10mg", "label": "10mg" },
+        { "slug": "retatrutide-20mg", "label": "20mg" }
+      ]
+    },
+    "semaglutide": {
+      "label": "Semaglutide",
+      "variants": [
+        { "slug": "semaglutide-5mg", "label": "5mg" },
+        { "slug": "semaglutide-10mg", "label": "10mg" },
+        { "slug": "semaglutide-20mg", "label": "20mg" }
+      ]
+    },
+    "tirzepatide": {
+      "label": "Tirzepatide",
+      "variants": [
+        { "slug": "tirzepatide-5mg", "label": "5mg" },
+        { "slug": "tirzepatide-10mg", "label": "10mg" },
+        { "slug": "tirzepatide-30mg", "label": "30mg" }
+      ]
+    }
+  }
+}

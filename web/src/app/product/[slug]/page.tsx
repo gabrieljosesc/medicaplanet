@@ -3,7 +3,9 @@ import { notFound } from "next/navigation";
 import { PeptideCoaSection } from "@/components/peptide-coa-section";
 import { ProductBuyBox } from "@/components/product-buy-box";
 import { ProductImageGallery } from "@/components/product-image-gallery";
+import { PeptideDoseSelector } from "@/components/peptide-dose-selector";
 import { getPeptideCoaLinks } from "@/lib/peptide-coa";
+import { getPeptideVariantGroup } from "@/lib/peptide-variants";
 import { createClient } from "@/lib/supabase/server";
 import { nextImageUnoptimized, resolveProductMainImage } from "@/lib/product-image";
 import { withStorageImageTransform } from "@/lib/storage-image";
@@ -56,6 +58,7 @@ export default async function ProductPage({ params }: Props) {
     : categoryRel?.slug ?? null;
   const isPeptideCategory = categorySlug === "peptides";
   const coaLinks = isPeptideCategory ? getPeptideCoaLinks(product.slug) : [];
+  const doseGroup = isPeptideCategory ? getPeptideVariantGroup(product.slug) : null;
 
   return (
     <div className="grid gap-10 lg:grid-cols-2">
@@ -78,6 +81,7 @@ export default async function ProductPage({ params }: Props) {
           {(product.categories as { name?: string } | null)?.name ?? "Catalog"}
         </p>
         <h1 className="mt-2 text-2xl font-semibold text-zinc-900">{product.title}</h1>
+        {doseGroup ? <PeptideDoseSelector group={doseGroup} currentSlug={product.slug} /> : null}
         <p className="mt-2 text-sm text-zinc-600">
           Rated {Number(product.rating).toFixed(2)} / 5 · {product.review_count} reviews
         </p>
