@@ -200,8 +200,8 @@ const PEPTIDE_CATALOG = [
   {
     slug: "retatrutide-20mg",
     title: "Retatrutide 20mg",
-    imageFile: "Retatrutide_20mg.png",
-    imageUrl: "https://purechainresearch.com/wp-content/uploads/2025/12/GLP-1-R.png",
+    imageFile: "Retatrutide_5mg.png",
+    imageUrl: "https://purechainresearch.com/wp-content/uploads/2025/12/Retatrutide.png",
   },
   {
     slug: "selank-10mg",
