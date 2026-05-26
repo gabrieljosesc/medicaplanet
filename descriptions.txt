@@ -1,0 +1,189 @@
+================================================================================
+MEDICAPLANET - PEPTIDE PRODUCTS - DATA FROM PURECHAINRESEARCH.COM
+================================================================================
+
+Total products: 29
+Found on purechain: 26
+Not found (need to source elsewhere): 3
+
+Run download_images.ps1 in PowerShell to fetch all images into the images/ folder.
+
+================================================================================
+
+
+--- CATEGORY A: MISSING ITEMS (need to be ADDED to medicaplanet) ---
+
+[A-1] Glow BPC 157 10mg + GHK-CU 50mg + TB500 10mg
+   Image file:  images/Glow_BPC_157_10mg_+_GHK-CU_50mg_+_TB500_10mg.png
+   Source URL:  https://purechainresearch.com/product/glow-ghk-cu-50mg-bpc-157-10mg-tb500-10mg/
+   Description: "GLOW GHK-CU (50mg) / BPC-157 (10mg) / TB500 (10mg)" (70mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Exact match on purechain. Note: dose on the page may differ; verify before publishing.
+
+[A-2] Klow BPC 157 10mg + GHK-CU 50mg + TB500 10mg + KPV 10mg
+   Image file:  images/Klow_BPC_157_10mg_+_GHK-CU_50mg_+_TB500_10mg_+_KPV_10mg.png
+   Source URL:  https://purechainresearch.com/product/klow-bpc-157-10mgghk-cu-50mgtb500-10mg-kpv-10mg/
+   Description: "“Klow” BPC 157 10mg+GHK-CU 50mg+TB500 10mg+ KPV 10mg" (80mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Exact match on purechain.
+
+[A-3] 2X Blend Tesamorelin 10mg + Ipamorelin 2mg
+   Image file:  (none - not found on purechain)
+   Description: (not available on purechain)
+   Note:        NOT FOUND on purechainresearch.com (specific blend doesn't exist). You could use the Tesamorelin (10mg) image at https://purechainresearch.com/wp-content/uploads/2025/12/Tesamorelin-2-300x300.png if you want a close visual.
+
+[A-4] ARA-290 14mg
+   Image file:  images/ARA-290_14mg.png
+   Source URL:  https://purechainresearch.com/product/ara-290-10-mg/
+   Description: "ARA-290 10 mg" (10 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Closest dose: purechain has 10mg (you want 14mg). Image is generic ARA-290.
+
+[A-5] BPC 5mg + TB 5mg
+   Image file:  images/BPC_5mg_+_TB_5mg.png
+   Source URL:  https://purechainresearch.com/product/bpc-5mg-tb-5mg/
+   Description: "BPC 5mg + TB 5mg" (10mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Exact match.
+
+[A-6] BPC-157 20mg
+   Image file:  images/BPC-157_20mg.png
+   Source URL:  https://purechainresearch.com/product/bpc-157-20mg/
+   Description: "BPC-157 (20mg)" (20 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Exact match. Image is generic BPC-157 (used for 5/10/15/20mg variants).
+
+[A-7] Cagrilintide 10mg
+   Image file:  images/Cagrilintide_10mg.png
+   Source URL:  https://purechainresearch.com/product/cagrilintide-10mg/
+   Description: "Cagrilintide (10mg)" (10 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Exact match.
+
+[A-8] CJC-1295 With DAC 10mg
+   Image file:  images/CJC-1295_With_DAC_10mg.png
+   Source URL:  https://purechainresearch.com/product/cjc-1295-with-dac-5-mg/
+   Description: "CJC-1295 With DAC 5 mg" (5 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Closest dose: purechain only has 5mg (you want 10mg). Image is generic.
+
+[A-9] CJC-1295 without DAC 5mg + IPA 5mg
+   Image file:  images/CJC-1295_without_DAC_5mg_+_IPA_5mg.png
+   Source URL:  https://purechainresearch.com/product/cjc-1295-no-dac-ipamorelin-5-mg-5-mg/
+   Description: "CJC-1295 No DAC / Ipamorelin 5 mg / 5 mg" (10 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Exact match (purechain spelling differs slightly).
+
+[A-10] GHK-Cu 50mg
+   Image file:  images/GHK-Cu_50mg.png
+   Source URL:  https://purechainresearch.com/product/ghk-cu-50mg/
+   Description: "GHK-Cu (50mg)" (50 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Exact match.
+
+[A-11] Hexarelin 5mg
+   Image file:  images/Hexarelin_5mg.png
+   Source URL:  https://purechainresearch.com/product/hexarelin-5mg/
+   Description: "Hexarelin (5mg)" (5 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Exact match.
+
+[A-12] KPV 10mg
+   Image file:  (none - not found on purechain)
+   Description: (not available on purechain)
+   Note:        NOT FOUND as standalone on purechainresearch.com (only as part of Klow bundle). Source elsewhere.
+
+[A-13] MOTS-c 10mg
+   Image file:  images/MOTS-c_10mg.png
+   Source URL:  https://purechainresearch.com/product/mots-c-10mg/
+   Description: "MOTs-C (10mg)" (10 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Exact match.
+
+[A-14] Oxytocin 10mg
+   Image file:  images/Oxytocin_10mg.png
+   Source URL:  https://purechainresearch.com/product/oxytocin-10mg/
+   Description: "Oxytocin (10mg)" (10 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Exact match.
+
+[A-15] PE-22-28 10mg
+   Image file:  images/PE-22-28_10mg.png
+   Source URL:  https://purechainresearch.com/product/pe-22-28-10mg/
+   Description: "PE-22-28 (10mg)" (10 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Exact match.
+
+[A-16] Retatrutide 5mg
+   Image file:  images/Retatrutide_5mg.png
+   Source URL:  https://purechainresearch.com/product/retatrutide/
+   Description: "Retatrutide" (5 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Purechain has 2 'Retatrutide' pages without dose labels. Using $101 version for 5mg.
+
+[A-17] Retatrutide 20mg
+   Image file:  images/Retatrutide_20mg.png
+   Source URL:  https://purechainresearch.com/product/glp-1-r-3/
+   Description: "GLP-1 R (24 mg)" (24 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Closest dose: purechain has GLP-1 R 24mg (you want 20mg). GLP-1 R = Retatrutide on purechain.
+
+[A-18] Semax 30mg
+   Image file:  images/Semax_30mg.png
+   Source URL:  https://purechainresearch.com/product/semax-30mg/
+   Description: "Semax (30mg)" (30 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Exact match.
+
+[A-19] Sermorelin 10mg
+   Image file:  images/Sermorelin_10mg.png
+   Source URL:  https://purechainresearch.com/product/sermorelin-10mg/
+   Description: "Sermorelin (10mg)" (10 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Exact match.
+
+[A-20] Tesofensine 500mcg
+   Image file:  (none - not found on purechain)
+   Description: (not available on purechain)
+   Note:        NOT FOUND on purechainresearch.com. Source elsewhere.
+
+[A-21] Tirzepatide 5mg
+   Image file:  images/Tirzepatide_5mg.png
+   Source URL:  https://purechainresearch.com/product/glp-1-t/
+   Description: "GLP-1 T (5 mg)" (5 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        GLP-1 T = Tirzepatide on purechain. Exact dose match.
+
+[A-22] Tirzepatide 30mg
+   Image file:  images/Tirzepatide_30mg.png
+   Source URL:  https://purechainresearch.com/product/glp-1-t-4/
+   Description: "GLP-1 T (30 mg)" (30 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        GLP-1 T = Tirzepatide on purechain. Exact dose match.
+
+
+--- CATEGORY B: WRONG PIC ITEMS (replace image on existing medicaplanet product) ---
+
+[B-1] Cagrilintide 5mg + Semaglutide 5mg
+   Image file:  images/Cagrilintide_5mg_+_Semaglutide_5mg.png
+   Source URL:  https://purechainresearch.com/product/cagrilintide-5mgsemaglutide-5mg/
+   Description: "Cagrilintide 5mg+Semaglutide 5mg" (10mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Exact match - has dedicated combo image.
+
+[B-2] Melanotan II 10mg
+   Image file:  images/Melanotan_II_10mg.png
+   Source URL:  https://purechainresearch.com/product/mt-ii-melanotan-ii-10mg/
+   Description: "MT-II (Melanotan II) (10mg)" (10 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        Exact match. Note purechain has typo in filename (Melatonan instead of Melanotan).
+
+[B-3] Semaglutide 5mg
+   Image file:  images/Semaglutide_5mg.png
+   Source URL:  https://purechainresearch.com/product/glp-1-s-2/
+   Description: "GLP-1 S (5 mg)" (5 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        GLP-1 S = Semaglutide on purechain. Exact dose match.
+
+[B-4] Semaglutide 10mg
+   Image file:  images/Semaglutide_10mg.png
+   Source URL:  https://purechainresearch.com/product/glp-1-s-3/
+   Description: "GLP-1 S (10 mg)" (10 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        GLP-1 S = Semaglutide on purechain. Exact dose match.
+
+[B-5] Semaglutide 20mg
+   Image file:  images/Semaglutide_20mg.png
+   Source URL:  https://purechainresearch.com/product/glp-1-s-4/
+   Description: "GLP-1 S (20 mg)" (20 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        GLP-1 S = Semaglutide on purechain. Exact dose match.
+
+[B-6] TB-500 10mg
+   Image file:  images/TB-500_10mg.png
+   Source URL:  https://purechainresearch.com/product/thymosin-beta-4-tb500-10mg/
+   Description: "Thymosin Beta 4 (TB500) (10mg)" (10 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        TB-500 = Thymosin Beta 4 on purechain. Exact dose match.
+
+[B-7] Tirzepatide 10mg
+   Image file:  images/Tirzepatide_10mg.png
+   Source URL:  https://purechainresearch.com/product/glp-1-t-2/
+   Description: "GLP-1 T (10 mg)" (10 mg) is a research-grade peptide supplied in lyophilized powder form for laboratory and investigational use.
+   Note:        GLP-1 T = Tirzepatide. (Sheet noted pic was missing - now provided.)
+

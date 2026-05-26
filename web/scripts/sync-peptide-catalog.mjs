@@ -45,7 +45,7 @@ const PEPTIDE_CATALOG = [
   {
     slug: "2x-blend-tesamorelin-10mg-ipamorelin-2mg",
     title: "2X Blend: Tesamorelin 10mg + Ipamorelin 2mg",
-    imageFile: "Tesamorelin_10mg.png",
+    imageFile: "Tesamorelin-10mg-Ipamorelin-2mg-12mg-Front.png",
     imageUrl: "https://purechainresearch.com/wp-content/uploads/2025/12/Tesamorelin-2-300x300.png",
   },
   {
@@ -138,6 +138,7 @@ const PEPTIDE_CATALOG = [
   {
     slug: "ipamorelin-10mg",
     title: "Ipamorelin 10mg",
+    imageFile: "Ipamorelin.png",
     imageUrl: "https://purechainresearch.com/wp-content/uploads/2025/12/Ipamorelin.png",
   },
   {

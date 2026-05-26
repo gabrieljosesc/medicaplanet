@@ -25,6 +25,10 @@
     "klow-bpc-157-10mg-ghk-cu-50mg-tb500-10mg-kpv-10mg": [
       { "label": "KLOW blend", "file": "Endotoxin_2352_NC_KLOW.pdf" }
     ],
+    "2x-blend-tesamorelin-10mg-ipamorelin-2mg": [
+      { "label": "Tesamorelin + Ipamorelin (Novera)", "file": "12928_NOVERA_COMPOUNDS_LLC_Tesamorelin_Ipamorelin.pdf" },
+      { "label": "Tesamorelin + Ipamorelin", "file": "Endotoxin_2445_NC_Tesamorelin_Ipamorelin.pdf" }
+    ],
     "wolverine-blend-bpc-157-10mg-tb500-10mg": [
       { "label": "Wolverine (Novera)", "file": "12879_NOVERA_COMPOUNDS_LLC_Wolverine_BPC-157_TB500.pdf" },
       { "label": "Wolverine blend", "file": "Endotoxin_2437_NC_Wolverine_BPCTB410.pdf" }
@@ -47,6 +51,8 @@
       { "label": "Cagrilintide", "file": "Endotoxin_2443_NC_Cagrilintide.pdf" }
     ],
     "cagrilintide-5mg-semaglutide-5mg": [
+      { "label": "Cagrilintide (Novera)", "file": "13013_NOVERA_COMPOUNDS_LLC_Cagrilintide_10mg.pdf" },
+      { "label": "Cagrilintide", "file": "Endotoxin_2443_NC_Cagrilintide.pdf" },
       { "label": "Semaglutide 5mg (Novera)", "file": "12222_NOVERA_COMPOUNDS_LLC_Semaglutide_5mg.pdf" },
       { "label": "Semaglutide 5mg", "file": "Endotoxin_2260_NC_SEMAGLUTIDE_5mg.pdf" }
     ],
@@ -134,14 +140,8 @@
       { "label": "Tirzepatide 10mg (Novera)", "file": "12563_NOVERA_COMPOUNDS_LLC_Tirzepatide_10mg.pdf" },
       { "label": "Tirzepatide 10mg", "file": "Endotoxin_2353_NC_Tirzepatide_10mg.pdf" }
     ],
-    "tirzepatide-5mg": [
-      { "label": "Tirzepatide 10mg (Novera)", "file": "12563_NOVERA_COMPOUNDS_LLC_Tirzepatide_10mg.pdf" },
-      { "label": "Tirzepatide 10mg", "file": "Endotoxin_2353_NC_Tirzepatide_10mg.pdf" }
-    ],
-    "tirzepatide-30mg": [
-      { "label": "Tirzepatide 15mg (Novera)", "file": "12564_NOVERA_COMPOUNDS_LLC_Tirzepatide_15mg.pdf" },
-      { "label": "Tirzepatide 15mg", "file": "Endotoxin_2354_NC_Tirzepatide_15mg.pdf" }
-    ],
+    "tirzepatide-5mg": [],
+    "tirzepatide-30mg": [],
     "igf-1-lr3-1mg": [
       { "label": "IGF-1 LR3 (Novera)", "file": "12863_NOVERA_COMPOUNDS_LLC_IGF-1_LR3.pdf" },
       { "label": "IGF-1 LR3", "file": "Endotoxin_2430_NC_IGF-1_LR3_IGFR12172025-J.pdf" }
@@ -153,13 +153,7 @@
       { "label": "Semaglutide 5mg (Novera)", "file": "12222_NOVERA_COMPOUNDS_LLC_Semaglutide_5mg.pdf" },
       { "label": "Semaglutide 5mg", "file": "Endotoxin_2260_NC_SEMAGLUTIDE_5mg.pdf" }
     ],
-    "semaglutide-10mg": [
-      { "label": "Semaglutide 5mg (Novera)", "file": "12222_NOVERA_COMPOUNDS_LLC_Semaglutide_5mg.pdf" },
-      { "label": "Semaglutide 5mg", "file": "Endotoxin_2260_NC_SEMAGLUTIDE_5mg.pdf" }
-    ],
-    "semaglutide-20mg": [
-      { "label": "Semaglutide 5mg (Novera)", "file": "12222_NOVERA_COMPOUNDS_LLC_Semaglutide_5mg.pdf" },
-      { "label": "Semaglutide 5mg", "file": "Endotoxin_2260_NC_SEMAGLUTIDE_5mg.pdf" }
-    ]
+    "semaglutide-10mg": [],
+    "semaglutide-20mg": []
   }
 }
