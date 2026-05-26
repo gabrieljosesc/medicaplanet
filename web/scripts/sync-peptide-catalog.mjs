@@ -395,13 +395,17 @@ function loadVolumeData() {
 }
 
 function copyLocalImage(slug, imageFile) {
-  if (!imageFile) return null;
-  const src = path.join(IMAGES_SRC, imageFile);
-  if (!fs.existsSync(src)) return null;
   const dest = path.join(IMAGES_DST, `${slug}.png`);
-  fs.mkdirSync(IMAGES_DST, { recursive: true });
-  fs.copyFileSync(src, dest);
-  return `/images/${slug}.png`;
+  if (imageFile) {
+    const src = path.join(IMAGES_SRC, imageFile);
+    if (fs.existsSync(src)) {
+      fs.mkdirSync(IMAGES_DST, { recursive: true });
+      fs.copyFileSync(src, dest);
+      return `/images/${slug}.png`;
+    }
+  }
+  if (fs.existsSync(dest)) return `/images/${slug}.png`;
+  return null;
 }
 
 async function main() {
