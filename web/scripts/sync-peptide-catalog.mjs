@@ -256,11 +256,6 @@ const PEPTIDE_CATALOG = [
     imageUrl: "https://purechainresearch.com/wp-content/uploads/2025/12/Tesamorelin-2-300x300.png",
   },
   {
-    slug: "tesofensine-500mcg",
-    title: "Tesofensine 500mcg",
-    imageUrl: "https://purechainresearch.com/wp-content/uploads/2025/12/Tesofensine.png",
-  },
-  {
     slug: "thymosin-alpha-1-10mg",
     title: "Thymosin Alpha-1 10mg",
     imageUrl: "https://purechainresearch.com/wp-content/uploads/2025/12/Thymosin-Alpha-1.png",
@@ -309,6 +304,7 @@ const DEACTIVATE_SLUGS = new Set([
   "mgf-igf-1ec-5mg",
   "n-acetyl-epitalon-amidate",
   "survodutide-6mg",
+  "tesofensine-500mcg",
   "cortagen",
   "livagen",
   "mt-ii-melanotan-ii-10mg",

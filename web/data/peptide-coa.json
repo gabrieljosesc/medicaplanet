@@ -126,10 +126,7 @@
       { "label": "SS-31 (Lot A)", "file": "Endotoxin_2376_NC_SS-31_395405.pdf" },
       { "label": "SS-31 (Lot B)", "file": "Endotoxin_2377_NC_SS-31_395226.pdf" }
     ],
-    "tesofensine-500mcg": [
-      { "label": "Tesofensine (Novera)", "file": "12901_NOVERA_COMPOUNDS_LLC_Tesofensine.pdf" },
-      { "label": "Tesofensine", "file": "Endotoxin_2446_NC_Tesofensine_500mcg.pdf" }
-    ],
+    "tesofensine-500mcg": [],
     "thymosin-alpha-1-10mg": [
       { "label": "Thymosin α-1 (Novera A)", "file": "12601_NOVERA_COMPOUNDS_LLC_Thymosin_Alpha-1_10mg.pdf" },
       { "label": "Thymosin α-1 (Novera B)", "file": "12624_NOVERA_COMPOUNDS_LLC_Thymosin_Alpha-1_10mg.pdf" },
