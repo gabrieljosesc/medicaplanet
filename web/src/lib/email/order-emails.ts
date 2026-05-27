@@ -2,6 +2,7 @@ import "server-only";
 
 import { orderGrandTotal } from "@/lib/checkout-shipping";
 import { displayOrderReference } from "@/lib/order-reference";
+import { emailHeaderHtml } from "@/lib/email/email-branding";
 import { SITE_EMAIL, SITE_PHONE_DISPLAY, SITE_PUBLIC_URL } from "@/lib/site-constants";
 import { sendTransactionalEmail } from "@/lib/email/resend";
 
@@ -46,9 +47,7 @@ function emailLayout(bodyHtml: string): string {
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;padding:24px 12px;">
     <tr><td align="center">
       <table width="100%" style="max-width:520px;background:#fff;border-radius:12px;border:1px solid #e4e4e7;overflow:hidden;">
-        <tr><td style="background:#0f766e;padding:20px 24px;">
-          <p style="margin:0;font-size:18px;font-weight:600;color:#fff;">MedicaPlanet</p>
-        </td></tr>
+        <tr><td>${emailHeaderHtml()}</td></tr>
         <tr><td style="padding:24px;color:#18181b;font-size:15px;line-height:1.55;">${bodyHtml}</td></tr>
         <tr><td style="padding:16px 24px 24px;border-top:1px solid #e4e4e7;font-size:12px;color:#71717a;line-height:1.5;">
           Questions? <a href="mailto:${SITE_EMAIL}" style="color:#0f766e;">${SITE_EMAIL}</a> · ${SITE_PHONE_DISPLAY}<br>
