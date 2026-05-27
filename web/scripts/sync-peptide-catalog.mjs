@@ -281,7 +281,7 @@ const PEPTIDE_CATALOG = [
   {
     slug: "wolverine-blend-bpc-157-10mg-tb500-10mg",
     title: "Wolverine Blend: BPC-157 10mg + TB-500 10mg",
-    imageFile: "BPC_5mg_+_TB_5mg.png",
+    imageFile: "Wolverine-Blend-BPC-157.png",
     imageUrl: "https://purechainresearch.com/wp-content/uploads/2025/12/BPC-5mg-TB-5mg.png",
   },
 ];
