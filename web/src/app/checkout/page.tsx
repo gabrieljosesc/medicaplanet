@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { submitOrder } from "@/app/actions/orders";
+import { AddressAutocompleteInput } from "@/components/address-autocomplete-input";
 import { CartMinimumBar } from "@/components/cart-minimum-bar";
 import { useCart } from "@/context/cart-context";
 import { MIN_CHECKOUT_SUBTOTAL_USD, meetsCheckoutMinimumUsd } from "@/lib/cart-minimum";
 import { orderGrandTotal } from "@/lib/checkout-shipping";
+import type { ParsedAddress } from "@/lib/parse-google-place";
 import { createClient } from "@/lib/supabase/client";
 
 type ContactFields = {
@@ -152,6 +154,17 @@ export default function CheckoutPage() {
     missingProfileFields.length === 0 &&
     missingShippingFields.length === 0 &&
     !pending;
+
+  function handleShippingAddressSelect(parsed: ParsedAddress) {
+    setShipping((s) => ({
+      ...s,
+      line1: parsed.line1,
+      city: parsed.city,
+      state: parsed.state,
+      postalCode: parsed.postalCode,
+      ...(parsed.countryCode ? { country: parsed.countryCode } : {}),
+    }));
+  }
 
   function applySavedRow(row: SavedAddressRow) {
     setShipping({
@@ -565,11 +578,13 @@ export default function CheckoutPage() {
                 </div>
                 <div className="sm:col-span-2">
                   <label className="text-xs font-medium text-zinc-600">Address line 1</label>
-                  <input
-                    required={useDifferentShipping}
+                  <AddressAutocompleteInput
+                    name="shipping_line1"
                     value={shipping.line1}
-                    onChange={(e) => setShipping((s) => ({ ...s, line1: e.target.value }))}
-                    className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
+                    onChange={(v) => setShipping((s) => ({ ...s, line1: v }))}
+                    onAddressSelect={handleShippingAddressSelect}
+                    placeholder="123 Main St"
+                    className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
                   />
                 </div>
                 <div className="sm:col-span-2">

@@ -1,8 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import { createAddress, updateAddress, type ActionState } from "@/app/actions/account";
+import { AddressAutocompleteInput } from "@/components/address-autocomplete-input";
+import type { ParsedAddress } from "@/lib/parse-google-place";
 
 type Addr = {
   id: string;
@@ -36,7 +38,6 @@ export function AddressEditor({
 }: {
   mode: "create" | "edit";
   initial?: Addr;
-  /** Pre-fill "Add address" from profile / signup metadata when not editing a row. */
   registrationDefaults?: RegistrationAddrDefaults;
 }) {
   const [state, action] = useActionState(
@@ -46,6 +47,20 @@ export function AddressEditor({
 
   const i = initial;
   const d = mode === "create" ? registrationDefaults : undefined;
+
+  const [line1, setLine1] = useState(i?.line1 ?? d?.line1 ?? "");
+  const [city, setCity] = useState(i?.city ?? d?.city ?? "");
+  const [stateVal, setStateVal] = useState(i?.state ?? d?.state ?? "");
+  const [postalCode, setPostalCode] = useState(i?.postal_code ?? d?.postal_code ?? "");
+  const [country, setCountry] = useState(i?.country ?? d?.country ?? "");
+
+  function handleAddressSelect(parsed: ParsedAddress) {
+    setLine1(parsed.line1);
+    setCity(parsed.city);
+    setStateVal(parsed.state);
+    setPostalCode(parsed.postalCode);
+    if (parsed.countryCode) setCountry(parsed.countryCode);
+  }
 
   return (
     <section className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
@@ -80,15 +95,17 @@ export function AddressEditor({
             className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
           />
         </label>
-        <label className="block text-sm sm:col-span-2">
+        <div className="block text-sm sm:col-span-2">
           <span className="font-medium text-zinc-700">Address line 1</span>
-          <input
+          <AddressAutocompleteInput
             name="line1"
-            required
-            defaultValue={i?.line1 ?? d?.line1 ?? ""}
-            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            value={line1}
+            onChange={setLine1}
+            onAddressSelect={handleAddressSelect}
+            placeholder="123 Main St"
+            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
           />
-        </label>
+        </div>
         <label className="block text-sm sm:col-span-2">
           <span className="font-medium text-zinc-700">Address line 2</span>
           <input
@@ -101,7 +118,8 @@ export function AddressEditor({
           <span className="font-medium text-zinc-700">City</span>
           <input
             name="city"
-            defaultValue={i?.city ?? d?.city ?? ""}
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
             className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
           />
         </label>
@@ -109,7 +127,8 @@ export function AddressEditor({
           <span className="font-medium text-zinc-700">State / region</span>
           <input
             name="state"
-            defaultValue={i?.state ?? d?.state ?? ""}
+            value={stateVal}
+            onChange={(e) => setStateVal(e.target.value)}
             className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
           />
         </label>
@@ -117,7 +136,8 @@ export function AddressEditor({
           <span className="font-medium text-zinc-700">Postal code</span>
           <input
             name="postal_code"
-            defaultValue={i?.postal_code ?? d?.postal_code ?? ""}
+            value={postalCode}
+            onChange={(e) => setPostalCode(e.target.value)}
             className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
           />
         </label>
@@ -125,7 +145,8 @@ export function AddressEditor({
           <span className="font-medium text-zinc-700">Country</span>
           <input
             name="country"
-            defaultValue={i?.country ?? d?.country ?? ""}
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
             className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
           />
         </label>
