@@ -6,6 +6,8 @@ import { parseGooglePlace, type ParsedAddress } from "@/lib/parse-google-place";
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY?.trim() ?? "";
 
+type Status = "loading" | "ready" | "error" | "no-key";
+
 type Props = {
   id?: string;
   name: string;
@@ -14,7 +16,6 @@ type Props = {
   onAddressSelect: (address: ParsedAddress) => void;
   className?: string;
   placeholder?: string;
-  autoComplete?: string;
   enterKeyHint?: "next" | "done" | "search" | "go" | "send";
 };
 
@@ -26,31 +27,35 @@ export function AddressAutocompleteInput({
   onAddressSelect,
   className,
   placeholder,
-  autoComplete = "off",
   enterKeyHint = "next",
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const onChangeRef = useRef(onChange);
   const onAddressSelectRef = useRef(onAddressSelect);
-  const externalValueRef = useRef(value);
+  const lastExternalValue = useRef(value);
 
-  const [inputValue, setInputValue] = useState(value);
-  const [loadError, setLoadError] = useState(false);
-  const [ready, setReady] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+  const [status, setStatus] = useState<Status>(GOOGLE_MAPS_API_KEY ? "loading" : "no-key");
 
   onChangeRef.current = onChange;
   onAddressSelectRef.current = onAddressSelect;
 
-  // Sync when parent resets the form after validation errors (not on every keystroke).
+  // Remount input when parent resets form values (validation errors).
   useEffect(() => {
-    if (value !== externalValueRef.current) {
-      externalValueRef.current = value;
-      setInputValue(value);
+    if (value !== lastExternalValue.current) {
+      lastExternalValue.current = value;
+      setResetKey((k) => k + 1);
     }
   }, [value]);
 
   useEffect(() => {
-    if (!GOOGLE_MAPS_API_KEY || !inputRef.current) return;
+    if (!GOOGLE_MAPS_API_KEY) {
+      setStatus("no-key");
+      return;
+    }
+
+    const input = inputRef.current;
+    if (!input) return;
 
     let autocomplete: google.maps.places.Autocomplete | null = null;
     let cancelled = false;
@@ -58,7 +63,7 @@ export function AddressAutocompleteInput({
     loadGoogleMaps(GOOGLE_MAPS_API_KEY)
       .then(() => {
         if (cancelled || !inputRef.current || !window.google?.maps?.places) {
-          if (!cancelled) setLoadError(true);
+          if (!cancelled) setStatus("error");
           return;
         }
 
@@ -68,24 +73,24 @@ export function AddressAutocompleteInput({
           fields: ["address_components", "formatted_address"],
         });
         autocomplete = instance;
-        setReady(true);
-        setLoadError(false);
 
         instance.addListener("place_changed", () => {
           const place = instance.getPlace();
-          if (!place) return;
+          if (!place || !inputRef.current) return;
 
           const parsed = parseGooglePlace(place);
           if (!parsed) return;
 
-          setInputValue(parsed.line1);
-          externalValueRef.current = parsed.line1;
+          inputRef.current.value = parsed.line1;
+          lastExternalValue.current = parsed.line1;
           onChangeRef.current(parsed.line1);
           onAddressSelectRef.current(parsed);
         });
+
+        setStatus("ready");
       })
       .catch(() => {
-        if (!cancelled) setLoadError(true);
+        if (!cancelled) setStatus("error");
       });
 
     return () => {
@@ -94,37 +99,46 @@ export function AddressAutocompleteInput({
         window.google.maps.event.clearInstanceListeners(autocomplete);
       }
     };
-  }, []);
+  }, [resetKey]);
 
-  const handleBlur = () => {
-    externalValueRef.current = inputValue;
-    onChange(inputValue);
+  const syncToParent = () => {
+    const v = inputRef.current?.value ?? "";
+    lastExternalValue.current = v;
+    onChange(v);
   };
 
   return (
     <div className="relative">
+      {/* Uncontrolled: Google Places breaks when React controls value on each keystroke. */}
       <input
+        key={resetKey}
         ref={inputRef}
         id={id}
         name={name}
-        value={inputValue}
-        onChange={(event) => setInputValue(event.target.value)}
-        onBlur={handleBlur}
-        autoComplete={autoComplete}
+        type="text"
+        defaultValue={value}
+        onBlur={syncToParent}
         enterKeyHint={enterKeyHint}
         className={className}
         placeholder={placeholder}
+        autoComplete="off"
+        autoCorrect="off"
+        autoCapitalize="off"
+        spellCheck={false}
+        data-1p-ignore
+        data-lpignore="true"
+        data-form-type="other"
       />
-      {!GOOGLE_MAPS_API_KEY ? (
+      {status === "no-key" ? (
         <p className="mt-1 text-[11px] leading-snug text-amber-800/90">
           Address suggestions are not configured on this environment.
         </p>
-      ) : loadError ? (
+      ) : status === "error" ? (
         <p className="mt-1 text-[11px] leading-snug text-amber-800/90">
           Could not load address suggestions. Type your address manually, or check the API key and
           domain restrictions in Google Cloud.
         </p>
-      ) : ready ? (
+      ) : status === "ready" ? (
         <p className="mt-1 text-[11px] leading-snug text-teal-800/75">
           Start typing a U.S. address and pick a suggestion to fill city, state, and zip
           automatically.

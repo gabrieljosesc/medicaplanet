@@ -226,7 +226,6 @@ function RegisterFormInner({
               value={deliveryAddress}
               onChange={setDeliveryAddress}
               onAddressSelect={handleAddressSelect}
-              autoComplete="off"
               enterKeyHint="next"
               className={`${pill} ${hasFieldError(state, "delivery_address") ? pillError : ""}`}
               placeholder="Street address, suite, unit *"
