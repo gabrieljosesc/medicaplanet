@@ -26,6 +26,10 @@ type Props = {
   enterKeyHint?: "next" | "done" | "search" | "go" | "send";
 };
 
+function placesStatusOk(status: google.maps.places.PlacesServiceStatus | string): boolean {
+  return status === "OK" || status === window.google?.maps?.places?.PlacesServiceStatus?.OK;
+}
+
 export function AddressAutocompleteInput({
   id,
   name,
@@ -45,14 +49,19 @@ export function AddressAutocompleteInput({
     places: google.maps.places.PlacesService;
   } | null>(null);
   const lastExternalValue = useRef(value);
+  const statusRef = useRef<Status>(GOOGLE_MAPS_API_KEY ? "loading" : "no-key");
 
   const [query, setQuery] = useState(value);
   const queryRef = useRef(query);
   queryRef.current = query;
-  const [status, setStatus] = useState<Status>(GOOGLE_MAPS_API_KEY ? "loading" : "no-key");
+  const [status, setStatus] = useState<Status>(statusRef.current);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [hint, setHint] = useState<string | null>(null);
+  const [fetching, setFetching] = useState(false);
+
+  statusRef.current = status;
 
   // Sync when parent resets form (validation errors only).
   useEffect(() => {
@@ -61,6 +70,7 @@ export function AddressAutocompleteInput({
       setQuery(value);
       setSuggestions([]);
       setOpen(false);
+      setHint(null);
     }
   }, [value]);
 
@@ -98,25 +108,43 @@ export function AddressAutocompleteInput({
 
   const fetchSuggestions = useCallback((input: string) => {
     const services = servicesRef.current;
-    if (!services || input.trim().length < MIN_CHARS) {
+    const trimmed = input.trim();
+
+    if (!services || trimmed.length < MIN_CHARS) {
       setSuggestions([]);
       setOpen(false);
+      setHint(null);
+      setFetching(false);
       return;
     }
 
+    setFetching(true);
+    setHint(null);
+
     services.autocomplete.getPlacePredictions(
       {
-        input: input.trim(),
+        input: trimmed,
         componentRestrictions: { country: "us" },
-        types: ["address"],
+        // No `types` filter — "address" only matches full street addresses and often returns nothing for city/street names like "evergreen".
       },
       (predictions, predictionStatus) => {
-        if (
-          predictionStatus !== window.google.maps.places.PlacesServiceStatus.OK ||
-          !predictions?.length
-        ) {
+        setFetching(false);
+
+        if (predictionStatus === "REQUEST_DENIED" || predictionStatus === "OVER_QUERY_LIMIT") {
           setSuggestions([]);
           setOpen(false);
+          setHint(
+            "Address lookup is blocked. Check the Google API key, billing, and domain restrictions in Google Cloud."
+          );
+          return;
+        }
+
+        if (!placesStatusOk(predictionStatus) || !predictions?.length) {
+          setSuggestions([]);
+          setOpen(false);
+          if (predictionStatus === "ZERO_RESULTS") {
+            setHint("No matching addresses. Try a street number + street name (e.g. 123 Main St).");
+          }
           return;
         }
 
@@ -128,22 +156,35 @@ export function AddressAutocompleteInput({
         );
         setOpen(true);
         setActiveIndex(-1);
+        setHint(null);
       }
     );
   }, []);
 
+  // If user typed before Google finished loading, search now when ready.
+  useEffect(() => {
+    if (status === "ready" && queryRef.current.trim().length >= MIN_CHARS) {
+      fetchSuggestions(queryRef.current);
+    }
+  }, [status, fetchSuggestions]);
+
+  const scheduleFetch = useCallback(
+    (input: string) => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+
+      if (statusRef.current !== "ready") {
+        return;
+      }
+
+      debounceRef.current = setTimeout(() => fetchSuggestions(input), DEBOUNCE_MS);
+    },
+    [fetchSuggestions]
+  );
+
   const handleInputChange = (next: string) => {
     setQuery(next);
-
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-
-    if (status !== "ready") {
-      setSuggestions([]);
-      setOpen(false);
-      return;
-    }
-
-    debounceRef.current = setTimeout(() => fetchSuggestions(next), DEBOUNCE_MS);
+    setHint(null);
+    scheduleFetch(next);
   };
 
   const selectSuggestion = (suggestion: Suggestion) => {
@@ -152,6 +193,7 @@ export function AddressAutocompleteInput({
 
     setOpen(false);
     setSuggestions([]);
+    setHint(null);
     setQuery(suggestion.description);
     lastExternalValue.current = suggestion.description;
     onChange(suggestion.description);
@@ -162,7 +204,7 @@ export function AddressAutocompleteInput({
         fields: ["address_components", "formatted_address"],
       },
       (place, detailStatus) => {
-        if (detailStatus !== window.google.maps.places.PlacesServiceStatus.OK || !place) return;
+        if (!placesStatusOk(detailStatus) || !place) return;
 
         const parsed = parseGooglePlace(place);
         if (!parsed) return;
@@ -205,6 +247,18 @@ export function AddressAutocompleteInput({
     };
   }, []);
 
+  const helperText =
+    hint ??
+    (status === "no-key"
+      ? "Address suggestions are not configured on this environment."
+      : status === "error"
+        ? "Could not load address suggestions. Type your address manually, or check the API key in Google Cloud."
+        : status === "ready"
+          ? fetching
+            ? "Searching addresses…"
+            : "Type at least 3 characters, then pick a U.S. address to fill city, state, and zip."
+          : "Loading address suggestions…");
+
   return (
     <div ref={wrapperRef} className="relative">
       <input
@@ -215,7 +269,11 @@ export function AddressAutocompleteInput({
         value={query}
         onChange={(event) => handleInputChange(event.target.value)}
         onFocus={() => {
-          if (suggestions.length > 0) setOpen(true);
+          if (suggestions.length > 0) {
+            setOpen(true);
+          } else if (query.trim().length >= MIN_CHARS && status === "ready") {
+            scheduleFetch(query);
+          }
         }}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
@@ -261,22 +319,13 @@ export function AddressAutocompleteInput({
         </ul>
       ) : null}
 
-      {status === "no-key" ? (
-        <p className="mt-1 text-[11px] leading-snug text-amber-800/90">
-          Address suggestions are not configured on this environment.
-        </p>
-      ) : status === "error" ? (
-        <p className="mt-1 text-[11px] leading-snug text-amber-800/90">
-          Could not load address suggestions. Type your address manually, or check the API key and
-          domain restrictions in Google Cloud.
-        </p>
-      ) : status === "ready" ? (
-        <p className="mt-1 text-[11px] leading-snug text-teal-800/75">
-          Type at least 3 characters, then pick a U.S. address to fill city, state, and zip.
-        </p>
-      ) : (
-        <p className="mt-1 text-[11px] leading-snug text-teal-800/75">Loading address suggestions…</p>
-      )}
+      <p
+        className={`mt-1 text-[11px] leading-snug ${
+          hint || status === "error" || status === "no-key" ? "text-amber-800/90" : "text-teal-800/75"
+        }`}
+      >
+        {helperText}
+      </p>
     </div>
   );
 }
