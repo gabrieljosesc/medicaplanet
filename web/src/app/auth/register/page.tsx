@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useActionState, useState } from "react";
+import { Suspense, useActionState, useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { registerWithProfile, type RegisterFormState } from "@/app/actions/auth";
 import { COUNTRY_OPTIONS } from "@/app/auth/register/countries";
 import { CA_PROVINCE_OPTIONS, US_STATE_OPTIONS } from "@/app/auth/register/region-options";
+import { AddressAutocompleteInput } from "@/components/address-autocomplete-input";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { PasswordField } from "@/components/password-field";
+import type { ParsedAddress } from "@/lib/parse-google-place";
 import { safeAuthRedirectTarget } from "@/lib/safe-redirect";
 
 const pill =
@@ -63,6 +65,29 @@ function RegisterFormInner({
   nextTarget: string | null;
 }) {
   const [countryCode, setCountryCode] = useState(() => fieldValue(state, "country") || "");
+  const [deliveryAddress, setDeliveryAddress] = useState(() => fieldValue(state, "delivery_address"));
+  const [city, setCity] = useState(() => fieldValue(state, "city"));
+  const [stateVal, setStateVal] = useState(() => fieldValue(state, "state"));
+  const [postalCode, setPostalCode] = useState(() => fieldValue(state, "postal_code"));
+
+  useEffect(() => {
+    if (!state || !("values" in state) || !state.values) return;
+    setDeliveryAddress(fieldValue(state, "delivery_address"));
+    setCountryCode(fieldValue(state, "country"));
+    setCity(fieldValue(state, "city"));
+    setStateVal(fieldValue(state, "state"));
+    setPostalCode(fieldValue(state, "postal_code"));
+  }, [state]);
+
+  const handleAddressSelect = useCallback((address: ParsedAddress) => {
+    setDeliveryAddress(address.line1);
+    setCity(address.city);
+    setStateVal(address.state);
+    setPostalCode(address.postalCode);
+    if (address.countryCode) {
+      setCountryCode(address.countryCode);
+    }
+  }, []);
 
   const stateFieldError = hasFieldError(state, "state");
   const stateSelectClass = `${pill} cursor-pointer appearance-none bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat ${stateFieldError ? pillError : ""}`;
@@ -195,12 +220,14 @@ function RegisterFormInner({
             <label htmlFor="reg-delivery-address" className="mb-1 block text-sm font-medium text-teal-900">
               Delivery address <span className="text-red-500">*</span>
             </label>
-            <input
+            <AddressAutocompleteInput
               id="reg-delivery-address"
               name="delivery_address"
+              value={deliveryAddress}
+              onChange={setDeliveryAddress}
+              onAddressSelect={handleAddressSelect}
               autoComplete="shipping street-address"
               enterKeyHint="next"
-              defaultValue={fieldValue(state, "delivery_address")}
               className={`${pill} ${hasFieldError(state, "delivery_address") ? pillError : ""}`}
               placeholder="Street address, suite, unit *"
             />
@@ -250,7 +277,8 @@ function RegisterFormInner({
                 id="reg-state"
                 name="state"
                 required
-                defaultValue={fieldValue(state, "state")}
+                value={stateVal}
+                onChange={(event) => setStateVal(event.target.value)}
                 autoComplete="shipping address-level1"
                 className={stateSelectClass}
                 style={stateSelectStyle}
@@ -270,7 +298,8 @@ function RegisterFormInner({
                 id="reg-state"
                 name="state"
                 required
-                defaultValue={fieldValue(state, "state")}
+                value={stateVal}
+                onChange={(event) => setStateVal(event.target.value)}
                 autoComplete="shipping address-level1"
                 className={stateSelectClass}
                 style={stateSelectStyle}
@@ -291,7 +320,8 @@ function RegisterFormInner({
                 name="state"
                 autoComplete="shipping address-level1"
                 enterKeyHint="next"
-                defaultValue={fieldValue(state, "state")}
+                value={stateVal}
+                onChange={(event) => setStateVal(event.target.value)}
                 className={`${pill} ${stateFieldError ? pillError : ""}`}
                 placeholder="State / province *"
               />
@@ -309,7 +339,8 @@ function RegisterFormInner({
               name="city"
               autoComplete="shipping address-level2"
               enterKeyHint="next"
-              defaultValue={fieldValue(state, "city")}
+              value={city}
+              onChange={(event) => setCity(event.target.value)}
               className={`${pill} ${hasFieldError(state, "city") ? pillError : ""}`}
               placeholder="City *"
             />
@@ -326,7 +357,8 @@ function RegisterFormInner({
               name="postal_code"
               autoComplete="shipping postal-code"
               enterKeyHint="done"
-              defaultValue={fieldValue(state, "postal_code")}
+              value={postalCode}
+              onChange={(event) => setPostalCode(event.target.value)}
               className={`${pill} ${hasFieldError(state, "postal_code") ? pillError : ""}`}
               placeholder="Zip *"
             />
