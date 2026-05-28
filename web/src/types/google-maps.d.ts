@@ -2,10 +2,20 @@ export {};
 
 declare global {
   namespace google.maps.places {
-    interface AutocompleteOptions {
-      fields?: string[];
-      types?: string[];
+    interface AutocompletePrediction {
+      description: string;
+      place_id: string;
+    }
+
+    interface AutocompleteRequest {
+      input: string;
       componentRestrictions?: { country: string | string[] };
+      types?: string[];
+    }
+
+    interface PlaceDetailsRequest {
+      placeId: string;
+      fields?: string[];
     }
 
     interface PlaceResult {
@@ -19,25 +29,44 @@ declare global {
       types: string[];
     }
 
-    class Autocomplete {
-      constructor(input: HTMLInputElement, opts?: AutocompleteOptions);
-      addListener(event: string, handler: () => void): MapsEventListener;
-      getPlace(): PlaceResult;
+    class AutocompleteService {
+      getPlacePredictions(
+        request: AutocompleteRequest,
+        callback: (
+          predictions: AutocompletePrediction[] | null,
+          status: PlacesServiceStatus
+        ) => void
+      ): void;
     }
 
-    interface MapsEventListener {
-      remove(): void;
+    class PlacesService {
+      constructor(attrContainer: HTMLDivElement | google.maps.Map);
+      getDetails(
+        request: PlaceDetailsRequest,
+        callback: (place: PlaceResult | null, status: PlacesServiceStatus) => void
+      ): void;
+    }
+
+    enum PlacesServiceStatus {
+      OK = "OK",
+      ZERO_RESULTS = "ZERO_RESULTS",
+      INVALID_REQUEST = "INVALID_REQUEST",
+      OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT",
+      REQUEST_DENIED = "REQUEST_DENIED",
+      UNKNOWN_ERROR = "UNKNOWN_ERROR",
     }
   }
 
-  namespace google.maps.event {
-    function clearInstanceListeners(instance: object): void;
+  namespace google.maps {
+    class Map {
+      constructor(el: HTMLElement, opts?: object);
+    }
   }
 
   const google: {
     maps: {
+      Map: typeof google.maps.Map;
       places: typeof google.maps.places;
-      event: typeof google.maps.event;
     };
   };
 
