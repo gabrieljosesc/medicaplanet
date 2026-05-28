@@ -82,3 +82,11 @@ body {
     display: none;
   }
 }
+
+/* Google Places address dropdown on registration */
+.pac-container {
+  z-index: 10000 !important;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 12%);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}

@@ -5,6 +5,7 @@ declare global {
     interface AutocompleteOptions {
       fields?: string[];
       types?: string[];
+      componentRestrictions?: { country: string | string[] };
     }
 
     interface PlaceResult {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { loadGoogleMaps } from "@/lib/load-google-maps";
 import { parseGooglePlace, type ParsedAddress } from "@/lib/parse-google-place";
 
@@ -26,15 +26,28 @@ export function AddressAutocompleteInput({
   onAddressSelect,
   className,
   placeholder,
-  autoComplete = "shipping street-address",
+  autoComplete = "off",
   enterKeyHint = "next",
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const onChangeRef = useRef(onChange);
   const onAddressSelectRef = useRef(onAddressSelect);
+  const externalValueRef = useRef(value);
+
+  const [inputValue, setInputValue] = useState(value);
+  const [loadError, setLoadError] = useState(false);
+  const [ready, setReady] = useState(false);
 
   onChangeRef.current = onChange;
   onAddressSelectRef.current = onAddressSelect;
+
+  // Sync when parent resets the form after validation errors (not on every keystroke).
+  useEffect(() => {
+    if (value !== externalValueRef.current) {
+      externalValueRef.current = value;
+      setInputValue(value);
+    }
+  }, [value]);
 
   useEffect(() => {
     if (!GOOGLE_MAPS_API_KEY || !inputRef.current) return;
@@ -44,13 +57,19 @@ export function AddressAutocompleteInput({
 
     loadGoogleMaps(GOOGLE_MAPS_API_KEY)
       .then(() => {
-        if (cancelled || !inputRef.current || !window.google?.maps?.places) return;
+        if (cancelled || !inputRef.current || !window.google?.maps?.places) {
+          if (!cancelled) setLoadError(true);
+          return;
+        }
 
         const instance = new window.google.maps.places.Autocomplete(inputRef.current, {
           types: ["address"],
+          componentRestrictions: { country: "us" },
           fields: ["address_components", "formatted_address"],
         });
         autocomplete = instance;
+        setReady(true);
+        setLoadError(false);
 
         instance.addListener("place_changed", () => {
           const place = instance.getPlace();
@@ -59,12 +78,14 @@ export function AddressAutocompleteInput({
           const parsed = parseGooglePlace(place);
           if (!parsed) return;
 
+          setInputValue(parsed.line1);
+          externalValueRef.current = parsed.line1;
           onChangeRef.current(parsed.line1);
           onAddressSelectRef.current(parsed);
         });
       })
       .catch(() => {
-        // Fall back to a plain text input when Maps fails to load.
+        if (!cancelled) setLoadError(true);
       });
 
     return () => {
@@ -75,24 +96,42 @@ export function AddressAutocompleteInput({
     };
   }, []);
 
+  const handleBlur = () => {
+    externalValueRef.current = inputValue;
+    onChange(inputValue);
+  };
+
   return (
-    <div>
+    <div className="relative">
       <input
         ref={inputRef}
         id={id}
         name={name}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
+        value={inputValue}
+        onChange={(event) => setInputValue(event.target.value)}
+        onBlur={handleBlur}
         autoComplete={autoComplete}
         enterKeyHint={enterKeyHint}
         className={className}
         placeholder={placeholder}
       />
-      {GOOGLE_MAPS_API_KEY ? (
-        <p className="mt-1 text-[11px] leading-snug text-teal-800/75">
-          Start typing your address and choose a suggestion to fill city, state, and zip automatically.
+      {!GOOGLE_MAPS_API_KEY ? (
+        <p className="mt-1 text-[11px] leading-snug text-amber-800/90">
+          Address suggestions are not configured on this environment.
         </p>
-      ) : null}
+      ) : loadError ? (
+        <p className="mt-1 text-[11px] leading-snug text-amber-800/90">
+          Could not load address suggestions. Type your address manually, or check the API key and
+          domain restrictions in Google Cloud.
+        </p>
+      ) : ready ? (
+        <p className="mt-1 text-[11px] leading-snug text-teal-800/75">
+          Start typing a U.S. address and pick a suggestion to fill city, state, and zip
+          automatically.
+        </p>
+      ) : (
+        <p className="mt-1 text-[11px] leading-snug text-teal-800/75">Loading address suggestions…</p>
+      )}
     </div>
   );
 }

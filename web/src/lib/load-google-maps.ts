@@ -16,7 +16,15 @@ export function loadGoogleMaps(apiKey: string): Promise<void> {
   loadPromise = new Promise((resolve, reject) => {
     const existing = document.querySelector<HTMLScriptElement>('script[data-google-maps="1"]');
     if (existing) {
-      existing.addEventListener("load", () => resolve(), { once: true });
+      const onExistingLoad = () => {
+        if (window.google?.maps?.places) resolve();
+        else reject(new Error("Google Maps Places library did not load"));
+      };
+      if (window.google?.maps?.places) {
+        resolve();
+        return;
+      }
+      existing.addEventListener("load", onExistingLoad, { once: true });
       existing.addEventListener("error", () => reject(new Error("Failed to load Google Maps")), {
         once: true,
       });
@@ -28,7 +36,13 @@ export function loadGoogleMaps(apiKey: string): Promise<void> {
     script.async = true;
     script.defer = true;
     script.dataset.googleMaps = "1";
-    script.onload = () => resolve();
+    script.onload = () => {
+      if (window.google?.maps?.places) {
+        resolve();
+      } else {
+        reject(new Error("Google Maps Places library did not load"));
+      }
+    };
     script.onerror = () => reject(new Error("Failed to load Google Maps"));
     document.head.appendChild(script);
   });
