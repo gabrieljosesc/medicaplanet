@@ -121,13 +121,21 @@ export function AddressAutocompleteInput({
     setFetching(true);
     setHint(null);
 
+    // Detect when Google silently drops the callback (e.g. Maps JavaScript API not enabled).
+    const callbackTimeout = setTimeout(() => {
+      setFetching(false);
+      setHint(
+        "Address lookup timed out. In Google Cloud Console, enable both Maps JavaScript API AND Places API for this key."
+      );
+    }, 5000);
+
     services.autocomplete.getPlacePredictions(
       {
         input: trimmed,
         componentRestrictions: { country: "us" },
-        // No `types` filter — "address" only matches full street addresses and often returns nothing for city/street names like "evergreen".
       },
       (predictions, predictionStatus) => {
+        clearTimeout(callbackTimeout);
         setFetching(false);
 
         if (predictionStatus === "REQUEST_DENIED" || predictionStatus === "OVER_QUERY_LIMIT") {
