@@ -216,6 +216,59 @@ export async function sendOrderCancelledEmail(order: OrderEmailRow): Promise<voi
   });
 }
 
+/** Internal alert sent to the site admin email whenever a new order is placed. */
+export async function sendAdminNewOrderEmail(order: OrderEmailRow): Promise<void> {
+  const ref = orderRef(order);
+  const total = orderTotal(order).toFixed(2);
+  const items = Array.isArray(order.order_items) ? order.order_items : [];
+  const itemLines = items
+    .map((it) => `  • ${it.title} × ${it.quantity}  $${(Number(it.unit_price) * it.quantity).toFixed(2)}`)
+    .join("\n");
+
+  const adminUrl = `${SITE_PUBLIC_URL}/admin/orders/${order.id}`;
+
+  const text = [
+    `New order received — ${ref}`,
+    "",
+    `Customer: ${order.full_name} <${order.email}>`,
+    `Reference: ${ref}`,
+    `Total: $${total}`,
+    "",
+    "Items:",
+    itemLines,
+    "",
+    `Review: ${adminUrl}`,
+  ].join("\n");
+
+  const itemRowsHtml = items
+    .map(
+      (it) =>
+        `<tr>
+          <td style="padding:5px 0;border-bottom:1px solid #f4f4f5;">${escapeHtml(it.title)} × ${it.quantity}</td>
+          <td style="padding:5px 0;border-bottom:1px solid #f4f4f5;text-align:right;">$${(Number(it.unit_price) * it.quantity).toFixed(2)}</td>
+        </tr>`
+    )
+    .join("");
+
+  const html = emailLayout(`
+    <p style="margin:0 0 16px;font-size:17px;font-weight:600;">New order received</p>
+    <p style="margin:0 0 8px;"><strong>Customer:</strong> ${escapeHtml(order.full_name)} &lt;${escapeHtml(order.email)}&gt;</p>
+    <p style="margin:0 0 8px;"><strong>Reference:</strong> ${escapeHtml(ref)}</p>
+    <p style="margin:0 0 16px;"><strong>Total:</strong> $${total}</p>
+    ${itemRowsHtml ? `<table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;margin-bottom:16px;">${itemRowsHtml}</table>` : ""}
+    <a href="${adminUrl}" style="display:inline-block;background:#0f766e;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
+      Review order in admin
+    </a>
+  `);
+
+  await sendTransactionalEmail({
+    to: SITE_EMAIL,
+    subject: `New order — ${ref} · ${order.full_name}`,
+    html,
+    text,
+  });
+}
+
 export async function sendOrderStatusEmail(
   order: OrderEmailRow,
   previousStatus: OrderStatus,

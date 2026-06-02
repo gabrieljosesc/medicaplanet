@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/admin";
 import { sendOrderStatusEmail, type OrderStatus } from "@/lib/email/order-emails";
+import { SITE_PUBLIC_URL } from "@/lib/site-constants";
 
 async function requireAdmin() {
   const supabase = await createClient();
@@ -178,4 +179,29 @@ export async function upsertBlogPostAction(formData: FormData): Promise<void> {
     revalidatePath("/admin/blog");
     redirect("/admin/blog/" + data.id + "?saved=1");
   }
+}
+
+export type AdminActionResult = { ok: true; message: string } | { ok: false; message: string };
+
+/** Send a password-reset email to any user. Admin only. */
+export async function sendPasswordResetAction(userId: string): Promise<AdminActionResult> {
+  await requireAdmin();
+  const svc = createServiceClient();
+
+  const { data: authUser, error: getUserErr } = await svc.auth.admin.getUserById(userId);
+  if (getUserErr || !authUser?.user?.email) {
+    return { ok: false, message: getUserErr?.message ?? "User not found." };
+  }
+
+  const { error } = await svc.auth.admin.generateLink({
+    type: "recovery",
+    email: authUser.user.email,
+    options: { redirectTo: `${SITE_PUBLIC_URL}/auth/update-password` },
+  });
+
+  if (error) {
+    return { ok: false, message: error.message };
+  }
+
+  return { ok: true, message: `Password reset email sent to ${authUser.user.email}.` };
 }
