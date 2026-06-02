@@ -8,6 +8,7 @@ import { getOrderShippingLine } from "@/lib/checkout-shipping";
 import { parsePriceTiersJson, unitPriceForQuantity } from "@/lib/price-tiers";
 import { displayOrderReference } from "@/lib/order-reference";
 import { sendOrderReceivedEmail, sendAdminNewOrderEmail } from "@/lib/email/order-emails";
+import { validateCouponCode, type CouponValidationResult } from "@/lib/coupons";
 
 const checkoutSchema = z.object({
   firstName: z.string().min(1),
@@ -40,6 +41,7 @@ const checkoutSchema = z.object({
     .min(1),
   checkoutType: z.enum(["saved_manual_card", "bank_transfer"]),
   userSavedCardId: z.string().uuid().optional(),
+  couponCode: z.string().optional(),
 }).refine(
   (d) => d.checkoutType !== "saved_manual_card" || Boolean(d.userSavedCardId),
   { message: "Select a saved card.", path: ["userSavedCardId"] }
@@ -118,6 +120,20 @@ export async function submitOrder(
       ok: false,
       message: `Minimum order is $${MIN_CHECKOUT_SUBTOTAL_USD.toFixed(2)}. Add more items before checking out.`,
     };
+  }
+
+  // Validate coupon if provided
+  let appliedCoupon: { id: string; code: string; discountAmount: number } | null = null;
+  if (input.couponCode?.trim()) {
+    const couponResult: CouponValidationResult = await validateCouponCode(
+      svc,
+      input.couponCode.trim(),
+      subtotal
+    );
+    if (!couponResult.ok) {
+      return { ok: false, message: couponResult.message };
+    }
+    appliedCoupon = couponResult.coupon;
   }
 
   let shippingLine: { amount: number; label: string };
@@ -213,6 +229,8 @@ export async function submitOrder(
     shipping_amount: shippingLine.amount,
     shipping_label: shippingLine.label,
     payment_card_snapshot: paymentCardSnapshot,
+    coupon_code: appliedCoupon?.code ?? null,
+    discount_amount: appliedCoupon?.discountAmount ?? 0,
   };
 
   const withPolicy = {
@@ -294,6 +312,21 @@ export async function submitOrder(
     return { ok: false, message: iErr.message };
   }
 
+  // Increment coupon usage (best-effort, non-critical)
+  if (appliedCoupon) {
+    const { data: couponRow } = await svc
+      .from("coupons")
+      .select("used_count")
+      .eq("id", appliedCoupon.id)
+      .single();
+    if (couponRow) {
+      void svc
+        .from("coupons")
+        .update({ used_count: (couponRow.used_count ?? 0) + 1 })
+        .eq("id", appliedCoupon.id);
+    }
+  }
+
   const orderEmailPayload = {
     id: order.id,
     reference_number: order.reference_number,
@@ -322,4 +355,13 @@ export async function submitOrder(
     orderId: order.id,
     orderReference: displayOrderReference(order),
   };
+}
+
+/** Called from the checkout page to preview a coupon discount before submitting. */
+export async function validateCouponAction(
+  code: string,
+  subtotalUsd: number
+): Promise<CouponValidationResult> {
+  const svc = createServiceClient();
+  return validateCouponCode(svc, code, subtotalUsd);
 }

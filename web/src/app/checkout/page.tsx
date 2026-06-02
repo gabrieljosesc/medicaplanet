@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { submitOrder } from "@/app/actions/orders";
+import { submitOrder, validateCouponAction } from "@/app/actions/orders";
 import { AddressAutocompleteInput } from "@/components/address-autocomplete-input";
 import { CartMinimumBar } from "@/components/cart-minimum-bar";
 import { useCart } from "@/context/cart-context";
@@ -117,6 +117,14 @@ export default function CheckoutPage() {
   const [customerNotes, setCustomerNotes] = useState("");
   const [paymentNotes, setPaymentNotes] = useState("");
   const [shippingPreview, setShippingPreview] = useState<{ amount: number; label: string } | null>(null);
+  const [couponInput, setCouponInput] = useState("");
+  const [couponPending, setCouponPending] = useState(false);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    discountAmount: number;
+    label: string;
+  } | null>(null);
 
   const subtotal = selectedLines.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0);
   const usableCards = useMemo(() => savedCards.filter((card) => !isCardExpired(card)), [savedCards]);
@@ -164,6 +172,21 @@ export default function CheckoutPage() {
       postalCode: parsed.postalCode,
       ...(parsed.countryCode ? { country: parsed.countryCode } : {}),
     }));
+  }
+
+  async function handleApplyCoupon() {
+    const code = couponInput.trim();
+    if (!code) return;
+    setCouponPending(true);
+    setCouponError(null);
+    const result = await validateCouponAction(code, subtotal);
+    setCouponPending(false);
+    if (result.ok) {
+      setAppliedCoupon(result.coupon);
+      setCouponInput("");
+    } else {
+      setCouponError(result.message);
+    }
   }
 
   function applySavedRow(row: SavedAddressRow) {
@@ -337,6 +360,7 @@ export default function CheckoutPage() {
       items: selectedLines.map((line) => ({ slug: line.slug, quantity: line.quantity })),
       checkoutType: "saved_manual_card",
       userSavedCardId: selectedCard.id,
+      couponCode: appliedCoupon?.code,
     });
     setPending(false);
 
@@ -661,6 +685,49 @@ export default function CheckoutPage() {
             </div>
           </section>
 
+          <section className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+            <p className="text-sm font-semibold text-zinc-900">Coupon code</p>
+            {appliedCoupon ? (
+              <div className="mt-3 flex items-center justify-between rounded-lg border border-teal-200 bg-teal-50 px-3 py-2">
+                <div>
+                  <p className="text-sm font-medium text-teal-800">{appliedCoupon.label}</p>
+                  <p className="text-xs text-teal-700">−${appliedCoupon.discountAmount.toFixed(2)} applied</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setAppliedCoupon(null)}
+                  className="text-xs text-zinc-500 hover:text-red-600"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <div className="mt-3">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponInput}
+                    onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError(null); }}
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void handleApplyCoupon(); } }}
+                    placeholder="Enter coupon code"
+                    className="flex-1 rounded-md border border-zinc-300 px-3 py-2 text-sm uppercase tracking-wide"
+                  />
+                  <button
+                    type="button"
+                    disabled={!couponInput.trim() || couponPending}
+                    onClick={() => void handleApplyCoupon()}
+                    className="rounded-md bg-teal-800 px-4 py-2 text-sm font-medium text-white hover:bg-teal-900 disabled:opacity-50"
+                  >
+                    {couponPending ? "Checking…" : "Apply"}
+                  </button>
+                </div>
+                {couponError ? (
+                  <p className="mt-1 text-xs text-red-600">{couponError}</p>
+                ) : null}
+              </div>
+            )}
+          </section>
+
           <label className="flex items-start gap-2 text-xs text-zinc-700">
             <input type="checkbox" name="policyAck" value="1" required className="mt-0.5 size-4 rounded border-zinc-400" />
             <span>
@@ -699,6 +766,12 @@ export default function CheckoutPage() {
                 <span>Subtotal</span>
                 <span>${subtotal.toFixed(2)}</span>
               </p>
+              {appliedCoupon ? (
+                <p className="flex items-center justify-between text-teal-700">
+                  <span className="pr-2 leading-snug">{appliedCoupon.label}</span>
+                  <span className="shrink-0">−${appliedCoupon.discountAmount.toFixed(2)}</span>
+                </p>
+              ) : null}
               <p className="flex items-center justify-between text-zinc-600">
                 <span className="pr-2 text-left leading-snug">
                   {shippingPreview ? shippingPreview.label : "Shipping"}
@@ -711,7 +784,7 @@ export default function CheckoutPage() {
                 <span>Total</span>
                 <span>
                   {shippingPreview
-                    ? `$${orderGrandTotal(subtotal, shippingPreview.amount).toFixed(2)}`
+                    ? `$${Math.max(0, orderGrandTotal(subtotal, shippingPreview.amount) - (appliedCoupon?.discountAmount ?? 0)).toFixed(2)}`
                     : "…"}
                 </span>
               </p>

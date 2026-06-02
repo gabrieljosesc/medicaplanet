@@ -17,6 +17,11 @@ const sections = [
     desc: "View all registered accounts and send password resets.",
   },
   {
+    href: "/admin/coupons",
+    label: "Coupons",
+    desc: "Create and manage discount / promo codes.",
+  },
+  {
     href: "/admin/blog",
     label: "Blog",
     desc: "Create and publish blog posts.",

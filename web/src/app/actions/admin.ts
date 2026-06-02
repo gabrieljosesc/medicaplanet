@@ -183,6 +183,60 @@ export async function upsertBlogPostAction(formData: FormData): Promise<void> {
 
 export type AdminActionResult = { ok: true; message: string } | { ok: false; message: string };
 
+// ─── Coupon actions ───────────────────────────────────────────────────────────
+
+export async function createCouponAction(formData: FormData): Promise<void> {
+  const { supabase } = await requireAdmin();
+  const code = String(formData.get("code") ?? "").trim().toUpperCase();
+  const description = String(formData.get("description") ?? "").trim() || null;
+  const discount_type = String(formData.get("discount_type")) as "percent" | "fixed";
+  const discount_value = parseFloat(String(formData.get("discount_value")));
+  const min_order_amount = parseFloat(String(formData.get("min_order_amount") ?? "0")) || 0;
+  const max_uses_raw = String(formData.get("max_uses") ?? "").trim();
+  const max_uses = max_uses_raw ? parseInt(max_uses_raw, 10) : null;
+  const expires_at_raw = String(formData.get("expires_at") ?? "").trim();
+  const expires_at = expires_at_raw ? new Date(expires_at_raw).toISOString() : null;
+
+  if (!code) redirect("/admin/coupons?error=Code+is+required");
+  if (!["percent", "fixed"].includes(discount_type)) redirect("/admin/coupons?error=Invalid+discount+type");
+  if (isNaN(discount_value) || discount_value <= 0) redirect("/admin/coupons?error=Discount+value+must+be+positive");
+  if (discount_type === "percent" && discount_value > 100) redirect("/admin/coupons?error=Percent+cannot+exceed+100");
+
+  const { error } = await supabase.from("coupons").insert({
+    code,
+    description,
+    discount_type,
+    discount_value,
+    min_order_amount,
+    max_uses,
+    expires_at,
+    is_active: true,
+  });
+
+  if (error) {
+    redirect("/admin/coupons?error=" + encodeURIComponent(error.message));
+  }
+
+  revalidatePath("/admin/coupons");
+  redirect("/admin/coupons?created=1");
+}
+
+export async function toggleCouponAction(id: string, isActive: boolean): Promise<AdminActionResult> {
+  const { supabase } = await requireAdmin();
+  const { error } = await supabase.from("coupons").update({ is_active: isActive }).eq("id", id);
+  if (error) return { ok: false, message: error.message };
+  revalidatePath("/admin/coupons");
+  return { ok: true, message: isActive ? "Coupon activated." : "Coupon deactivated." };
+}
+
+export async function deleteCouponAction(id: string): Promise<AdminActionResult> {
+  const { supabase } = await requireAdmin();
+  const { error } = await supabase.from("coupons").delete().eq("id", id);
+  if (error) return { ok: false, message: error.message };
+  revalidatePath("/admin/coupons");
+  return { ok: true, message: "Coupon deleted." };
+}
+
 /** Send a password-reset email to any user. Admin only. */
 export async function sendPasswordResetAction(userId: string): Promise<AdminActionResult> {
   await requireAdmin();
