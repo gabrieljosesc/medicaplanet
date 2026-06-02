@@ -98,6 +98,12 @@ export default async function AdminOrderDetailPage({ params }: Props) {
           <span>Subtotal</span>
           <span>${Number(order.subtotal).toFixed(2)}</span>
         </span>
+        {(order as { coupon_code?: string | null }).coupon_code ? (
+          <span className="flex justify-between text-teal-700">
+            <span>Coupon: {(order as { coupon_code?: string | null }).coupon_code}</span>
+            <span>−${Number((order as { discount_amount?: number | null }).discount_amount ?? 0).toFixed(2)}</span>
+          </span>
+        ) : null}
         <span className="flex justify-between">
           <span className="pr-2">
             {(order as { shipping_label?: string | null }).shipping_label ?? "Shipping"}
@@ -108,9 +114,12 @@ export default async function AdminOrderDetailPage({ params }: Props) {
           <span>Total</span>
           <span>
             $
-            {orderGrandTotal(
-              Number(order.subtotal),
-              Number((order as { shipping_amount?: number | null }).shipping_amount ?? 0)
+            {Math.max(
+              0,
+              orderGrandTotal(
+                Number(order.subtotal),
+                Number((order as { shipping_amount?: number | null }).shipping_amount ?? 0)
+              ) - Number((order as { discount_amount?: number | null }).discount_amount ?? 0)
             ).toFixed(2)}
           </span>
         </span>
