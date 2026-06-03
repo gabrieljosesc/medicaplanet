@@ -42,6 +42,7 @@ const checkoutSchema = z.object({
   checkoutType: z.enum(["saved_manual_card", "bank_transfer"]),
   userSavedCardId: z.string().uuid().optional(),
   couponCode: z.string().optional(),
+  shippingCompany: z.string().optional(),
 }).refine(
   (d) => d.checkoutType !== "saved_manual_card" || Boolean(d.userSavedCardId),
   { message: "Select a saved card.", path: ["userSavedCardId"] }
@@ -146,6 +147,7 @@ export async function submitOrder(
 
   const shipping_address = {
     recipientName: input.recipientName,
+    company: input.shippingCompany ?? "",
     phone: input.phone,
     line1: input.line1,
     line2: input.line2 ?? "",

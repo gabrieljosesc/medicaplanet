@@ -48,6 +48,7 @@ type SavedAddressRow = {
 
 type ShippingFields = {
   recipientName: string;
+  company: string;
   phone: string;
   line1: string;
   line2: string;
@@ -69,6 +70,7 @@ const emptyContact: ContactFields = {
 
 const emptyShipping: ShippingFields = {
   recipientName: "",
+  company: "",
   phone: "",
   line1: "",
   line2: "",
@@ -192,6 +194,7 @@ export default function CheckoutPage() {
   function applySavedRow(row: SavedAddressRow) {
     setShipping({
       recipientName: row.recipient_name,
+      company: "",
       phone: row.phone ?? "",
       line1: row.line1,
       line2: row.line2 ?? "",
@@ -266,6 +269,7 @@ export default function CheckoutPage() {
           setSelectedSavedId(null);
           setShipping({
             recipientName: fullName,
+            company: profile.company ?? "",
             phone: profile.phone ?? "",
             line1: profile.delivery_address ?? "",
             line2: "",
@@ -361,6 +365,7 @@ export default function CheckoutPage() {
       checkoutType: "saved_manual_card",
       userSavedCardId: selectedCard.id,
       couponCode: appliedCoupon?.code,
+      shippingCompany: shipping.company.trim() || undefined,
     });
     setPending(false);
 
@@ -588,6 +593,14 @@ export default function CheckoutPage() {
                     required={useDifferentShipping}
                     value={shipping.recipientName}
                     onChange={(e) => setShipping((s) => ({ ...s, recipientName: e.target.value }))}
+                    className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-zinc-600">Company (optional)</label>
+                  <input
+                    value={shipping.company}
+                    onChange={(e) => setShipping((s) => ({ ...s, company: e.target.value }))}
                     className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
                   />
                 </div>

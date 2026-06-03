@@ -8,9 +8,7 @@ import { orderGrandTotal } from "@/lib/checkout-shipping";
 import { displayOrderReference } from "@/lib/order-reference";
 
 type ImgRow = { url: string; sort_order: number };
-
 type ProductEmbed = { slug: string; product_images?: ImgRow[] | null } | null;
-
 type OrderItemRow = {
   id: string;
   title: string;
@@ -19,9 +17,19 @@ type OrderItemRow = {
   products?: ProductEmbed | ProductEmbed[];
 };
 
-function normalizeProduct(
-  p: ProductEmbed | ProductEmbed[] | undefined
-): { slug: string; product_images?: ImgRow[] | null } | null {
+type ShippingAddr = {
+  recipientName?: string;
+  company?: string;
+  phone?: string;
+  line1?: string;
+  line2?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+};
+
+function normalizeProduct(p: ProductEmbed | ProductEmbed[] | undefined): { slug: string; product_images?: ImgRow[] | null } | null {
   if (!p) return null;
   return Array.isArray(p) ? p[0] ?? null : p;
 }
@@ -31,34 +39,49 @@ function firstRemoteImage(images: ImgRow[] | null | undefined): string | null {
   return [...images].sort((a, b) => a.sort_order - b.sort_order)[0]?.url ?? null;
 }
 
+function formatAddress(addr: ShippingAddr | null | undefined): string {
+  if (!addr) return "—";
+  return [
+    addr.company,
+    addr.recipientName,
+    addr.line1,
+    addr.line2,
+    [addr.city, addr.state, addr.postalCode].filter(Boolean).join(", "),
+    addr.country,
+  ].filter(Boolean).join("\n");
+}
+
+function formatStatus(s: string): string {
+  switch (s) {
+    case "pending_csr": return "Pending review";
+    case "confirmed": return "Confirmed";
+    case "shipped": return "Shipped";
+    case "cancelled": return "Cancelled";
+    default: return s;
+  }
+}
+
+function statusColor(s: string) {
+  switch (s) {
+    case "pending_csr": return "bg-amber-100 text-amber-800";
+    case "confirmed": return "bg-teal-100 text-teal-800";
+    case "shipped": return "bg-blue-100 text-blue-800";
+    case "cancelled": return "bg-red-100 text-red-700";
+    default: return "bg-zinc-100 text-zinc-700";
+  }
+}
+
 type Props = { params: Promise<{ id: string }> };
 
 export default async function OrderDetailPage({ params }: Props) {
   const { id } = await params;
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/auth/login");
 
   const { data: order } = await supabase
     .from("orders")
-    .select(
-      `
-      *,
-      order_items (
-        id,
-        title,
-        quantity,
-        unit_price,
-        product_id,
-        products (
-          slug,
-          product_images ( url, sort_order )
-        )
-      )
-    `
-    )
+    .select(`*, order_items ( id, title, quantity, unit_price, product_id, products ( slug, product_images ( url, sort_order ) ) )`)
     .eq("id", id)
     .eq("user_id", user.id)
     .single();
@@ -66,41 +89,50 @@ export default async function OrderDetailPage({ params }: Props) {
   if (!order) notFound();
 
   const items = (Array.isArray(order.order_items) ? order.order_items : []) as OrderItemRow[];
+  const shipping = order.shipping_address as ShippingAddr | null;
+  const ref = displayOrderReference(order);
+  const customerNote = (order as { customer_visible_note?: string | null }).customer_visible_note;
 
   return (
-    <div>
-      <Link href="/account/purchases" className="text-sm font-medium text-teal-800 hover:underline">
-        ← My purchases
-      </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-zinc-900">Order</h1>
-      <p className="font-mono text-xs text-zinc-500">{displayOrderReference(order)}</p>
-      <p className="mt-2 text-sm text-zinc-600">Status: {formatStatus(order.status)}</p>
-      <ul className="mt-6 space-y-4">
+    <div className="space-y-5">
+      <div>
+        <Link href="/account/purchases" className="text-sm font-medium text-teal-800 hover:underline">
+          ← My purchases
+        </Link>
+        <div className="mt-4 flex flex-wrap items-start justify-between gap-2">
+          <div>
+            <h1 className="text-2xl font-semibold text-zinc-900">Order {ref}</h1>
+            <p className="mt-1 text-xs text-zinc-400">Placed {new Date(order.created_at).toLocaleDateString()}</p>
+          </div>
+          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusColor(order.status)}`}>
+            {formatStatus(order.status)}
+          </span>
+        </div>
+      </div>
+
+      {/* Admin message to customer */}
+      {customerNote ? (
+        <div className="rounded-xl border border-teal-200 bg-teal-50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">Message from MedicaPlanet</p>
+          <p className="mt-2 text-sm text-teal-900 whitespace-pre-wrap">{customerNote}</p>
+        </div>
+      ) : null}
+
+      {/* Items */}
+      <ul className="space-y-4">
         {items.map((row) => {
           const p = normalizeProduct(row.products);
           const slug = p?.slug ?? null;
           const remote = firstRemoteImage(p?.product_images ?? null);
           const src = resolveOrderItemImage(slug, remote, row.title);
           return (
-            <li
-              key={row.id}
-              className="flex gap-4 rounded-lg border border-zinc-200 bg-white p-3 shadow-sm"
-            >
+            <li key={row.id} className="flex gap-4 rounded-lg border border-zinc-200 bg-white p-3 shadow-sm">
               <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md bg-zinc-100">
-                <Image
-                  src={src}
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="64px"
-                  unoptimized={nextImageUnoptimized(src)}
-                />
+                <Image src={src} alt="" fill className="object-cover" sizes="64px" unoptimized={nextImageUnoptimized(src)} />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="font-medium text-zinc-900">{row.title}</p>
-                <p className="text-sm text-zinc-600">
-                  ×{row.quantity} at ${Number(row.unit_price).toFixed(2)} each
-                </p>
+                <p className="text-sm text-zinc-600">×{row.quantity} at ${Number(row.unit_price).toFixed(2)} each</p>
               </div>
               <div className="shrink-0 text-sm font-semibold text-zinc-900">
                 ${(Number(row.unit_price) * row.quantity).toFixed(2)}
@@ -109,52 +141,43 @@ export default async function OrderDetailPage({ params }: Props) {
           );
         })}
       </ul>
-      <p className="mt-6 space-y-1 text-sm text-zinc-700">
-        <span className="flex justify-between font-medium text-zinc-900">
+
+      {/* Totals */}
+      <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm space-y-1 text-sm">
+        <div className="flex justify-between font-medium text-zinc-900">
           <span>Subtotal</span>
           <span>${Number(order.subtotal).toFixed(2)}</span>
-        </span>
+        </div>
         {(order as { coupon_code?: string | null }).coupon_code ? (
-          <span className="flex justify-between text-teal-700">
+          <div className="flex justify-between text-teal-700">
             <span>Coupon: {(order as { coupon_code?: string | null }).coupon_code}</span>
             <span>−${Number((order as { discount_amount?: number | null }).discount_amount ?? 0).toFixed(2)}</span>
-          </span>
+          </div>
         ) : null}
-        <span className="flex justify-between">
-          <span className="pr-2">
-            {(order as { shipping_label?: string | null }).shipping_label ?? "Shipping"}
-          </span>
+        <div className="flex justify-between text-zinc-600">
+          <span>{(order as { shipping_label?: string | null }).shipping_label ?? "Shipping"}</span>
           <span>${Number((order as { shipping_amount?: number | null }).shipping_amount ?? 0).toFixed(2)}</span>
-        </span>
-        <span className="flex justify-between border-t border-zinc-200 pt-2 font-semibold text-teal-900">
+        </div>
+        <div className="flex justify-between border-t border-zinc-200 pt-2 font-semibold text-teal-900">
           <span>Total</span>
           <span>
-            $
-            {Math.max(
-              0,
+            ${Math.max(0,
               orderGrandTotal(
                 Number(order.subtotal),
                 Number((order as { shipping_amount?: number | null }).shipping_amount ?? 0)
               ) - Number((order as { discount_amount?: number | null }).discount_amount ?? 0)
             ).toFixed(2)}
           </span>
-        </span>
-      </p>
+        </div>
+      </div>
+
+      {/* Shipping address */}
+      <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Shipping to</p>
+        <address className="mt-2 not-italic text-sm text-zinc-700 whitespace-pre-line leading-relaxed">
+          {formatAddress(shipping)}
+        </address>
+      </div>
     </div>
   );
-}
-
-function formatStatus(s: string): string {
-  switch (s) {
-    case "pending_csr":
-      return "Pending review";
-    case "confirmed":
-      return "Confirmed";
-    case "shipped":
-      return "Shipped";
-    case "cancelled":
-      return "Cancelled";
-    default:
-      return s;
-  }
 }

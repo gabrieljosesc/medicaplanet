@@ -107,11 +107,12 @@ export async function updateOrderAction(formData: FormData): Promise<void> {
   const id = String(formData.get("id"));
   const status = String(formData.get("status")) as OrderStatus;
   const admin_notes = String(formData.get("admin_notes") || "");
+  const customer_visible_note = String(formData.get("customer_visible_note") || "") || null;
 
   const { data: before } = await supabase.from("orders").select("status").eq("id", id).single();
   const previousStatus = (before?.status ?? "pending_csr") as OrderStatus;
 
-  const { error } = await supabase.from("orders").update({ status, admin_notes }).eq("id", id);
+  const { error } = await supabase.from("orders").update({ status, admin_notes, customer_visible_note }).eq("id", id);
   if (error) {
     redirect("/admin/orders/" + id + "?error=" + encodeURIComponent(error.message));
   }
