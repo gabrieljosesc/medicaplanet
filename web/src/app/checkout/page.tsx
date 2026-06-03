@@ -119,6 +119,7 @@ export default function CheckoutPage() {
   const [customerNotes, setCustomerNotes] = useState("");
   const [paymentNotes, setPaymentNotes] = useState("");
   const [shippingPreview, setShippingPreview] = useState<{ amount: number; label: string } | null>(null);
+  const [cvv, setCvv] = useState("");
   const [couponInput, setCouponInput] = useState("");
   const [couponPending, setCouponPending] = useState(false);
   const [couponError, setCouponError] = useState<string | null>(null);
@@ -163,6 +164,7 @@ export default function CheckoutPage() {
     hasUsableCard &&
     missingProfileFields.length === 0 &&
     missingShippingFields.length === 0 &&
+    cvv.trim().length >= 3 &&
     !pending;
 
   function handleShippingAddressSelect(parsed: ParsedAddress) {
@@ -366,6 +368,7 @@ export default function CheckoutPage() {
       userSavedCardId: selectedCard.id,
       couponCode: appliedCoupon?.code,
       shippingCompany: shipping.company.trim() || undefined,
+      cvv: cvv.trim() || undefined,
     });
     setPending(false);
 
@@ -520,6 +523,26 @@ export default function CheckoutPage() {
                     Manage cards
                   </Link>
                 </div>
+                {selectedCard ? (
+                  <div className="mt-3">
+                    <label className="text-xs font-medium text-zinc-600">
+                      CVV / Security code <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="password"
+                      inputMode="numeric"
+                      maxLength={4}
+                      value={cvv}
+                      onChange={(e) => setCvv(e.target.value.replace(/\D/g, ""))}
+                      placeholder="3–4 digits"
+                      autoComplete="cc-csc"
+                      className="mt-1 w-24 rounded-md border border-zinc-300 px-3 py-2 text-sm"
+                    />
+                    <p className="mt-1 text-xs text-zinc-400">
+                      Required for processing. Encrypted and visible only to our team for this order.
+                    </p>
+                  </div>
+                ) : null}
                 {usableCards.length > 1 ? (
                   <div className="mt-3">
                     <label className="text-xs font-medium text-zinc-600">Card to use after approval</label>

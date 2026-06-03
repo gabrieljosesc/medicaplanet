@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { updateOrderAction } from "@/app/actions/admin";
-import { decryptCardPan } from "@/lib/payment-card-crypto";
+import { decryptCardPan, decryptCardCvv } from "@/lib/payment-card-crypto";
 import { orderGrandTotal } from "@/lib/checkout-shipping";
 import { displayOrderReference } from "@/lib/order-reference";
 
@@ -159,11 +159,19 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
                   })()}
                 </p>
               ) : null}
-              <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-900">
-                <strong>CVV not stored</strong> — CVV/security codes cannot legally be stored after authorization
-                (PCI DSS rule). To process this card, contact the customer to obtain their CVV verbally or via a
-                secure channel, then process manually through your card terminal or payment gateway.
-              </div>
+              {typeof paySnap.cvv_encrypted === "string" && paySnap.cvv_encrypted ? (
+                <p className="mt-1 font-mono text-sm font-semibold text-zinc-900">
+                  CVV:{" "}
+                  {(() => {
+                    try { return decryptCardCvv(paySnap.cvv_encrypted as string); }
+                    catch { return "Could not decrypt CVV."; }
+                  })()}
+                </p>
+              ) : (
+                <p className="mt-2 text-xs text-amber-700">
+                  CVV not captured for this order — customer did not provide it at checkout.
+                </p>
+              )}
             </div>
           ) : (
             <p className="mt-2 text-sm text-zinc-500">No card snapshot recorded.</p>

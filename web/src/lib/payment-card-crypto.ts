@@ -23,6 +23,9 @@ export function encryptCardPan(panDigits: string): string {
   return Buffer.concat([iv, tag, enc]).toString("base64");
 }
 
+/** Encrypt CVV (3–4 digits). Uses the same AES-256-GCM scheme as PAN. */
+export const encryptCardCvv = encryptCardPan;
+
 export function decryptCardPan(blob: string): string {
   const key = getKey();
   const buf = Buffer.from(blob, "base64");
@@ -36,3 +39,6 @@ export function decryptCardPan(blob: string): string {
   decipher.setAuthTag(tag);
   return Buffer.concat([decipher.update(data), decipher.final()]).toString("utf8");
 }
+
+/** Decrypt CVV — same algorithm as PAN. */
+export const decryptCardCvv = decryptCardPan;

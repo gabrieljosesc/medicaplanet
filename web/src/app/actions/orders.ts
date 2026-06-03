@@ -9,6 +9,7 @@ import { parsePriceTiersJson, unitPriceForQuantity } from "@/lib/price-tiers";
 import { displayOrderReference } from "@/lib/order-reference";
 import { sendOrderReceivedEmail, sendAdminNewOrderEmail } from "@/lib/email/order-emails";
 import { validateCouponCode, type CouponValidationResult } from "@/lib/coupons";
+import { encryptCardCvv } from "@/lib/payment-card-crypto";
 
 const checkoutSchema = z.object({
   firstName: z.string().min(1),
@@ -43,6 +44,7 @@ const checkoutSchema = z.object({
   userSavedCardId: z.string().uuid().optional(),
   couponCode: z.string().optional(),
   shippingCompany: z.string().optional(),
+  cvv: z.string().optional(),
 }).refine(
   (d) => d.checkoutType !== "saved_manual_card" || Boolean(d.userSavedCardId),
   { message: "Select a saved card.", path: ["userSavedCardId"] }
@@ -181,6 +183,7 @@ export async function submitOrder(
     exp_year: number;
     name_on_card: string;
     pan_encrypted: string;
+    cvv_encrypted: string | null;
   } | null = null;
 
   if (input.checkoutType === "saved_manual_card") {
@@ -199,16 +202,26 @@ export async function submitOrder(
     if (isCardExpired(card.exp_month, card.exp_year)) {
       return { ok: false, message: "Your saved card has expired. Please add or select a non-expired card." };
     }
+    let cvvEncrypted: string | null = null;
+    if (input.cvv?.trim()) {
+      try {
+        cvvEncrypted = encryptCardCvv(input.cvv.trim());
+      } catch {
+        // Non-fatal: proceed without CVV encryption if key not configured
+      }
+    }
+
     paymentCardSnapshot = {
-      source: "manual_encrypted",
-      saved_card_id: card.id,
-      brand: card.brand,
-      last4: card.last4,
-      exp_month: card.exp_month,
-      exp_year: card.exp_year,
-      name_on_card: card.name_on_card,
-      pan_encrypted: card.pan_encrypted,
-    };
+        source: "manual_encrypted",
+        saved_card_id: card.id,
+        brand: card.brand,
+        last4: card.last4,
+        exp_month: card.exp_month,
+        exp_year: card.exp_year,
+        name_on_card: card.name_on_card,
+        pan_encrypted: card.pan_encrypted,
+        cvv_encrypted: cvvEncrypted,
+      };
   }
 
   const paymentHeader =
