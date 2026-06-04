@@ -90,7 +90,7 @@ export async function sendOrderReceivedEmail(order: OrderEmailRow): Promise<void
     `Hi ${order.full_name.trim() || "there"},`,
     "",
     "Thank you! Your order is being processed.",
-    "We've sent a summary to your email. You'll receive another email when your order is confirmed.",
+    "You'll receive another email when your order is confirmed.",
     "",
     `Reference: ${ref}`,
     "",
@@ -102,7 +102,7 @@ export async function sendOrderReceivedEmail(order: OrderEmailRow): Promise<void
   const html = emailLayout(`
     <p style="margin:0 0 16px;">Hi ${name},</p>
     <p style="margin:0 0 12px;">Thank you! Your order is being processed.</p>
-    <p style="margin:0 0 20px;">We&apos;ve sent a summary to your email. You&apos;ll receive another email when your order is confirmed.</p>
+    <p style="margin:0 0 20px;">You&apos;ll receive another email when your order is confirmed.</p>
     ${orderMetaHtml(order)}
     ${itemSummaryHtml(order)}
     <p style="margin:20px 0 0;font-size:14px;color:#52525b;">
