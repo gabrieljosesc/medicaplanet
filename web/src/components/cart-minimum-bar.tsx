@@ -37,8 +37,8 @@ export function CartMinimumBar({ amountUsd, currency = "USD", className = "" }: 
           />
         </div>
       </div>
-      <div className="mt-2 flex justify-center overflow-x-auto overscroll-x-contain px-1 [-webkit-overflow-scrolling:touch]">
-        <p className="whitespace-nowrap text-center text-xs leading-snug text-zinc-600">
+      <div className="mt-2 px-1">
+        <p className="text-center text-xs leading-snug text-zinc-600">
           {met ? (
             <>
               Minimum order of{" "}
