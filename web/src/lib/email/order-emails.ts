@@ -261,8 +261,15 @@ export async function sendAdminNewOrderEmail(order: OrderEmailRow): Promise<void
     </a>
   `);
 
+  // ADMIN_NOTIFY_EMAILS: comma-separated extra inboxes, e.g. "joe@example.com,jane@example.com"
+  const extraEmails = (process.env.ADMIN_NOTIFY_EMAILS ?? "")
+    .split(",")
+    .map((e) => e.trim())
+    .filter(Boolean);
+  const recipients = [SITE_EMAIL, ...extraEmails];
+
   await sendTransactionalEmail({
-    to: SITE_EMAIL,
+    to: recipients,
     subject: `New order — ${ref} · ${order.full_name}`,
     html,
     text,

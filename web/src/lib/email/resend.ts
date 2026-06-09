@@ -3,7 +3,7 @@ import "server-only";
 import { SITE_EMAIL } from "@/lib/site-constants";
 
 export type SendEmailInput = {
-  to: string;
+  to: string | string[];
   subject: string;
   html: string;
   text?: string;
@@ -27,7 +27,7 @@ export async function sendTransactionalEmail(input: SendEmailInput): Promise<Sen
     },
     body: JSON.stringify({
       from: `MedicaPlanet <${SITE_EMAIL}>`,
-      to: [input.to],
+      to: Array.isArray(input.to) ? input.to : [input.to],
       subject: input.subject,
       html: input.html,
       text: input.text,
