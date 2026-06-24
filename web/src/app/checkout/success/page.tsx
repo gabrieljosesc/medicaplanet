@@ -9,8 +9,7 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
       <p className="mt-3 text-sm text-teal-900/90">
         Thank you! Your order is being processed.
         <br />
-        We&apos;ve sent a summary to your email. You&apos;ll receive another email when your order is
-        confirmed.
+        You&apos;ll receive another email when your order is confirmed.
       </p>
       {reference && (
         <p className="mt-4 text-xs text-teal-900/80">
