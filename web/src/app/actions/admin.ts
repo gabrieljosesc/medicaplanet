@@ -5,7 +5,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/admin";
 import { sendOrderStatusEmail, type OrderStatus } from "@/lib/email/order-emails";
-import { SITE_PUBLIC_URL } from "@/lib/site-constants";
+import { sendTransactionalEmail } from "@/lib/email/resend";
+import { SITE_EMAIL, SITE_PUBLIC_URL } from "@/lib/site-constants";
 
 async function requireAdmin() {
   const supabase = await createClient();
@@ -236,6 +237,49 @@ export async function deleteCouponAction(id: string): Promise<AdminActionResult>
   if (error) return { ok: false, message: error.message };
   revalidatePath("/admin/coupons");
   return { ok: true, message: "Coupon deleted." };
+}
+
+/**
+ * Sends a real test email through the same Resend path as order notifications,
+ * so a misconfigured API key or unverified sending domain surfaces loudly here
+ * instead of failing silently at checkout. Admin only.
+ */
+export async function sendTestEmailAction(): Promise<AdminActionResult> {
+  const { user } = await requireAdmin();
+  const to = user.email;
+  if (!to) {
+    return { ok: false, message: "Your admin account has no email address to send to." };
+  }
+
+  if (!process.env.RESEND_API_KEY?.trim()) {
+    return {
+      ok: false,
+      message:
+        "RESEND_API_KEY is not set on the server. Add it to your host's environment variables and redeploy.",
+    };
+  }
+
+  const now = new Date().toISOString();
+  const result = await sendTransactionalEmail({
+    to,
+    subject: "MedicaPlanet email test",
+    html: `<p>This is a test from the admin email diagnostics page.</p>
+      <p>If you received this, order notifications from <strong>${SITE_EMAIL}</strong> are working.</p>
+      <p style="color:#71717a;font-size:12px;">Sent ${now}</p>`,
+    text: `This is a test from the admin email diagnostics page.\nIf you received this, order notifications from ${SITE_EMAIL} are working.\nSent ${now}`,
+  });
+
+  if (!result.ok) {
+    return {
+      ok: false,
+      message: `Resend rejected the send: ${result.error}. Common cause: the sending domain for ${SITE_EMAIL} is not verified in Resend (check its DNS/DKIM records).`,
+    };
+  }
+
+  return {
+    ok: true,
+    message: `Test email sent to ${to}. Check that inbox (and spam) to confirm delivery.`,
+  };
 }
 
 /** Send a password-reset email to any user. Admin only. */

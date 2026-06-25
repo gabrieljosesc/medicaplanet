@@ -19,25 +19,35 @@ export async function sendTransactionalEmail(input: SendEmailInput): Promise<Sen
     return { ok: false, error: "Email is not configured (missing RESEND_API_KEY)." };
   }
 
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: `MedicaPlanet <${SITE_EMAIL}>`,
-      to: Array.isArray(input.to) ? input.to : [input.to],
-      subject: input.subject,
-      html: input.html,
-      text: input.text,
-    }),
+  const payload = JSON.stringify({
+    from: `MedicaPlanet <${SITE_EMAIL}>`,
+    to: Array.isArray(input.to) ? input.to : [input.to],
+    subject: input.subject,
+    html: input.html,
+    text: input.text,
   });
 
-  if (!res.ok) {
-    const body = await res.text().catch(() => "");
-    console.error("[email] Resend error:", res.status, body);
-    return { ok: false, error: body || `Resend HTTP ${res.status}` };
+  // Retry once on a rate-limit (429): Resend allows ~2 requests/sec, so bursts
+  // of order emails can be briefly throttled.
+  let res: Response | undefined;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: payload,
+    });
+    if (res.status !== 429) break;
+    await new Promise((r) => setTimeout(r, 700));
+  }
+
+  if (!res || !res.ok) {
+    const status = res?.status ?? 0;
+    const body = res ? await res.text().catch(() => "") : "";
+    console.error("[email] Resend error:", status, body);
+    return { ok: false, error: body || `Resend HTTP ${status}` };
   }
 
   const data = (await res.json().catch(() => ({}))) as { id?: string };
