@@ -26,6 +26,11 @@ const sections = [
     label: "Blog",
     desc: "Create and publish blog posts.",
   },
+  {
+    href: "/admin/email",
+    label: "Email diagnostics",
+    desc: "Confirm order notifications can send, and send a test email.",
+  },
 ];
 
 export default function AdminHomePage() {

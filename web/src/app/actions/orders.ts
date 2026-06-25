@@ -358,12 +358,20 @@ export async function submitOrder(
     })),
   };
 
-  void sendOrderReceivedEmail(orderEmailPayload).catch((err) =>
-    console.error("[email] order received:", err)
-  );
-  void sendAdminNewOrderEmail(orderEmailPayload).catch((err) =>
-    console.error("[email] admin new order:", err)
-  );
+  // Send sequentially, not concurrently: Resend rate-limits to ~2 requests/sec,
+  // and two simultaneous sends can get one silently rejected (429).
+  void (async () => {
+    try {
+      await sendOrderReceivedEmail(orderEmailPayload);
+    } catch (err) {
+      console.error("[email] order received:", err);
+    }
+    try {
+      await sendAdminNewOrderEmail(orderEmailPayload);
+    } catch (err) {
+      console.error("[email] admin new order:", err);
+    }
+  })();
 
   return {
     ok: true,
