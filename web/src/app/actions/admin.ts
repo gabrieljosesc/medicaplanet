@@ -127,7 +127,7 @@ export async function updateOrderAction(formData: FormData): Promise<void> {
     const { data: order } = await svc
       .from("orders")
       .select(
-        "id, reference_number, email, full_name, status, subtotal, shipping_amount, shipping_label, order_items ( title, quantity, unit_price )"
+        "id, reference_number, email, full_name, status, subtotal, shipping_amount, shipping_label, discount_amount, order_items ( title, quantity, unit_price )"
       )
       .eq("id", id)
       .single();
@@ -188,6 +188,90 @@ export async function upsertBlogPostAction(formData: FormData): Promise<void> {
 }
 
 export type AdminActionResult = { ok: true; message: string } | { ok: false; message: string };
+
+// ─── Order items editing ──────────────────────────────────────────────────────
+
+export type AdminProductSuggestion = { id: string; title: string; base_price: number };
+
+/** Product search for the admin order-items editor. */
+export async function searchOrderProductsAction(query: string): Promise<AdminProductSuggestion[]> {
+  await requireAdmin();
+  const q = query.trim();
+  if (q.length < 2) return [];
+  const svc = createServiceClient();
+  const { data } = await svc
+    .from("products")
+    .select("id, title, base_price")
+    .eq("is_active", true)
+    .ilike("title", `%${q}%`)
+    .order("title")
+    .limit(10);
+  return (data ?? []).map((p) => ({
+    id: p.id as string,
+    title: p.title as string,
+    base_price: Number(p.base_price),
+  }));
+}
+
+export type OrderItemInput = {
+  product_id: string | null;
+  title: string;
+  quantity: number;
+  unit_price: number;
+};
+
+/**
+ * Replaces an order's items and updates subtotal / shipping / manual discount.
+ * New rows are inserted before the old ones are deleted so a failed insert
+ * leaves the original items untouched.
+ */
+export async function saveOrderItemsAction(input: {
+  orderId: string;
+  items: OrderItemInput[];
+  shippingAmount: number;
+  discountAmount: number;
+}): Promise<AdminActionResult> {
+  await requireAdmin();
+  const svc = createServiceClient();
+
+  const clean = (input.items ?? [])
+    .map((i) => ({
+      product_id: i.product_id || null,
+      title: String(i.title ?? "").trim(),
+      quantity: Math.max(1, Math.floor(Number(i.quantity) || 1)),
+      unit_price: Math.max(0, Number(i.unit_price) || 0),
+    }))
+    .filter((i) => i.title);
+  if (!clean.length) return { ok: false, message: "An order must have at least one item." };
+
+  const { data: order } = await svc.from("orders").select("id").eq("id", input.orderId).single();
+  if (!order) return { ok: false, message: "Order not found." };
+
+  const subtotal = clean.reduce((s, i) => s + i.quantity * i.unit_price, 0);
+  const shipping = Math.max(0, Number(input.shippingAmount) || 0);
+  const discount = Math.min(Math.max(0, Number(input.discountAmount) || 0), subtotal);
+
+  const { data: oldRows } = await svc.from("order_items").select("id").eq("order_id", input.orderId);
+  const { error: insErr } = await svc
+    .from("order_items")
+    .insert(clean.map((i) => ({ ...i, order_id: input.orderId })));
+  if (insErr) return { ok: false, message: insErr.message };
+  const oldIds = (oldRows ?? []).map((r) => r.id as string);
+  if (oldIds.length) {
+    await svc.from("order_items").delete().in("id", oldIds);
+  }
+
+  const { error: updErr } = await svc
+    .from("orders")
+    .update({ subtotal, shipping_amount: shipping, discount_amount: discount })
+    .eq("id", input.orderId);
+  if (updErr) return { ok: false, message: updErr.message };
+
+  revalidatePath(`/admin/orders/${input.orderId}`);
+  revalidatePath(`/account/orders/${input.orderId}`);
+  revalidatePath("/admin/orders");
+  return { ok: true, message: "Order saved." };
+}
 
 // ─── Coupon actions ───────────────────────────────────────────────────────────
 
@@ -320,7 +404,7 @@ export async function requestPaymentUpdateAction(orderId: string): Promise<Admin
 
   const { data: order } = await svc
     .from("orders")
-    .select("id, reference_number, email, full_name, status, subtotal, shipping_amount, shipping_label")
+    .select("id, reference_number, email, full_name, status, subtotal, shipping_amount, shipping_label, discount_amount")
     .eq("id", orderId)
     .single();
   if (!order) return { ok: false, message: "Order not found." };

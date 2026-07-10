@@ -178,12 +178,16 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
           <span>Subtotal</span>
           <span>${Number(order.subtotal).toFixed(2)}</span>
         </div>
-        {(order as { coupon_code?: string | null }).coupon_code ? (
-          <div className="flex justify-between text-teal-700">
-            <span>Coupon: {(order as { coupon_code?: string | null }).coupon_code}</span>
-            <span>−${Number((order as { discount_amount?: number | null }).discount_amount ?? 0).toFixed(2)}</span>
-          </div>
-        ) : null}
+        {(() => {
+          const couponCode = (order as { coupon_code?: string | null }).coupon_code;
+          const discount = Number((order as { discount_amount?: number | null }).discount_amount ?? 0);
+          return couponCode || discount > 0 ? (
+            <div className="flex justify-between text-teal-700">
+              <span>{couponCode ? `Coupon: ${couponCode}` : "Discount"}</span>
+              <span>−${discount.toFixed(2)}</span>
+            </div>
+          ) : null;
+        })()}
         <div className="flex justify-between text-zinc-600">
           <span>{(order as { shipping_label?: string | null }).shipping_label ?? "Shipping"}</span>
           <span>${Number((order as { shipping_amount?: number | null }).shipping_amount ?? 0).toFixed(2)}</span>

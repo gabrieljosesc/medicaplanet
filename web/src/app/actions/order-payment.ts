@@ -49,7 +49,7 @@ export async function updateOrderPaymentAction(formData: FormData): Promise<Upda
   // RLS-scoped read proves the order belongs to this user.
   const { data: order } = await supabase
     .from("orders")
-    .select("id, reference_number, email, full_name, status, subtotal, shipping_amount, shipping_label")
+    .select("id, reference_number, email, full_name, status, subtotal, shipping_amount, shipping_label, discount_amount")
     .eq("id", orderId)
     .eq("user_id", user.id)
     .single();

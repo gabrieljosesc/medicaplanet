@@ -3,9 +3,9 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { updateOrderAction } from "@/app/actions/admin";
 import { decryptCardPan, decryptCardCvv } from "@/lib/payment-card-crypto";
-import { orderGrandTotal } from "@/lib/checkout-shipping";
 import { displayOrderReference } from "@/lib/order-reference";
 import { RequestPaymentUpdateButton } from "./request-payment-update-button";
+import { OrderItemsEditor } from "./order-items-editor";
 
 type Props = { params: Promise<{ id: string }>; searchParams: Promise<{ saved?: string; error?: string }> };
 
@@ -208,45 +208,21 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
         </section>
       ) : null}
 
-      {/* Order items */}
-      <section className="mt-4 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Items</h2>
-        <ul className="mt-3 space-y-2">
-          {items.map((it: { id: string; title: string; quantity: number; unit_price: number }) => (
-            <li key={it.id} className="flex justify-between text-sm">
-              <span className="text-zinc-800">{it.title} <span className="text-zinc-500">× {it.quantity}</span></span>
-              <span className="font-medium text-zinc-900">${(Number(it.unit_price) * it.quantity).toFixed(2)}</span>
-            </li>
-          ))}
-        </ul>
-        <div className="mt-4 space-y-1 border-t border-zinc-100 pt-3 text-sm">
-          <div className="flex justify-between text-zinc-600">
-            <span>Subtotal</span>
-            <span>${Number(order.subtotal).toFixed(2)}</span>
-          </div>
-          {(order as { coupon_code?: string | null }).coupon_code ? (
-            <div className="flex justify-between text-teal-700">
-              <span>Coupon: {(order as { coupon_code?: string | null }).coupon_code}</span>
-              <span>−${Number((order as { discount_amount?: number | null }).discount_amount ?? 0).toFixed(2)}</span>
-            </div>
-          ) : null}
-          <div className="flex justify-between text-zinc-600">
-            <span>{(order as { shipping_label?: string | null }).shipping_label ?? "Shipping"}</span>
-            <span>${Number((order as { shipping_amount?: number | null }).shipping_amount ?? 0).toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between border-t border-zinc-200 pt-2 font-semibold text-teal-900">
-            <span>Total</span>
-            <span>
-              ${Math.max(0,
-                orderGrandTotal(
-                  Number(order.subtotal),
-                  Number((order as { shipping_amount?: number | null }).shipping_amount ?? 0)
-                ) - Number((order as { discount_amount?: number | null }).discount_amount ?? 0)
-              ).toFixed(2)}
-            </span>
-          </div>
-        </div>
-      </section>
+      {/* Order items — editable */}
+      <OrderItemsEditor
+        orderId={order.id}
+        initialItems={items.map(
+          (it: { product_id?: string | null; title: string; quantity: number; unit_price: number }) => ({
+            product_id: it.product_id ?? null,
+            title: it.title,
+            quantity: Number(it.quantity),
+            unit_price: Number(it.unit_price),
+          })
+        )}
+        initialShipping={Number((order as { shipping_amount?: number | null }).shipping_amount ?? 0)}
+        initialDiscount={Number((order as { discount_amount?: number | null }).discount_amount ?? 0)}
+        couponCode={(order as { coupon_code?: string | null }).coupon_code ?? null}
+      />
 
       {/* Policy ack */}
       <section className="mt-4 rounded-xl border border-zinc-100 bg-zinc-50 p-4 text-xs text-zinc-500">
