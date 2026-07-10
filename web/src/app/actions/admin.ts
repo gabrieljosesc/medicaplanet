@@ -4,7 +4,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/admin";
-import { sendOrderStatusEmail, type OrderStatus } from "@/lib/email/order-emails";
+import {
+  sendOrderStatusEmail,
+  sendPaymentUpdateRequestEmail,
+  type OrderStatus,
+} from "@/lib/email/order-emails";
 import { sendTransactionalEmail } from "@/lib/email/resend";
 import { SITE_EMAIL, SITE_PUBLIC_URL } from "@/lib/site-constants";
 
@@ -368,4 +372,42 @@ export async function sendPasswordResetAction(userId: string): Promise<AdminActi
   }
 
   return { ok: true, message: `Password reset email sent to ${authUser.user.email}.` };
+}
+
+/**
+ * Flags an order as needing updated payment details and emails the customer a
+ * link to enter a new card for that order. The customer's submission replaces
+ * the order's payment_card_snapshot, so the refreshed card shows on this page.
+ */
+export async function requestPaymentUpdateAction(orderId: string): Promise<AdminActionResult> {
+  await requireAdmin();
+  const svc = createServiceClient();
+
+  const { data: order } = await svc
+    .from("orders")
+    .select("id, reference_number, email, full_name, status, subtotal, shipping_amount, shipping_label")
+    .eq("id", orderId)
+    .single();
+  if (!order) return { ok: false, message: "Order not found." };
+
+  const { error: upErr } = await svc
+    .from("orders")
+    .update({ payment_update_requested_at: new Date().toISOString() })
+    .eq("id", orderId);
+  if (upErr) {
+    return {
+      ok: false,
+      message: upErr.message.includes("payment_update_requested_at")
+        ? "Database migration missing: run 20260711120000_payment_update_request.sql in Supabase first."
+        : upErr.message,
+    };
+  }
+
+  const emailRes = await sendPaymentUpdateRequestEmail(order);
+  if (!emailRes.ok) {
+    return { ok: false, message: `Flag set, but the email failed to send: ${emailRes.error}` };
+  }
+
+  revalidatePath(`/admin/orders/${orderId}`);
+  return { ok: true, message: `Payment update email sent to ${order.email}.` };
 }
