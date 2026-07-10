@@ -5,6 +5,7 @@ import { updateOrderAction } from "@/app/actions/admin";
 import { decryptCardPan, decryptCardCvv } from "@/lib/payment-card-crypto";
 import { orderGrandTotal } from "@/lib/checkout-shipping";
 import { displayOrderReference } from "@/lib/order-reference";
+import { RequestPaymentUpdateButton } from "./request-payment-update-button";
 
 type Props = { params: Promise<{ id: string }>; searchParams: Promise<{ saved?: string; error?: string }> };
 
@@ -176,6 +177,22 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
           ) : (
             <p className="mt-2 text-sm text-zinc-500">No card snapshot recorded.</p>
           )}
+          {typeof paySnap?.updated_by_customer_at === "string" ? (
+            <p className="mt-2 text-xs font-medium text-teal-700">
+              Card updated by customer on{" "}
+              {new Date(paySnap.updated_by_customer_at as string).toLocaleString()}
+            </p>
+          ) : null}
+          {(() => {
+            const requestedAt = (order as { payment_update_requested_at?: string | null })
+              .payment_update_requested_at;
+            return requestedAt ? (
+              <p className="mt-2 text-xs text-amber-700">
+                Updated payment requested {new Date(requestedAt).toLocaleString()} — waiting on customer.
+              </p>
+            ) : null;
+          })()}
+          {order.status !== "cancelled" ? <RequestPaymentUpdateButton orderId={order.id} /> : null}
         </section>
 
       </div>

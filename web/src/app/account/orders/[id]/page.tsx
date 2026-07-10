@@ -71,10 +71,14 @@ function statusColor(s: string) {
   }
 }
 
-type Props = { params: Promise<{ id: string }> };
+type Props = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ payment_updated?: string }>;
+};
 
-export default async function OrderDetailPage({ params }: Props) {
+export default async function OrderDetailPage({ params, searchParams }: Props) {
   const { id } = await params;
+  const sp = await searchParams;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/auth/login");
@@ -109,6 +113,32 @@ export default async function OrderDetailPage({ params }: Props) {
           </span>
         </div>
       </div>
+
+      {/* Payment update confirmation / request */}
+      {sp.payment_updated ? (
+        <div className="rounded-xl border border-teal-200 bg-teal-50 p-4">
+          <p className="text-sm font-medium text-teal-900">
+            ✓ Your payment details have been updated. Our team will re-process your order shortly.
+          </p>
+        </div>
+      ) : null}
+      {!sp.payment_updated &&
+      (order as { payment_update_requested_at?: string | null }).payment_update_requested_at &&
+      order.status !== "cancelled" ? (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Action needed</p>
+          <p className="mt-2 text-sm text-amber-900">
+            There was a problem processing the payment card on this order. Please update your payment
+            details so we can continue processing it.
+          </p>
+          <Link
+            href={`/account/orders/${order.id}/update-payment`}
+            className="mt-3 inline-block rounded-full bg-teal-800 px-5 py-2 text-sm font-semibold text-white hover:bg-teal-900"
+          >
+            Update payment details
+          </Link>
+        </div>
+      ) : null}
 
       {/* Admin message to customer */}
       {customerNote ? (
