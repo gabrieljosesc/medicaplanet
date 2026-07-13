@@ -4,7 +4,7 @@ import { orderGrandTotal } from "@/lib/checkout-shipping";
 import { displayOrderReference } from "@/lib/order-reference";
 import { emailHeaderHtml } from "@/lib/email/email-branding";
 import { SITE_EMAIL, SITE_PHONE_DISPLAY, SITE_PUBLIC_URL } from "@/lib/site-constants";
-import { sendTransactionalEmail } from "@/lib/email/resend";
+import { sendTransactionalEmail, type SendEmailResult } from "@/lib/email/resend";
 
 export type OrderStatus = "pending_csr" | "confirmed" | "shipped" | "cancelled";
 
@@ -17,6 +17,7 @@ export type OrderEmailRow = {
   subtotal: number | string;
   shipping_amount?: number | string | null;
   shipping_label?: string | null;
+  discount_amount?: number | string | null;
   order_items?: { title: string; quantity: number; unit_price: number | string }[] | null;
 };
 
@@ -25,9 +26,10 @@ function orderRef(order: OrderEmailRow): string {
 }
 
 function orderTotal(order: OrderEmailRow): number {
-  return orderGrandTotal(
-    Number(order.subtotal),
-    Number(order.shipping_amount ?? 0)
+  return Math.max(
+    0,
+    orderGrandTotal(Number(order.subtotal), Number(order.shipping_amount ?? 0)) -
+      Number(order.discount_amount ?? 0)
   );
 }
 
@@ -77,8 +79,13 @@ function itemSummaryHtml(order: OrderEmailRow): string {
 function orderMetaHtml(order: OrderEmailRow): string {
   const ref = escapeHtml(orderRef(order));
   const total = orderTotal(order).toFixed(2);
+  const discount = Number(order.discount_amount ?? 0);
+  const discountLine =
+    discount > 0
+      ? `<p style="margin:0 0 8px;"><strong>Discount:</strong> −$${discount.toFixed(2)}</p>`
+      : "";
   return `<p style="margin:0 0 8px;"><strong>Reference:</strong> ${ref}</p>
-    <p style="margin:0 0 8px;"><strong>Order total:</strong> $${total}</p>`;
+    ${discountLine}<p style="margin:0 0 8px;"><strong>Order total:</strong> $${total}</p>`;
 }
 
 /** Matches checkout success page — sent immediately after order is placed. */
@@ -216,6 +223,87 @@ export async function sendOrderCancelledEmail(order: OrderEmailRow): Promise<voi
   });
 }
 
+/** SITE_EMAIL plus any extra inboxes from ADMIN_NOTIFY_EMAILS (comma-separated). */
+function adminRecipients(): string[] {
+  const extraEmails = (process.env.ADMIN_NOTIFY_EMAILS ?? "")
+    .split(",")
+    .map((e) => e.trim())
+    .filter(Boolean);
+  return [SITE_EMAIL, ...extraEmails];
+}
+
+/** Sent when admin requests updated payment details for an order (e.g. card declined). */
+export async function sendPaymentUpdateRequestEmail(order: OrderEmailRow): Promise<SendEmailResult> {
+  const ref = orderRef(order);
+  const name = escapeHtml(order.full_name.trim() || "there");
+  const updateUrl = `${SITE_PUBLIC_URL}/account/orders/${order.id}/update-payment`;
+
+  const text = [
+    `Hi ${order.full_name.trim() || "there"},`,
+    "",
+    `There was a problem processing the payment card on your order ${ref}.`,
+    "Please update your payment details so we can continue processing your order:",
+    "",
+    updateUrl,
+    "",
+    "If you have any questions, just reply to this email.",
+    "",
+    `— MedicaPlanet · ${SITE_EMAIL} · ${SITE_PHONE_DISPLAY}`,
+  ].join("\n");
+
+  const html = emailLayout(`
+    <p style="margin:0 0 16px;">Hi ${name},</p>
+    <p style="margin:0 0 12px;"><strong>There was a problem processing the payment card on your order.</strong></p>
+    <p style="margin:0 0 20px;">Please update your payment details so we can continue processing your order.</p>
+    ${orderMetaHtml(order)}
+    <a href="${updateUrl}" style="display:inline-block;margin-top:16px;background:#0f766e;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
+      Update payment details
+    </a>
+    <p style="margin:20px 0 0;font-size:13px;color:#52525b;">
+      You&apos;ll be asked to sign in, then enter your new card for this order.
+    </p>
+  `);
+
+  return sendTransactionalEmail({
+    to: order.email,
+    subject: `Action needed: update payment for order ${ref}`,
+    html,
+    text,
+  });
+}
+
+/** Internal alert when a customer submits updated payment details for an order. */
+export async function sendAdminPaymentUpdatedEmail(order: OrderEmailRow): Promise<void> {
+  const ref = orderRef(order);
+  const adminUrl = `${SITE_PUBLIC_URL}/admin/orders/${order.id}`;
+
+  const text = [
+    `Payment updated — ${ref}`,
+    "",
+    `Customer: ${order.full_name} <${order.email}>`,
+    `The customer submitted new payment card details for this order.`,
+    "",
+    `Review: ${adminUrl}`,
+  ].join("\n");
+
+  const html = emailLayout(`
+    <p style="margin:0 0 16px;font-size:17px;font-weight:600;">Payment updated</p>
+    <p style="margin:0 0 8px;"><strong>Customer:</strong> ${escapeHtml(order.full_name)} &lt;${escapeHtml(order.email)}&gt;</p>
+    <p style="margin:0 0 16px;"><strong>Reference:</strong> ${escapeHtml(ref)}</p>
+    <p style="margin:0 0 16px;">The customer submitted new payment card details for this order.</p>
+    <a href="${adminUrl}" style="display:inline-block;background:#0f766e;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
+      Review order in admin
+    </a>
+  `);
+
+  await sendTransactionalEmail({
+    to: adminRecipients(),
+    subject: `Payment updated — ${ref} · ${order.full_name}`,
+    html,
+    text,
+  });
+}
+
 /** Internal alert sent to the site admin email whenever a new order is placed. */
 export async function sendAdminNewOrderEmail(order: OrderEmailRow): Promise<void> {
   const ref = orderRef(order);
@@ -261,15 +349,8 @@ export async function sendAdminNewOrderEmail(order: OrderEmailRow): Promise<void
     </a>
   `);
 
-  // ADMIN_NOTIFY_EMAILS: comma-separated extra inboxes, e.g. "joe@example.com,jane@example.com"
-  const extraEmails = (process.env.ADMIN_NOTIFY_EMAILS ?? "")
-    .split(",")
-    .map((e) => e.trim())
-    .filter(Boolean);
-  const recipients = [SITE_EMAIL, ...extraEmails];
-
   await sendTransactionalEmail({
-    to: recipients,
+    to: adminRecipients(),
     subject: `New order — ${ref} · ${order.full_name}`,
     html,
     text,
