@@ -127,7 +127,7 @@ export async function updateOrderAction(formData: FormData): Promise<void> {
     const { data: order } = await svc
       .from("orders")
       .select(
-        "id, reference_number, email, full_name, status, subtotal, shipping_amount, shipping_label, order_items ( title, quantity, unit_price )"
+        "id, reference_number, email, full_name, status, subtotal, shipping_amount, shipping_label, discount_amount, order_items ( title, quantity, unit_price )"
       )
       .eq("id", id)
       .single();
@@ -385,7 +385,7 @@ export async function requestPaymentUpdateAction(orderId: string): Promise<Admin
 
   const { data: order } = await svc
     .from("orders")
-    .select("id, reference_number, email, full_name, status, subtotal, shipping_amount, shipping_label")
+    .select("id, reference_number, email, full_name, status, subtotal, shipping_amount, shipping_label, discount_amount")
     .eq("id", orderId)
     .single();
   if (!order) return { ok: false, message: "Order not found." };

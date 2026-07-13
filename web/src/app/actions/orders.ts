@@ -351,6 +351,7 @@ export async function submitOrder(
     subtotal,
     shipping_amount: shippingLine.amount,
     shipping_label: shippingLine.label,
+    discount_amount: appliedCoupon?.discountAmount ?? 0,
     order_items: lines.map((l) => ({
       title: l.title,
       quantity: l.quantity,

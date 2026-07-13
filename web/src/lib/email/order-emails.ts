@@ -17,6 +17,7 @@ export type OrderEmailRow = {
   subtotal: number | string;
   shipping_amount?: number | string | null;
   shipping_label?: string | null;
+  discount_amount?: number | string | null;
   order_items?: { title: string; quantity: number; unit_price: number | string }[] | null;
 };
 
@@ -25,9 +26,10 @@ function orderRef(order: OrderEmailRow): string {
 }
 
 function orderTotal(order: OrderEmailRow): number {
-  return orderGrandTotal(
-    Number(order.subtotal),
-    Number(order.shipping_amount ?? 0)
+  return Math.max(
+    0,
+    orderGrandTotal(Number(order.subtotal), Number(order.shipping_amount ?? 0)) -
+      Number(order.discount_amount ?? 0)
   );
 }
 
@@ -77,8 +79,13 @@ function itemSummaryHtml(order: OrderEmailRow): string {
 function orderMetaHtml(order: OrderEmailRow): string {
   const ref = escapeHtml(orderRef(order));
   const total = orderTotal(order).toFixed(2);
+  const discount = Number(order.discount_amount ?? 0);
+  const discountLine =
+    discount > 0
+      ? `<p style="margin:0 0 8px;"><strong>Discount:</strong> −$${discount.toFixed(2)}</p>`
+      : "";
   return `<p style="margin:0 0 8px;"><strong>Reference:</strong> ${ref}</p>
-    <p style="margin:0 0 8px;"><strong>Order total:</strong> $${total}</p>`;
+    ${discountLine}<p style="margin:0 0 8px;"><strong>Order total:</strong> $${total}</p>`;
 }
 
 /** Matches checkout success page — sent immediately after order is placed. */
