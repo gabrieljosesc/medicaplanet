@@ -1,7 +1,6 @@
 import Script from "next/script";
 
-const GOOGLE_ADS_ID = "AW-18323938697";
-const META_PIXEL_ID = "1298323648776735";
+import { GOOGLE_ADS_ID, META_PIXEL_ID } from "@/lib/marketing";
 
 /** Google Ads + Meta Pixel base tags for marketing attribution. */
 export function MarketingPixels() {
