@@ -121,6 +121,8 @@ export default async function ShopPage({ searchParams }: Props) {
                   priceTiersRaw={p.price_tiers}
                   categoryName={slug && name ? categoryNavLabel(slug, name) : null}
                   categorySlug={slug ?? null}
+                  fdaApproved={p.fda_approved}
+                  ceMarked={p.ce_marked}
                 />
               );
             })}

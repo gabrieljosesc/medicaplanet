@@ -38,6 +38,8 @@ export async function updateProductAction(formData: FormData): Promise<void> {
   const category_id = String(formData.get("category_id") || "") || null;
   const is_active = formData.get("is_active") === "on";
   const is_featured = formData.get("is_featured") === "on";
+  const fda_approved = formData.get("fda_approved") === "on";
+  const ce_marked = formData.get("ce_marked") === "on";
   const image_url = String(formData.get("image_url") || "").trim();
 
   const { error } = await supabase
@@ -51,6 +53,8 @@ export async function updateProductAction(formData: FormData): Promise<void> {
       category_id,
       is_active,
       is_featured,
+      fda_approved,
+      ce_marked,
     })
     .eq("id", id);
 

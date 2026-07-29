@@ -83,6 +83,8 @@ export default async function SearchPage({ searchParams }: Props) {
                   heroImageSrc={p.heroImageSrc}
                   imageUnoptimized={p.imageUnoptimized}
                   priceTiersRaw={p.price_tiers}
+                  fdaApproved={p.fda_approved}
+                  ceMarked={p.ce_marked}
                 />
               ))
             )}

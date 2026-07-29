@@ -55,7 +55,7 @@ export function categoryListParamsActive(p: CategoryListParams): boolean {
 }
 
 const PRODUCT_SELECT =
-  "slug,title,description,base_price,currency,rating,review_count,price_tiers,product_images(url),is_featured,created_at,variant_product_id,categories(slug,name)" as const;
+  "slug,title,description,base_price,currency,rating,review_count,price_tiers,product_images(url),is_featured,created_at,variant_product_id,fda_approved,ce_marked,categories(slug,name)" as const;
 
 export type CategoryProductRow = {
   slug: string;
@@ -67,6 +67,8 @@ export type CategoryProductRow = {
   review_count: number;
   price_tiers: unknown;
   product_images: { url: string }[] | null;
+  fda_approved?: boolean | null;
+  ce_marked?: boolean | null;
   category_slug?: string | null;
   category_name?: string | null;
 };

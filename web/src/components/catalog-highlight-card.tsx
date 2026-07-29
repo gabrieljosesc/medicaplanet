@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import { IconHeart } from "@/components/nav-icons";
+import { ProductCertBadges } from "@/components/product-cert-badges";
 import { categoryHref } from "@/lib/category-href";
 import { parsePriceTiersJson } from "@/lib/price-tiers";
 
@@ -39,6 +40,8 @@ export function CatalogHighlightCard({
   priceTiersRaw,
   categoryName,
   categorySlug,
+  fdaApproved,
+  ceMarked,
 }: {
   slug: string;
   title: string;
@@ -54,6 +57,8 @@ export function CatalogHighlightCard({
   heroImageSrc: string;
   imageUnoptimized: boolean;
   priceTiersRaw: unknown;
+  fdaApproved?: boolean | null;
+  ceMarked?: boolean | null;
 }) {
   const tiers = useMemo(() => parsePriceTiersJson(priceTiersRaw), [priceTiersRaw]);
   const hasPrice = basePrice > 0 || tiers.length > 0;
@@ -134,6 +139,7 @@ export function CatalogHighlightCard({
             </Link>
           </p>
         ) : null}
+        <ProductCertBadges fdaApproved={fdaApproved} ceMarked={ceMarked} className="mb-1.5" />
         <Link href={`/product/${slug}`} className="block flex-1 text-left">
           <h3 className="line-clamp-2 text-sm font-bold tracking-tight text-filler-ink transition group-hover:text-filler-rose-800 sm:text-lg">
             {title}

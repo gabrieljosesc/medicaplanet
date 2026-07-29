@@ -149,6 +149,8 @@ export default async function PeptidesPage({ searchParams }: Props) {
               priceTiersRaw={p.price_tiers}
               categoryName={cs && cn ? categoryNavLabel(cs, cn) : null}
               categorySlug={cs ?? null}
+              fdaApproved={p.fda_approved}
+              ceMarked={p.ce_marked}
             />
             );
           })
