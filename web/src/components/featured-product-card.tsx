@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { IconCartBag } from "@/components/nav-icons";
+import { ProductCertBadges } from "@/components/product-cert-badges";
 import { useCart } from "@/context/cart-context";
 import { categoryHref } from "@/lib/category-href";
 import { parsePriceTiersJson, unitPriceForQuantity } from "@/lib/price-tiers";
@@ -57,6 +58,8 @@ export function FeaturedProductCard({
   variant = "featured",
   bestSellerTags,
   compareAtPrice,
+  fdaApproved,
+  ceMarked,
 }: {
   slug: string;
   title: string;
@@ -72,6 +75,8 @@ export function FeaturedProductCard({
   variant?: "featured" | "bestSeller";
   bestSellerTags?: BestSellerTagLink[];
   compareAtPrice?: number;
+  fdaApproved?: boolean | null;
+  ceMarked?: boolean | null;
 }) {
   const tiers = useMemo(() => parsePriceTiersJson(priceTiersRaw), [priceTiersRaw]);
   const unit = useMemo(
@@ -246,6 +251,7 @@ export function FeaturedProductCard({
           </div>
         )}
 
+        <ProductCertBadges fdaApproved={fdaApproved} ceMarked={ceMarked} className="mt-2" />
         <Link
           href={`/product/${slug}`}
           className="mt-1.5 text-base font-bold leading-snug text-neutral-900 sm:text-lg"

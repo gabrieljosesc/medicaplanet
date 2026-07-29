@@ -50,7 +50,7 @@ export default async function HomePage({ searchParams }: { searchParams?: HomeSe
     supabase
       .from("products")
       .select(
-        "slug,title,description,base_price,currency,rating,review_count,price_tiers,category_id,is_featured,categories(slug,name), product_images(url)"
+        "slug,title,description,base_price,currency,rating,review_count,price_tiers,category_id,is_featured,fda_approved,ce_marked,categories(slug,name), product_images(url)"
       )
       .eq("is_active", true)
       .order("is_featured", { ascending: false })
@@ -166,6 +166,8 @@ export default async function HomePage({ searchParams }: { searchParams?: HomeSe
                             : c?.name ?? null
                         }
                         categorySlug={c?.slug ?? null}
+                        fdaApproved={(p as { fda_approved?: boolean | null }).fda_approved}
+                        ceMarked={(p as { ce_marked?: boolean | null }).ce_marked}
                       />
                     </div>
                   );

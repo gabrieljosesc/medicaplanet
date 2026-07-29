@@ -7,7 +7,7 @@ import {
 import { escapeIlike, quotePostgRestFilterValue } from "@/lib/search-products";
 
 const SELECT_WITH_CAT =
-  "slug,title,description,base_price,currency,rating,review_count,price_tiers,product_images(url),is_featured,created_at,variant_product_id,categories(slug,name)" as const;
+  "slug,title,description,base_price,currency,rating,review_count,price_tiers,product_images(url),is_featured,created_at,variant_product_id,fda_approved,ce_marked,categories(slug,name)" as const;
 
 type CatRel = { slug: string; name: string } | { slug: string; name: string }[] | null;
 
