@@ -2,6 +2,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { PeptideCoaSection } from "@/components/peptide-coa-section";
 import { ProductBuyBox } from "@/components/product-buy-box";
+import { ProductCertBadges } from "@/components/product-cert-badges";
 import { ProductImageGallery } from "@/components/product-image-gallery";
 import { PeptideDoseSelector } from "@/components/peptide-dose-selector";
 import { getPeptideCoaLinks } from "@/lib/peptide-coa";
@@ -81,6 +82,12 @@ export default async function ProductPage({ params }: Props) {
           {(product.categories as { name?: string } | null)?.name ?? "Catalog"}
         </p>
         <h1 className="mt-2 text-2xl font-semibold text-zinc-900">{product.title}</h1>
+        <ProductCertBadges
+          fdaApproved={product.fda_approved}
+          ceMarked={product.ce_marked}
+          size="md"
+          className="mt-2"
+        />
         {doseGroup ? <PeptideDoseSelector group={doseGroup} currentSlug={product.slug} /> : null}
         <p className="mt-2 text-sm text-zinc-600">
           Rated {Number(product.rating).toFixed(2)} / 5 · {product.review_count} reviews

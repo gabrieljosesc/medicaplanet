@@ -73,6 +73,14 @@ export default async function AdminProductEditPage({ params }: Props) {
           <input type="checkbox" name="is_featured" defaultChecked={product.is_featured} />
           Featured
         </label>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" name="fda_approved" defaultChecked={product.fda_approved} />
+          FDA approved (shows FDA badge)
+        </label>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" name="ce_marked" defaultChecked={product.ce_marked} />
+          CE marked (shows CE badge)
+        </label>
         <button type="submit" className="rounded-full bg-teal-800 px-6 py-2.5 text-sm font-semibold text-white">
           Save
         </button>
