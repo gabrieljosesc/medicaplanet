@@ -23,6 +23,7 @@ type ShippingAddr = {
 
 type BillingAddr = ShippingAddr & {
   doctorName?: string;
+  doctorLicenseType?: string;
   doctorLicenseNumber?: string;
   doctorLicenseExpiry?: string;
 };
@@ -120,6 +121,9 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
             <p><span className="font-medium text-zinc-700">Doctor / Prescriber:</span>{" "}
               <span className="text-zinc-900">{billing?.doctorName || "—"}</span>
             </p>
+            <p><span className="font-medium text-zinc-700">License type:</span>{" "}
+              <span className="text-zinc-900">{billing?.doctorLicenseType || "—"}</span>
+            </p>
             <p><span className="font-medium text-zinc-700">License #:</span>{" "}
               <span className="font-mono text-zinc-900">{billing?.doctorLicenseNumber || "—"}</span>
             </p>
@@ -127,6 +131,14 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
               <span className="text-zinc-900">{billing?.doctorLicenseExpiry || "—"}</span>
             </p>
           </div>
+        </section>
+
+        {/* Billing address */}
+        <section className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Billing Address</h2>
+          <address className="mt-2 not-italic text-sm text-zinc-700 whitespace-pre-line leading-relaxed">
+            {formatAddress(billing)}
+          </address>
         </section>
 
         {/* Shipping address */}

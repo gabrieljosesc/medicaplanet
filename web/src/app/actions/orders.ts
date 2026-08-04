@@ -27,6 +27,7 @@ const checkoutSchema = z.object({
   customerNotes: z.string().optional(),
   paymentNotes: z.string().optional(),
   doctorName: z.string().min(1),
+  doctorLicenseType: z.string().optional(),
   doctorLicenseNumber: z.string().min(1),
   doctorLicenseExpiry: z.string().min(1),
   policyAccepted: z.boolean().refine((v) => v === true, {
@@ -169,6 +170,7 @@ export async function submitOrder(
     recipientName: input.recipientName,
     phone: input.phone,
     doctorName: input.doctorName,
+    doctorLicenseType: input.doctorLicenseType ?? "",
     doctorLicenseNumber: input.doctorLicenseNumber,
     doctorLicenseExpiry: input.doctorLicenseExpiry,
   };

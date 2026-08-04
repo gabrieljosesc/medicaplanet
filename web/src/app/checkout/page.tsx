@@ -16,6 +16,7 @@ type ContactFields = {
   firstName: string;
   lastName: string;
   doctorName: string;
+  doctorLicenseType: string;
   email: string;
   company: string;
   doctorLicenseNumber: string;
@@ -62,6 +63,7 @@ const emptyContact: ContactFields = {
   firstName: "",
   lastName: "",
   doctorName: "",
+  doctorLicenseType: "",
   email: "",
   company: "",
   doctorLicenseNumber: "",
@@ -228,7 +230,7 @@ export default function CheckoutPage() {
           supabase
             .from("profiles")
             .select(
-              "first_name,last_name,full_name,email,phone,company,delivery_address,country,city,state,postal_code,license_number,license_expiry"
+              "first_name,last_name,full_name,email,phone,company,delivery_address,country,city,state,postal_code,profession,license_number,license_expiry"
             )
             .eq("id", user.id)
             .single(),
@@ -254,6 +256,7 @@ export default function CheckoutPage() {
           firstName: fn,
           lastName: ln,
           doctorName: fullName,
+          doctorLicenseType: profile?.profession ?? "",
           email: profile?.email ?? user.email ?? "",
           company: profile?.company ?? "",
           doctorLicenseNumber: profile?.license_number ?? "",
@@ -360,6 +363,7 @@ export default function CheckoutPage() {
       customerNotes,
       paymentNotes: paymentNotes.trim() || undefined,
       doctorName: contact.doctorName.trim(),
+      doctorLicenseType: contact.doctorLicenseType.trim() || undefined,
       doctorLicenseNumber: contact.doctorLicenseNumber.trim(),
       doctorLicenseExpiry: contact.doctorLicenseExpiry.trim(),
       policyAccepted: new FormData(form).get("policyAck") === "1",
