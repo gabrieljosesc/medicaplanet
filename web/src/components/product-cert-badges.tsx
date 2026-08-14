@@ -1,7 +1,8 @@
 /**
- * FDA / CE regulatory badges shown on product cards and the product page.
- * Rendered only when the product carries the flag. Mirrors medicadepot's
- * "FDA Approved" and "CE (EU Approved)" marks.
+ * FDA / CE regulatory badges shown on product cards and the product page,
+ * rendered only when the product carries the flag. Uses the standard
+ * "FDA Approved" and CE conformity marks (SVGs in /public/badges), matching
+ * how these marks appear across the aesthetics-supply industry.
  */
 export function ProductCertBadges({
   fdaApproved,
@@ -15,38 +16,17 @@ export function ProductCertBadges({
   className?: string;
 }) {
   if (!fdaApproved && !ceMarked) return null;
-  const box = size === "md" ? "h-6" : "h-5";
-  const text = size === "md" ? "text-[11px]" : "text-[10px]";
+  const h = size === "md" ? "h-8" : "h-6";
 
   return (
-    <div className={`flex flex-wrap items-center gap-1.5 ${className}`} aria-label="Regulatory approvals">
+    <div className={`flex flex-wrap items-center gap-2.5 ${className}`} aria-label="Regulatory approvals">
       {fdaApproved ? (
-        <span
-          className={`inline-flex items-center gap-1 rounded-md border border-teal-200 bg-teal-50 px-1.5 ${box} font-semibold ${text} uppercase tracking-wide text-teal-800`}
-          title="FDA approved"
-        >
-          <svg viewBox="0 0 20 20" className="h-3 w-3 shrink-0" fill="currentColor" aria-hidden="true">
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.7-9.3a1 1 0 00-1.4-1.4L9 10.6 7.7 9.3a1 1 0 00-1.4 1.4l2 2a1 1 0 001.4 0l4-4z"
-              clipRule="evenodd"
-            />
-          </svg>
-          FDA
-        </span>
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src="/badges/fda-approved.svg" alt="FDA approved" className={`${h} w-auto`} />
       ) : null}
       {ceMarked ? (
-        <span
-          className={`inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-1.5 ${box} font-semibold ${text} uppercase tracking-wide text-blue-800`}
-          title="CE marked (EU approved)"
-        >
-          <svg viewBox="0 0 24 24" className="h-3 w-3 shrink-0" fill="currentColor" aria-hidden="true">
-            {/* Stylised CE mark */}
-            <path d="M11.5 4a8 8 0 100 16 8.2 8.2 0 003-.57 6 6 0 110-14.86A8.2 8.2 0 0011.5 4z" />
-            <path d="M21.5 8.2a6 6 0 000 7.6 6.6 6.6 0 01-2 .2V8a6.6 6.6 0 012 .2z" />
-          </svg>
-          CE
-        </span>
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src="/badges/ce-approved.svg" alt="CE marked" className={`${h} w-auto`} />
       ) : null}
     </div>
   );
