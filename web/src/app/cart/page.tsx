@@ -42,7 +42,12 @@ export default function CartPage() {
             <span className="hidden text-right md:inline">Total Price</span>
             <span className="hidden text-right md:inline">Action</span>
           </div>
-          {lines.map((l) => (
+          {lines.map((l) => {
+            const free = l.isFree === true || l.unitPrice <= 0;
+            const unitLabel = free ? "FREE" : formatMoney(l.currency ?? "USD", l.unitPrice);
+            const totalLabel = free ? "FREE" : formatMoney(l.currency ?? "USD", l.unitPrice * l.quantity);
+            const moneyCls = free ? "text-green-700" : "text-zinc-700";
+            return (
             <div
               key={l.slug}
               className="grid grid-cols-[28px_72px_minmax(0,1fr)] items-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-4 shadow-sm md:grid-cols-[28px_minmax(0,1fr)_120px_150px_120px_90px]"
@@ -66,12 +71,12 @@ export default function CartPage() {
                   </p>
                   <div className="mt-3 flex items-center justify-between gap-3 md:hidden">
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-zinc-900">
-                        {formatMoney(l.currency ?? "USD", l.unitPrice)}
+                      <p className={`text-sm font-medium ${free ? "text-green-700" : "text-zinc-900"}`}>
+                        {unitLabel}
                       </p>
-                      {l.quantity > 1 ? (
+                      {l.quantity > 1 && !free ? (
                         <p className="text-xs text-zinc-500">
-                          Total {formatMoney(l.currency ?? "USD", l.unitPrice * l.quantity)}
+                          Total {totalLabel}
                         </p>
                       ) : null}
                     </div>
@@ -89,14 +94,14 @@ export default function CartPage() {
                   <CartLineThumbnail slug={l.slug} title={l.title} imageSrc={l.imageSrc} />
                 </div>
               </div>
-              <span className="hidden text-right text-sm text-zinc-700 md:block">
-                {formatMoney(l.currency ?? "USD", l.unitPrice)}
+              <span className={`hidden text-right text-sm md:block ${moneyCls}${free ? " font-semibold" : ""}`}>
+                {unitLabel}
               </span>
               <div className="hidden justify-center md:flex">
                 <QtyStepper value={l.quantity} onChange={(n) => setQty(l.slug, n)} size="sm" />
               </div>
-              <span className="hidden text-right text-sm text-zinc-700 md:block">
-                {formatMoney(l.currency ?? "USD", l.unitPrice * l.quantity)}
+              <span className={`hidden text-right text-sm md:block ${moneyCls}${free ? " font-semibold" : ""}`}>
+                {totalLabel}
               </span>
               <div className="hidden text-right md:block">
                 <button
@@ -108,7 +113,8 @@ export default function CartPage() {
                 </button>
               </div>
             </div>
-          ))}
+            );
+          })}
           <div className="flex items-center justify-between border-t border-zinc-200 pt-4">
             <span className="font-semibold text-zinc-900">Subtotal</span>
             <span className="text-lg font-semibold text-teal-900">

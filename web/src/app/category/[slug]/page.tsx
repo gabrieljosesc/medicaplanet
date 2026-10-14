@@ -138,6 +138,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
               categorySlug={cs ?? null}
               fdaApproved={p.fda_approved}
               ceMarked={p.ce_marked}
+              isFree={p.is_free === true}
             />
             );
           })

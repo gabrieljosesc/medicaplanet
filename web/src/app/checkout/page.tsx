@@ -791,8 +791,10 @@ export default function CheckoutPage() {
                   <span className="text-zinc-700">
                     {line.title} <span className="text-zinc-500">× {line.quantity}</span>
                   </span>
-                  <span className="font-medium text-zinc-900">
-                    ${Number(line.unitPrice * line.quantity).toFixed(2)}
+                  <span className={`font-medium ${line.isFree || line.unitPrice <= 0 ? "text-green-700" : "text-zinc-900"}`}>
+                    {line.isFree || line.unitPrice <= 0
+                      ? "FREE"
+                      : `$${Number(line.unitPrice * line.quantity).toFixed(2)}`}
                   </span>
                 </li>
               ))}

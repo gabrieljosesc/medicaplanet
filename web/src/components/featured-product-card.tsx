@@ -60,6 +60,7 @@ export function FeaturedProductCard({
   compareAtPrice,
   fdaApproved,
   ceMarked,
+  isFree,
 }: {
   slug: string;
   title: string;
@@ -77,13 +78,16 @@ export function FeaturedProductCard({
   compareAtPrice?: number;
   fdaApproved?: boolean | null;
   ceMarked?: boolean | null;
+  /** Complimentary item — shows "FREE" instead of a price and stays addable. */
+  isFree?: boolean | null;
 }) {
   const tiers = useMemo(() => parsePriceTiersJson(priceTiersRaw), [priceTiersRaw]);
+  const free = isFree === true;
   const unit = useMemo(
-    () => unitPriceForQuantity(tiers, 1, basePrice),
-    [tiers, basePrice]
+    () => (free ? 0 : unitPriceForQuantity(tiers, 1, basePrice)),
+    [free, tiers, basePrice]
   );
-  const hasPrice = basePrice > 0 || tiers.length > 0;
+  const hasPrice = basePrice > 0 || tiers.length > 0 || free;
   const minPrice =
     tiers.length > 0
       ? Math.min(...tiers.map((t) => t.price), basePrice > 0 ? basePrice : Infinity)
@@ -194,7 +198,11 @@ export function FeaturedProductCard({
           </div>
         ) : null}
 
-        {amount != null ? (
+        {free ? (
+          <p className={`text-lg font-bold uppercase tracking-wide text-green-700 sm:text-xl ${showStars ? "mt-1" : "mt-0"}`}>
+            Free
+          </p>
+        ) : amount != null ? (
           <p
             className={`flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm text-neutral-800 ${showStars ? "mt-1" : "mt-0"}`}
           >
@@ -278,8 +286,9 @@ export function FeaturedProductCard({
                   unitPrice: unit,
                   quantity: 1,
                   currency,
-                  priceTiers: tiers.length ? tiers : undefined,
+                  priceTiers: free ? undefined : tiers.length ? tiers : undefined,
                   imageSrc: heroImageSrc,
+                  isFree: free || undefined,
                 });
                 setAddedToCart(true);
                 if (addedTimerRef.current) clearTimeout(addedTimerRef.current);

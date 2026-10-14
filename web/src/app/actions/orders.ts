@@ -86,7 +86,7 @@ export async function submitOrder(
   const slugs = input.items.map((i) => i.slug);
   const { data: products, error: pErr } = await svc
     .from("products")
-    .select("id, slug, title, base_price, currency, price_tiers, is_active")
+    .select("id, slug, title, base_price, currency, price_tiers, is_active, is_free")
     .in("slug", slugs);
   if (pErr || !products?.length) {
     return { ok: false, message: "Could not load products for checkout." };
@@ -108,7 +108,8 @@ export async function submitOrder(
     const qty = it.quantity;
     const tiers = parsePriceTiersJson(p.price_tiers);
     const base = Number(p.base_price);
-    const unit = tiers.length ? unitPriceForQuantity(tiers, qty, base) : base;
+    // Complimentary items are always charged at $0 regardless of base_price.
+    const unit = p.is_free === true ? 0 : tiers.length ? unitPriceForQuantity(tiers, qty, base) : base;
     subtotal += unit * qty;
     lines.push({
       product_id: p.id,

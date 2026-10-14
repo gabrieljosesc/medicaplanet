@@ -85,6 +85,7 @@ export default async function SearchPage({ searchParams }: Props) {
                   priceTiersRaw={p.price_tiers}
                   fdaApproved={p.fda_approved}
                   ceMarked={p.ce_marked}
+                  isFree={p.is_free}
                 />
               ))
             )}

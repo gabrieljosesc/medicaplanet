@@ -17,6 +17,7 @@ export function ProductBuyBox({
   currency,
   basePrice,
   priceTiersRaw,
+  isFree,
   disabled,
   heroImageSrc,
 }: {
@@ -25,6 +26,8 @@ export function ProductBuyBox({
   currency: string;
   basePrice: number;
   priceTiersRaw: unknown;
+  /** Complimentary item — shows "FREE", stays addable to cart at $0. */
+  isFree?: boolean;
   disabled?: boolean;
   /** Main product image URL for cart thumbnails */
   heroImageSrc?: string | null;
@@ -35,10 +38,11 @@ export function ProductBuyBox({
   const [msg, setMsg] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
 
-  const hasPrice = basePrice > 0 || tiers.length > 0;
+  const free = isFree === true;
+  const hasPrice = basePrice > 0 || tiers.length > 0 || free;
   const unit = useMemo(
-    () => unitPriceForQuantity(tiers, qty, basePrice),
-    [tiers, qty, basePrice]
+    () => (free ? 0 : unitPriceForQuantity(tiers, qty, basePrice)),
+    [free, tiers, qty, basePrice]
   );
   const lineTotal = unit * qty;
 
@@ -53,12 +57,21 @@ export function ProductBuyBox({
 
   return (
     <div className="mt-6 space-y-4">
-      <p className="text-2xl font-semibold text-teal-900">{formatMoney(currency, unit)}</p>
-      {tiers.length > 1 && (
+      {free ? (
+        <div>
+          <p className="text-3xl font-bold uppercase tracking-wide text-green-700">Free</p>
+          <p className="mt-1 text-sm text-zinc-600">
+            Complimentary with your peptide order — add it to your cart at no charge.
+          </p>
+        </div>
+      ) : (
+        <p className="text-2xl font-semibold text-teal-900">{formatMoney(currency, unit)}</p>
+      )}
+      {!free && tiers.length > 1 && (
         <p className="text-xs text-zinc-500">Price per unit updates from the quantity you choose.</p>
       )}
 
-      {tiers.length > 0 && (
+      {!free && tiers.length > 0 && (
         <div className="rounded-xl border border-zinc-200 bg-zinc-50/80">
           <p className="border-b border-zinc-200 px-3 py-2 text-xs font-medium uppercase tracking-wide text-zinc-600">
             Volume pricing
@@ -94,8 +107,9 @@ export function ProductBuyBox({
               unitPrice: unit,
               quantity: qty,
               currency,
-              priceTiers: tiers.length ? tiers : undefined,
+              priceTiers: free ? undefined : tiers.length ? tiers : undefined,
               imageSrc: heroImageSrc ?? undefined,
+              isFree: free || undefined,
             });
             setMsg("Added to cart");
             setTimeout(() => {
@@ -110,7 +124,7 @@ export function ProductBuyBox({
         {msg && <span className="text-sm text-teal-800">{msg}</span>}
       </div>
 
-      {qty > 1 && (
+      {qty > 1 && !free && (
         <p className="text-sm text-zinc-600">
           {qty} × {formatMoney(currency, unit)} ={" "}
           <span className="font-semibold text-teal-900">{formatMoney(currency, lineTotal)}</span>

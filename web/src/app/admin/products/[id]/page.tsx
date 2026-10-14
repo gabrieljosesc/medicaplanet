@@ -81,6 +81,10 @@ export default async function AdminProductEditPage({ params }: Props) {
           <input type="checkbox" name="ce_marked" defaultChecked={product.ce_marked} />
           CE marked (shows CE badge)
         </label>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" name="is_free" defaultChecked={product.is_free === true} />
+          Free item (shows &ldquo;FREE&rdquo;)
+        </label>
         <button type="submit" className="rounded-full bg-teal-800 px-6 py-2.5 text-sm font-semibold text-white">
           Save
         </button>

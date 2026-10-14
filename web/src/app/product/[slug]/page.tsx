@@ -98,6 +98,7 @@ export default async function ProductPage({ params }: Props) {
           currency={String(product.currency || "USD")}
           basePrice={Number(product.base_price)}
           priceTiersRaw={product.price_tiers}
+          isFree={product.is_free === true}
           disabled={!product.is_active}
           heroImageSrc={slidesForUi[0]!.src}
         />

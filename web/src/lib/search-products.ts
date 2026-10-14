@@ -14,7 +14,7 @@ export function quotePostgRestFilterValue(s: string): string {
 }
 
 const PRODUCT_SEARCH_SELECT =
-  "slug,title,description,base_price,currency,rating,review_count,price_tiers,product_images(url),fda_approved,ce_marked,categories(name)" as const;
+  "slug,title,description,base_price,currency,rating,review_count,price_tiers,product_images(url),fda_approved,ce_marked,is_free,categories(name)" as const;
 
 export type ProductSearchHit = {
   slug: string;
@@ -29,6 +29,7 @@ export type ProductSearchHit = {
   categoryName: string | null;
   fda_approved: boolean | null;
   ce_marked: boolean | null;
+  is_free: boolean;
 };
 
 type DbProductRow = {
@@ -43,6 +44,7 @@ type DbProductRow = {
   product_images: { url: string }[] | null;
   fda_approved?: boolean | null;
   ce_marked?: boolean | null;
+  is_free?: boolean | null;
   categories: { name: string } | { name: string }[] | null;
 };
 
@@ -66,6 +68,7 @@ function mapRow(p: DbProductRow): ProductSearchHit {
     categoryName: normalizeCategory(p.categories),
     fda_approved: p.fda_approved ?? null,
     ce_marked: p.ce_marked ?? null,
+    is_free: p.is_free === true,
   };
 }
 

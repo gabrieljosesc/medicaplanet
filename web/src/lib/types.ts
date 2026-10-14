@@ -20,6 +20,8 @@ export type Product = {
   review_count: number;
   is_active: boolean;
   is_featured: boolean;
+  /** Complimentary item (e.g. freebie with peptide orders) — shows "FREE" instead of "Request pricing". */
+  is_free?: boolean;
 };
 
 import type { PriceTierRow } from "@/lib/price-tiers";
@@ -35,4 +37,6 @@ export type CartLine = {
   imageSrc?: string;
   /** When set, cart qty changes recompute unitPrice from tiers. */
   priceTiers?: PriceTierRow[];
+  /** Complimentary item — rendered as "FREE" (unitPrice is 0). */
+  isFree?: boolean;
 };

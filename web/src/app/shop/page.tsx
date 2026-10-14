@@ -123,6 +123,7 @@ export default async function ShopPage({ searchParams }: Props) {
                   categorySlug={slug ?? null}
                   fdaApproved={p.fda_approved}
                   ceMarked={p.ce_marked}
+                  isFree={p.is_free === true}
                 />
               );
             })}

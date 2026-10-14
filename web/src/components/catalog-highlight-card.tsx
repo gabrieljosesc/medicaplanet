@@ -42,6 +42,7 @@ export function CatalogHighlightCard({
   categorySlug,
   fdaApproved,
   ceMarked,
+  isFree,
 }: {
   slug: string;
   title: string;
@@ -59,15 +60,21 @@ export function CatalogHighlightCard({
   priceTiersRaw: unknown;
   fdaApproved?: boolean | null;
   ceMarked?: boolean | null;
+  /** Complimentary item — shows a green "FREE" badge instead of a price. */
+  isFree?: boolean | null;
 }) {
   const tiers = useMemo(() => parsePriceTiersJson(priceTiersRaw), [priceTiersRaw]);
+  const free = isFree === true;
   const hasPrice = basePrice > 0 || tiers.length > 0;
 
   const displayFrom =
     basePrice > 0 ? basePrice : tiers.length > 0 ? tiers[0].price : 0;
   const cur = (currency && currency.trim()) || "USD";
-  const priceBadge =
-    hasPrice && Number.isFinite(displayFrom) ? `${cur} ${Math.round(displayFrom)}` : null;
+  const priceBadge = free
+    ? "FREE"
+    : hasPrice && Number.isFinite(displayFrom)
+      ? `${cur} ${Math.round(displayFrom)}`
+      : null;
 
   const blurb =
     description && description.trim().length > 0
@@ -121,7 +128,13 @@ export function CatalogHighlightCard({
         </button>
 
         {priceBadge ? (
-          <div className="pointer-events-none absolute bottom-2 right-2 z-[25] rounded-lg border border-zinc-200/90 bg-white/92 px-2 py-1 text-[11px] font-semibold text-zinc-900 shadow-md backdrop-blur-sm tabular-nums ring-1 ring-black/5 sm:bottom-3 sm:right-3 sm:rounded-xl sm:px-3 sm:py-1.5 sm:text-xs">
+          <div
+            className={`pointer-events-none absolute bottom-2 right-2 z-[25] rounded-lg border px-2 py-1 text-[11px] font-semibold shadow-md backdrop-blur-sm tabular-nums ring-1 ring-black/5 sm:bottom-3 sm:right-3 sm:rounded-xl sm:px-3 sm:py-1.5 sm:text-xs ${
+              free
+                ? "border-green-700/60 bg-green-600 uppercase tracking-wide text-white"
+                : "border-zinc-200/90 bg-white/92 text-zinc-900"
+            }`}
+          >
             {priceBadge}
           </div>
         ) : null}
